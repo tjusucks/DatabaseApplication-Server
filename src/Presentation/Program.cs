@@ -14,7 +14,7 @@ builder.Services.AddControllers();
 // Register MediatR for CQRS pattern implementation.
 builder.Services.AddMediatR(cfg =>
 {
-    cfg.RegisterServicesFromAssembly(typeof(DbApp.Application.Module).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(DbApp.Application.IMediatorModule).Assembly);
 });
 
 // Configure Entity Framework with Oracle database.
@@ -63,7 +63,7 @@ if (app.Environment.IsDevelopment())
     // Trigger auto migration for database schema updates.
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
+    await dbContext.Database.MigrateAsync();
 }
 
 // Force HTTPS redirection for security.
@@ -73,4 +73,4 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 // Start the application.
-app.Run();
+await app.RunAsync();

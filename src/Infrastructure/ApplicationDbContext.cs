@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using DbApp.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure;
 
