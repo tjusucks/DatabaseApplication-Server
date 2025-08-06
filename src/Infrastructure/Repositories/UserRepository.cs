@@ -1,0 +1,39 @@
+using DbApp.Domain.Entities;
+using DbApp.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace DbApp.Infrastructure.Repositories;
+
+public class UserRepository(ApplicationDbContext dbContext) : IUserRepository
+{
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
+    public async Task<int> CreateAsync(User user)
+    {
+        _dbContext.Users.Add(user);
+        await _dbContext.SaveChangesAsync();
+        return user.UserId;
+    }
+
+    public async Task<User?> GetByIdAsync(int userId)
+    {
+        return await _dbContext.Users.FindAsync(userId);
+    }
+
+    public async Task<List<User>> GetAllAsync()
+    {
+        return await _dbContext.Users.ToListAsync();
+    }
+
+    public async Task UpdateAsync(User user)
+    {
+        _dbContext.Users.Update(user);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(User user)
+    {
+        _dbContext.Users.Remove(user);
+        await _dbContext.SaveChangesAsync();
+    }
+}
