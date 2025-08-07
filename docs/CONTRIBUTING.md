@@ -59,7 +59,7 @@ ALTER USER username QUOTA UNLIMITED ON users;
 
 其中 `username` 和 `password` 是你为新用户设置的用户名和密码.
 
-### Configure Connection String
+## Configure Connection String
 
 在 `src/Presentation/appsettings.{Environment}.json` 中设置连接字符串:
 
@@ -71,6 +71,52 @@ ALTER USER username QUOTA UNLIMITED ON users;
 ```
 
 其中 `username` 和 `password` 是你在上一步创建的用户的用户名和密码.
+
+## Use Environment Variables
+
+为保证安全性和灵活性, 建议不要在配置文件中写入真实的数据库密码等敏感信息. 可以通过环境变量或 `.env` 文件覆盖配置文件中的连接字符串.
+
+### Use `.env` File
+
+本地开发推荐使用 `.env` 文件来管理环境变量.
+
+在 `src/Presentation` 目录下复制 `.env.example` 为 `.env`, 并填写实际信息:
+
+```bash
+cp src/Presentation/.env.example src/Presentation/.env
+```
+
+编辑 `.env` 文件内容, 例如:
+
+```bash
+ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=<yourusername>;Password=<yourpassword>;"
+ConnectionStrings__RedisConnection="localhost:6379"
+```
+
+`.env` 文件中的变量会在应用启动时自动加载, 并覆盖 `appsettings.json` 中的同名配置.
+
+### Use Environment Variables Directly
+
+在服务器或 CI/CD 环境中, 可以直接设置环境变量, 无需 `.env` 文件. 例如:
+
+```bash
+# Linux / macOS
+export ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=yourusername;Password=yourpassword;"
+export ConnectionStrings__RedisConnection="localhost:6379"
+```
+
+```powershell
+# Windows
+$env:ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=yourusername;Password=yourpassword;"
+$env:ConnectionStrings__RedisConnection="localhost:6379"
+```
+
+```yaml
+# GitHub Actions.
+env:
+  ConnectionStrings__OracleConnection: ${{ secrets.ORACLE_CONNECTION }}
+  ConnectionStrings__RedisConnection: ${{ secrets.REDIS_CONNECTION }}
+```
 
 ## Run the Project
 

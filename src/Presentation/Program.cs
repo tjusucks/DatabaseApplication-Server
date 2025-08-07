@@ -1,6 +1,13 @@
 using DbApp.Infrastructure;
+using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+
+// Load environment variables from .env file if it exists.
+if (File.Exists(".env"))
+{
+    Env.Load();
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
