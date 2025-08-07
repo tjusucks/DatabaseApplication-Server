@@ -23,25 +23,25 @@ jobs:
     name: Lint Dotnet Projects
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 9.0.x
-        cache: true
-        cache-dependency-path: |
-          src/**/packages.lock.json
-          tests/packages.lock.json
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          cache: true
+          cache-dependency-path: |
+            src/**/packages.lock.json
+            tests/packages.lock.json
 
-    - name: Restore dependencies
-      run: dotnet restore --locked-mode --verbosity normal
-    
-    - name: Check code formatting
-      run: dotnet format --verify-no-changes --verbosity normal
+      - name: Restore dependencies
+        run: dotnet restore --locked-mode --verbosity normal
 
-    - name: Build the projects
-      run: dotnet build --no-restore --warnaserror --verbosity diagnostic
+      - name: Check code formatting
+        run: dotnet format --verify-no-changes --verbosity normal
 
-    - name: Run unit tests
-      run: dotnet test --no-build --verbosity normal
+      - name: Build the projects
+        run: dotnet build --no-restore --warnaserror --verbosity diagnostic
+
+      - name: Run unit tests
+        run: dotnet test --no-build --verbosity normal
