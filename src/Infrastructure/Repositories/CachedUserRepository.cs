@@ -14,7 +14,6 @@ public class CachedUserRepository(IUserRepository inner, IDistributedCache cache
     public async Task<int> CreateAsync(User user)
     {
         var id = await _inner.CreateAsync(user);
-        await _cache.RemoveAsync($"user:{id}");
         return id;
     }
 
