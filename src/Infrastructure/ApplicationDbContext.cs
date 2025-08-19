@@ -1,4 +1,4 @@
-using DbApp.Domain.Entities;
+using DbApp.Domain.Entities.UserSystem;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure;

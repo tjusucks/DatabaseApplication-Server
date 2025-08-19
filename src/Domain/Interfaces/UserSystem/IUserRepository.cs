@@ -1,6 +1,6 @@
-using DbApp.Domain.Entities;
+using DbApp.Domain.Entities.UserSystem;
 
-namespace DbApp.Domain.Interfaces;
+namespace DbApp.Domain.Interfaces.UserSystem;
 
 public interface IUserRepository
 {

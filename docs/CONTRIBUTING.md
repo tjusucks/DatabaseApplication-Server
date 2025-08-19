@@ -167,7 +167,7 @@ dotnet tool restore
 
 ```bash
 # Linux / macOS
-dotnet ef migrations add MigrationName \                         
+dotnet ef migrations add MigrationName \
     --project src/Infrastructure/Infrastructure.csproj \
     --startup-project src/Presentation/Presentation.csproj
 ```

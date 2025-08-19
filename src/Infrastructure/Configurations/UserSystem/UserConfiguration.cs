@@ -1,8 +1,8 @@
-using DbApp.Domain.Entities;
+using DbApp.Domain.Entities.UserSystem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DbApp.Infrastructure.Configurations;
+namespace DbApp.Infrastructure.Configurations.UserSystem;
 
 public class UserConfiguration : IEntityTypeConfiguration<User>
 {

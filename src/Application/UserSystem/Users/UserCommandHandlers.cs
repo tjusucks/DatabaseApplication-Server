@@ -1,5 +1,5 @@
-using DbApp.Domain.Entities;
-using DbApp.Domain.Interfaces;
+using DbApp.Domain.Entities.UserSystem;
+using DbApp.Domain.Interfaces.UserSystem;
 using MediatR;
 
 namespace DbApp.Application.UserSystem.Users;

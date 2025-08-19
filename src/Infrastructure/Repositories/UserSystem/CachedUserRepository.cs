@@ -1,9 +1,9 @@
 using System.Text.Json;
-using DbApp.Domain.Entities;
-using DbApp.Domain.Interfaces;
+using DbApp.Domain.Entities.UserSystem;
+using DbApp.Domain.Interfaces.UserSystem;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace DbApp.Infrastructure.Repositories;
+namespace DbApp.Infrastructure.Repositories.UserSystem;
 
 public class CachedUserRepository(IUserRepository inner, IDistributedCache cache) : IUserRepository
 {

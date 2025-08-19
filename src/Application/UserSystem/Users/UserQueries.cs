@@ -1,4 +1,4 @@
-using DbApp.Domain.Entities;
+using DbApp.Domain.Entities.UserSystem;
 using MediatR;
 
 namespace DbApp.Application.UserSystem.Users;

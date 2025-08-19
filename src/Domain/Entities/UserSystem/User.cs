@@ -1,4 +1,4 @@
-namespace DbApp.Domain.Entities;
+namespace DbApp.Domain.Entities.UserSystem;
 
 /// <summary>
 /// User entity representing the users table in the database.
