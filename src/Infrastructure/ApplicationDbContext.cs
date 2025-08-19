@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.UserSystem;
 using Microsoft.EntityFrameworkCore;
 
+using DbApp.Domain.Entities.TicketRelated;
 namespace DbApp.Infrastructure;
 
 public class ApplicationDbContext : DbContext
@@ -18,6 +19,18 @@ public class ApplicationDbContext : DbContext
     public DbSet<StaffTeam> StaffTeams { get; set; }
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<EntryRecord> EntryRecords { get; set; }
+    public DbSet<Ticket> Tickets { get; set; }
+    public DbSet<TicketType> TicketTypes { get; set; }
+    public DbSet<PriceRule> PriceRules { get; set; }
+    public DbSet<PriceHistory> PriceHistories { get; set; }
+    public DbSet<Promotion> Promotions { get; set; }
+    public DbSet<PromotionTicketType> PromotionTicketTypes { get; set; }
+    public DbSet<PromotionCondition> PromotionConditions { get; set; }
+    public DbSet<PromotionAction> PromotionActions { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<ReservationItem> ReservationItems { get; set; }
+    public DbSet<RefundRecord> RefundRecords { get; set; }
+    public DbSet<Coupon> Coupons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,4 +40,3 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 }
-
