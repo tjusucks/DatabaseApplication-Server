@@ -24,4 +24,7 @@ public class Blacklist
     /// Last update timestamp.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    // Navigation property.
+    public Visitor Visitor { get; set; } = null!;
 }

@@ -71,9 +71,15 @@ public class VisitorConfiguration : IEntityTypeConfiguration<Visitor>
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to users table.
-        builder.HasOne<User>()
+        builder.HasOne(v => v.User)
             .WithOne()
             .HasForeignKey<Visitor>(v => v.VisitorId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Navigation property for foreign key relationship to entry records.
+        builder.HasMany(v => v.EntryRecords)
+            .WithOne(er => er.Visitor)
+            .HasForeignKey(er => er.VisitorId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Indexes.

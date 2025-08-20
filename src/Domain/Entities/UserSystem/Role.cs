@@ -34,4 +34,7 @@ public class Role
     /// Last update timestamp.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    // Navigation property.
+    public ICollection<User> Users { get; set; } = [];
 }

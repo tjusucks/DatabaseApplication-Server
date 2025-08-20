@@ -94,9 +94,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("TIMESTAMP(0)")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
-        // Foreign key relationship to roles table.
-        builder.HasOne<Role>()
-            .WithMany()
+        // Navigation property for foreign key relationship to roles table.
+        builder.HasOne(u => u.Role)
+            .WithMany(r => r.Users)
             .HasForeignKey(u => u.RoleId)
             .OnDelete(DeleteBehavior.Restrict);
 

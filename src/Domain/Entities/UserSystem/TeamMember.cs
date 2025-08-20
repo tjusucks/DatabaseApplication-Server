@@ -19,4 +19,8 @@ public class TeamMember
     /// Date when the employee joined the team.
     /// </summary>
     public DateTime JoinDate { get; set; } = DateTime.UtcNow;
+
+    // Navigation properties.
+    public StaffTeam Team { get; set; } = null!;
+    public Employee Employee { get; set; } = null!;
 }

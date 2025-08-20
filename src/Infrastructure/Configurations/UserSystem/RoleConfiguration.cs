@@ -54,7 +54,13 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
             .HasColumnType("TIMESTAMP(0)")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
-        // Indexes.
+        // Navigation property for foreign key relationship.
+        builder.HasMany(r => r.Users)
+            .WithOne(u => u.Role)
+            .HasForeignKey(u => u.RoleId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Index.
         builder.HasIndex(r => r.RoleName)
             .IsUnique();
     }

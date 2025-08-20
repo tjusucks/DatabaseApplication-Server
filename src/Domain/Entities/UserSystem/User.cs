@@ -74,4 +74,7 @@ public class User
     /// Last update timestamp.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    // Navigation properties.
+    public Role Role { get; set; } = null!;
 }

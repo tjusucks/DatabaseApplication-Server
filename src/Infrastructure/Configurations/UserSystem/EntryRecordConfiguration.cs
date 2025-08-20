@@ -69,15 +69,15 @@ public class EntryRecordConfiguration : IEntityTypeConfiguration<EntryRecord>
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to visitors table.
-        builder.HasOne<Visitor>()
+        builder.HasOne(er => er.Visitor)
             .WithMany()
             .HasForeignKey(er => er.VisitorId)
             .OnDelete(DeleteBehavior.Cascade);
 
 #pragma warning disable S125
-        // Foreign key relationship to tickets table (will be defined in ticket system)
-        // This will be configured when the ticket entities are created
-        // builder.HasOne<Ticket>()
+        // Foreign key relationship to tickets table.
+        // This will be configured when the ticket entities are created.
+        // builder.HasOne(er => er.Ticket)
         //     .WithMany()
         //     .HasForeignKey(er => er.TicketId)
         //     .OnDelete(DeleteBehavior.SetNull);

@@ -90,22 +90,28 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to users table.
-        builder.HasOne<User>()
+        builder.HasOne(e => e.User)
             .WithOne()
             .HasForeignKey<Employee>(e => e.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);
 
         // Self-referencing foreign key for manager.
-        builder.HasOne<Employee>()
+        builder.HasOne(e => e.Manager)
             .WithMany()
             .HasForeignKey(e => e.ManagerId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Foreign key relationship to staff_teams table.
-        builder.HasOne<StaffTeam>()
+        builder.HasOne(e => e.Team)
             .WithMany()
             .HasForeignKey(e => e.TeamId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        // Self-referencing relationship for subordinates.
+        builder.HasMany(e => e.Subordinates)
+            .WithOne(e => e.Manager)
+            .HasForeignKey(e => e.ManagerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         // Indexes.
         builder.HasIndex(e => e.StaffNumber)

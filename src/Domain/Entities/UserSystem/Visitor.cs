@@ -55,4 +55,8 @@ public class Visitor
     /// Last update timestamp.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    // Navigation properties.
+    public User User { get; set; } = null!;
+    public ICollection<EntryRecord> EntryRecords { get; set; } = [];
 }

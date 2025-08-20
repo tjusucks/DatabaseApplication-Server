@@ -53,10 +53,21 @@ public class StaffTeamConfiguration : IEntityTypeConfiguration<StaffTeam>
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to employees table for leader.
-        builder.HasOne<Employee>()
+        builder.HasOne(st => st.Leader)
             .WithMany()
             .HasForeignKey(st => st.LeaderId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Navigation properties for foreign key relationships.
+        builder.HasMany(st => st.TeamMembers)
+            .WithOne(tm => tm.Team)
+            .HasForeignKey(tm => tm.TeamId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(st => st.Employees)
+            .WithOne(e => e.Team)
+            .HasForeignKey(e => e.TeamId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         // Indexes.
         builder.HasIndex(st => st.TeamType);

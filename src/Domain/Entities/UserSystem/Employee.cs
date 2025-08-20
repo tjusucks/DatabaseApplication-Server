@@ -72,4 +72,10 @@ public class Employee
     /// Last update timestamp.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    // Navigation properties.
+    public User User { get; set; } = null!;
+    public Employee? Manager { get; set; }
+    public StaffTeam? Team { get; set; }
+    public ICollection<Employee> Subordinates { get; set; } = [];
 }

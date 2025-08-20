@@ -50,4 +50,11 @@ public class EntryRecord
     /// Last update timestamp.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    // Navigation properties.
+    public Visitor Visitor { get; set; } = null!;
+
+#pragma warning disable S125
+    // public Ticket? Ticket { get; set; }
+#pragma warning restore S125
 }

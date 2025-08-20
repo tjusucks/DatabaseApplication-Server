@@ -37,13 +37,13 @@ public class TeamMemberConfiguration : IEntityTypeConfiguration<TeamMember>
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
-        // Foreign key relationships.
-        builder.HasOne<StaffTeam>()
-            .WithMany()
+        // Navigation properties for foreign key relationships.
+        builder.HasOne(tm => tm.Team)
+            .WithMany(st => st.TeamMembers)
             .HasForeignKey(tm => tm.TeamId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne<Employee>()
+        builder.HasOne(tm => tm.Employee)
             .WithMany()
             .HasForeignKey(tm => tm.EmployeeId)
             .OnDelete(DeleteBehavior.Cascade);

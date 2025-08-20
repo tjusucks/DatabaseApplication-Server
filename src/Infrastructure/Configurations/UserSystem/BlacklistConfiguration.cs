@@ -40,7 +40,7 @@ public class BlacklistConfiguration : IEntityTypeConfiguration<Blacklist>
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to visitors table.
-        builder.HasOne<Visitor>()
+        builder.HasOne(b => b.Visitor)
             .WithOne()
             .HasForeignKey<Blacklist>(b => b.VisitorId)
             .OnDelete(DeleteBehavior.Cascade);

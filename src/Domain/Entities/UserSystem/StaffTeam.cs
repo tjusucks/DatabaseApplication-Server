@@ -36,4 +36,9 @@ public class StaffTeam
     /// Last update timestamp.
     /// </summary>
     public DateTime? UpdatedAt { get; set; }
+
+    // Navigation properties.
+    public Employee Leader { get; set; } = null!;
+    public ICollection<TeamMember> TeamMembers { get; set; } = [];
+    public ICollection<Employee> Employees { get; set; } = [];
 }
