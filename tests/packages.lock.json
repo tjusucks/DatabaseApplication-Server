@@ -41,16 +41,6 @@
         "resolved": "2.8.2",
         "contentHash": "vm1tbfXhFmjFMUmS4M0J0ASXz3/U5XvXBa6DOQUL3fEz4Vt6YPhv+ESCarx6M6D+9kJkJYZKCNvJMas1+nVfmQ=="
       },
-      "EFCore.CheckConstraints": {
-        "type": "Transitive",
-        "resolved": "9.1.0",
-        "contentHash": "GN4bNWfP1JFbRuwXPxykA1UXexfMbqCE7tX1Eu78vN2JXM5G0JY2HcmDCXHS47zb4iRX6zyKJdSdznsLp3p+Bw==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[9.0.0, 10.0.0)",
-          "Microsoft.EntityFrameworkCore.Relational": "[9.0.0, 10.0.0)",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.2"
-        }
-      },
       "MediatR": {
         "type": "Transitive",
         "resolved": "13.0.0",
@@ -355,7 +345,6 @@
         "type": "Project",
         "dependencies": {
           "Domain": "[1.0.0, )",
-          "EFCore.CheckConstraints": "[9.1.0, )",
           "Microsoft.EntityFrameworkCore": "[9.0.7, )",
           "Microsoft.EntityFrameworkCore.Relational": "[9.0.7, )",
           "Microsoft.Extensions.Caching.Abstractions": "[9.0.8, )",

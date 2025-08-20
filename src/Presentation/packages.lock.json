@@ -16,6 +16,17 @@
           "System.Text.RegularExpressions": "4.3.1"
         }
       },
+      "EFCore.CheckConstraints": {
+        "type": "Direct",
+        "requested": "[9.1.0, )",
+        "resolved": "9.1.0",
+        "contentHash": "GN4bNWfP1JFbRuwXPxykA1UXexfMbqCE7tX1Eu78vN2JXM5G0JY2HcmDCXHS47zb4iRX6zyKJdSdznsLp3p+Bw==",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "[9.0.0, 10.0.0)",
+          "Microsoft.EntityFrameworkCore.Relational": "[9.0.0, 10.0.0)",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.2"
+        }
+      },
       "Microsoft.AspNetCore.OpenApi": {
         "type": "Direct",
         "requested": "[9.0.7, )",
@@ -89,16 +100,6 @@
         "requested": "[10.15.0.120848, )",
         "resolved": "10.15.0.120848",
         "contentHash": "1hM3HVRl5jdC/ZBDu+G7CCYLXRGe/QaP01Zy+c9ETPhY7lWD8g8HiefY6sGaH0T3CJ4wAy0/waGgQTh0TYy0oQ=="
-      },
-      "EFCore.CheckConstraints": {
-        "type": "Transitive",
-        "resolved": "9.1.0",
-        "contentHash": "GN4bNWfP1JFbRuwXPxykA1UXexfMbqCE7tX1Eu78vN2JXM5G0JY2HcmDCXHS47zb4iRX6zyKJdSdznsLp3p+Bw==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[9.0.0, 10.0.0)",
-          "Microsoft.EntityFrameworkCore.Relational": "[9.0.0, 10.0.0)",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.2"
-        }
       },
       "Humanizer.Core": {
         "type": "Transitive",
@@ -1451,7 +1452,6 @@
         "type": "Project",
         "dependencies": {
           "Domain": "[1.0.0, )",
-          "EFCore.CheckConstraints": "[9.1.0, )",
           "Microsoft.EntityFrameworkCore": "[9.0.7, )",
           "Microsoft.EntityFrameworkCore.Relational": "[9.0.7, )",
           "Microsoft.Extensions.Caching.Abstractions": "[9.0.8, )",

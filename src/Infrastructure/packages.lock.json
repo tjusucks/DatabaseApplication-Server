@@ -2,17 +2,6 @@
   "version": 1,
   "dependencies": {
     "net9.0": {
-      "EFCore.CheckConstraints": {
-        "type": "Direct",
-        "requested": "[9.1.0, )",
-        "resolved": "9.1.0",
-        "contentHash": "GN4bNWfP1JFbRuwXPxykA1UXexfMbqCE7tX1Eu78vN2JXM5G0JY2HcmDCXHS47zb4iRX6zyKJdSdznsLp3p+Bw==",
-        "dependencies": {
-          "Microsoft.EntityFrameworkCore": "[9.0.0, 10.0.0)",
-          "Microsoft.EntityFrameworkCore.Relational": "[9.0.0, 10.0.0)",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.2"
-        }
-      },
       "Microsoft.EntityFrameworkCore": {
         "type": "Direct",
         "requested": "[9.0.7, )",

@@ -31,9 +31,13 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(DbApp.Application.IMediatorModule).Assembly);
 });
 
-// Configure Entity Framework with Oracle database.
+// Configure Entity Framework with Oracle database and check constraints.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseOracle(builder.Configuration.GetConnectionString("OracleConnection")));
+{
+    options.UseOracle(builder.Configuration.GetConnectionString("OracleConnection"));
+    options.UseEnumCheckConstraints();
+    options.UseValidationCheckConstraints();
+});
 
 // Configure Redis caching.
 builder.Services.AddStackExchangeRedisCache(options =>

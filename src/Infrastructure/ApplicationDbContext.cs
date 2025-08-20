@@ -19,13 +19,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<EntryRecord> EntryRecords { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        // Enable enum check constraints
-        optionsBuilder.UseEnumCheckConstraints();
-        optionsBuilder.UseValidationCheckConstraints();
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Apply all configurations.
