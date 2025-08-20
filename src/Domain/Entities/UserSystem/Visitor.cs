@@ -1,6 +1,7 @@
-namespace DbApp.Domain.Entities.UserSystem;
-
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Enums.UserSystem;
+
+namespace DbApp.Domain.Entities.UserSystem;
 
 /// <summary>
 /// Visitor entity extending user information for theme park visitors.
@@ -21,6 +22,7 @@ public class Visitor
     /// <summary>
     /// Accumulated membership points.
     /// </summary>
+    [Range(0, int.MaxValue)]
     public int Points { get; set; } = 0;
 
     /// <summary>
@@ -41,6 +43,7 @@ public class Visitor
     /// <summary>
     /// Visitor's height in centimeters for ride restrictions.
     /// </summary>
+    [Range(50, 300)]
     public int Height { get; set; }
 
     /// <summary>

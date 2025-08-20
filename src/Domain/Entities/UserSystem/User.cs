@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Enums.UserSystem;
 
 namespace DbApp.Domain.Entities.UserSystem;
@@ -56,6 +57,7 @@ public class User
     /// <summary>
     /// Permission level controlling system access rights.
     /// </summary>
+    [Range(0, 4)]
     public int PermissionLevel { get; set; } = 0;
 
     /// <summary>

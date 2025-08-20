@@ -55,7 +55,7 @@ public class VisitorConfiguration : IEntityTypeConfiguration<Visitor>
         // Height for ride restrictions.
         builder.Property(v => v.Height)
             .HasColumnName("height")
-            .HasColumnType("NUMBER(4)")
+            .HasColumnType("NUMBER(10)")
             .IsRequired();
 
         // Audit fields.
