@@ -1,6 +1,6 @@
+using DbApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DbApp.Domain.Entities;
 
 namespace DbApp.Infrastructure.Configurations;
 
@@ -91,13 +91,13 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
             .WithMany(a => a.MaintenanceRecords)
             .HasForeignKey(r => r.RideId)
             .IsRequired();
-            
+
         // 与维修组的关系
         builder.HasOne(r => r.Group)
             .WithMany(t => t.MaintenanceRecords)
             .HasForeignKey(r => r.GroupId)
             .IsRequired();
-            
+
         // 与管理员的关系
         builder.HasOne(r => r.Manager)
             .WithMany(e => e.MaintenanceRecords)

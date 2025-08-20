@@ -74,7 +74,7 @@ public class Employee
     public User EmployeeNavigation { get; set; } = null!;
     public Employee? Manager { get; set; }
     public StaffTeam? Team { get; set; }
-    
+
     // 集合导航属性
     public ICollection<AmusementRide> AmusementRides { get; set; } = new List<AmusementRide>();
     public ICollection<Attendance> Attendances { get; set; } = new List<Attendance>();

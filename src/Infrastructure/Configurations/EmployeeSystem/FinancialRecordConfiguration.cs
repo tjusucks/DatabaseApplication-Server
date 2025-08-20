@@ -1,6 +1,6 @@
+using DbApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DbApp.Domain.Entities;
 
 namespace DbApp.Infrastructure.Configurations;
 
@@ -60,7 +60,7 @@ public class FinancialRecordConfiguration : IEntityTypeConfiguration<FinancialRe
         builder.HasOne(r => r.ApprovedByNavigation)
             .WithMany(e => e.FinancialRecordApprovedByNavigations)
             .HasForeignKey(r => r.ApprovedBy);
-            
+
         // 与负责人员工的关系
         builder.HasOne(r => r.ResponsibleEmployee)
             .WithMany(e => e.FinancialRecordResponsibleEmployees)

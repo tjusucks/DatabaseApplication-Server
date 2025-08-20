@@ -1,6 +1,6 @@
+using DbApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DbApp.Domain.Entities;
 
 namespace DbApp.Infrastructure.Configurations;
 
@@ -10,7 +10,7 @@ public class RideTrafficStatConfiguration : IEntityTypeConfiguration<RideTraffic
     {
         // 表名和基础配置
         builder.ToTable("RIDE_TRAFFIC_STATS");
-        
+
         // 复合主键配置
         builder.HasKey(r => new { r.RideId, r.RecordTime });
 

@@ -1,6 +1,6 @@
+using DbApp.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DbApp.Domain.Entities;
 
 namespace DbApp.Infrastructure.Configurations;
 
