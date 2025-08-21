@@ -74,14 +74,11 @@ public class EntryRecordConfiguration : IEntityTypeConfiguration<EntryRecord>
             .HasForeignKey(er => er.VisitorId)
             .OnDelete(DeleteBehavior.Cascade);
 
-#pragma warning disable S125
         // Foreign key relationship to tickets table.
-        // This will be configured when the ticket entities are created.
-        // builder.HasOne(er => er.Ticket)
-        //     .WithMany()
-        //     .HasForeignKey(er => er.TicketId)
-        //     .OnDelete(DeleteBehavior.SetNull);
-#pragma warning restore S125
+        builder.HasOne(er => er.Ticket)
+            .WithMany()
+            .HasForeignKey(er => er.TicketId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         // Indexes.
         builder.HasIndex(er => er.VisitorId);

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.UserSystem;
 
 namespace DbApp.Domain.Entities.UserSystem;
@@ -59,4 +60,5 @@ public class Visitor
     // Navigation properties.
     public User User { get; set; } = null!;
     public ICollection<EntryRecord> EntryRecords { get; set; } = [];
+    public ICollection<Coupon> UsedCoupons { get; set; } = [];
 }
