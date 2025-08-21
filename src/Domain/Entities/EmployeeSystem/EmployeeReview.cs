@@ -1,4 +1,5 @@
 namespace DbApp.Domain.Entities;
+using DbApp.Domain.Enums;
 
 /// <summary>
 /// 员工绩效考核记录
@@ -28,7 +29,7 @@ public class EmployeeReview
     /// <summary>
     /// 评级
     /// </summary>
-    public string? EvaluationLevel { get; set; }
+    public EvaluationLevel? EvaluationLevel { get; set; }
 
     /// <summary>
     /// 评估人ID

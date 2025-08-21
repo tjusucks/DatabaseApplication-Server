@@ -34,12 +34,14 @@ public class AttendanceConfiguration : IEntityTypeConfiguration<Attendance>
             .IsRequired()
             .HasColumnName("ATTENDANCE_STATUS")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(a => a.LeaveType)
             .HasColumnName("LEAVE_TYPE")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(a => a.CreatedAt)
             .HasColumnName("CREATED_AT");

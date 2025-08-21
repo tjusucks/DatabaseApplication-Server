@@ -28,12 +28,14 @@ public class FinancialRecordConfiguration : IEntityTypeConfiguration<FinancialRe
             .IsRequired()
             .HasColumnName("TRANSACTION_TYPE")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(r => r.PaymentMethod)
             .HasColumnName("PAYMENT_METHOD")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(r => r.ResponsibleEmployeeId)
             .HasColumnName("RESPONSIBLE_EMPLOYEE_ID")

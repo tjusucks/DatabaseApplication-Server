@@ -1,5 +1,5 @@
 namespace DbApp.Domain.Entities;
-
+using DbApp.Domain.Enums;
 /// <summary>
 /// 员工考勤记录
 /// </summary>
@@ -33,12 +33,12 @@ public class Attendance
     /// <summary>
     /// 考勤状态
     /// </summary>
-    public string AttendanceStatus { get; set; } = null!;
+    public AttendanceStatus AttendanceStatus { get; set; }
 
     /// <summary>
     /// 请假类型
     /// </summary>
-    public string? LeaveType { get; set; }
+    public LeaveType? LeaveType { get; set; }
 
     /// <summary>
     /// 创建时间

@@ -1,4 +1,5 @@
 using DbApp.Domain.Entities;
+using DbApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -41,7 +42,8 @@ public class AmusementRideConfiguration : IEntityTypeConfiguration<AmusementRide
             .IsRequired()
             .HasColumnName("RIDE_STATUS")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(r => r.Capacity)
             .HasColumnName("CAPACITY")

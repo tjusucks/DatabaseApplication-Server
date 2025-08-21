@@ -27,7 +27,8 @@ public class SeasonalEventConfiguration : IEntityTypeConfiguration<SeasonalEvent
             .IsRequired()
             .HasColumnName("EVENT_TYPE")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(e => e.Description)
             .HasColumnName("DESCRIPTION")

@@ -3,8 +3,60 @@
   "WorkspaceRootPath": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\usersystem\\blacklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\usersystem\\blacklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\seasonalevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\seasonalevent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\salaryrecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\salaryrecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\employeereview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\employeereview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\amusementride.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\amusementride.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\attendance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\attendance.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\infrastructure\\configurations\\employeesystem\\seasonaleventconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|solutionrelative:src\\infrastructure\\configurations\\employeesystem\\seasonaleventconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\infrastructure\\configurations\\employeesystem\\salaryrecordconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|solutionrelative:src\\infrastructure\\configurations\\employeesystem\\salaryrecordconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\infrastructure\\configurations\\employeesystem\\financialrecordconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|solutionrelative:src\\infrastructure\\configurations\\employeesystem\\financialrecordconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\infrastructure\\configurations\\employeesystem\\employeereviewconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|solutionrelative:src\\infrastructure\\configurations\\employeesystem\\employeereviewconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\infrastructure\\configurations\\employeesystem\\attendanceconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B80F861D-9F0F-41E0-84F3-A9C838FECF05}|src\\Infrastructure\\Infrastructure.csproj|solutionrelative:src\\infrastructure\\configurations\\employeesystem\\attendanceconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\maintenancerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\maintenancerecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\inspectionrecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\inspectionrecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|c:\\users\\lenovo\\databaseapplication-server\\src\\domain\\entities\\employeesystem\\financialrecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{87E474A5-44C0-40F5-8351-05D98A1109F6}|src\\Domain\\Domain.csproj|solutionrelative:src\\domain\\entities\\employeesystem\\financialrecord.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\UserSystem\\Blacklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Domain\\Entities\\UserSystem\\Blacklist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -19,15 +71,175 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "SeasonalEvent.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\SeasonalEvent.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\SeasonalEvent.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\SeasonalEvent.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\SeasonalEvent.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-21T02:47:29.234Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SalaryRecord.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\SalaryRecord.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\SalaryRecord.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\SalaryRecord.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\SalaryRecord.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-21T02:47:26.482Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SeasonalEventConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\SeasonalEventConfiguration.cs",
+              "RelativeDocumentMoniker": "src\\Infrastructure\\Configurations\\EmployeeSystem\\SeasonalEventConfiguration.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\SeasonalEventConfiguration.cs",
+              "RelativeToolTip": "src\\Infrastructure\\Configurations\\EmployeeSystem\\SeasonalEventConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-21T02:01:06.658Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "EmployeeReviewConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\EmployeeReviewConfiguration.cs",
+              "RelativeDocumentMoniker": "src\\Infrastructure\\Configurations\\EmployeeSystem\\EmployeeReviewConfiguration.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\EmployeeReviewConfiguration.cs",
+              "RelativeToolTip": "src\\Infrastructure\\Configurations\\EmployeeSystem\\EmployeeReviewConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:22:06.749Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "FinancialRecordConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\FinancialRecordConfiguration.cs",
+              "RelativeDocumentMoniker": "src\\Infrastructure\\Configurations\\EmployeeSystem\\FinancialRecordConfiguration.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\FinancialRecordConfiguration.cs",
+              "RelativeToolTip": "src\\Infrastructure\\Configurations\\EmployeeSystem\\FinancialRecordConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:22:10.298Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MaintenanceRecord.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\MaintenanceRecord.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\MaintenanceRecord.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\MaintenanceRecord.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\MaintenanceRecord.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:13:32.306Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Attendance.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\Attendance.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\Attendance.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\Attendance.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\Attendance.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADUAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:18:12.945Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AmusementRide.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\AmusementRide.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\AmusementRide.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\AmusementRide.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\AmusementRide.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAowFIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:13:44.373Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "EmployeeReview.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\EmployeeReview.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\EmployeeReview.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\EmployeeReview.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\EmployeeReview.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAcwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:18:19.045Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AttendanceConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\AttendanceConfiguration.cs",
+              "RelativeDocumentMoniker": "src\\Infrastructure\\Configurations\\EmployeeSystem\\AttendanceConfiguration.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\AttendanceConfiguration.cs",
+              "RelativeToolTip": "src\\Infrastructure\\Configurations\\EmployeeSystem\\AttendanceConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:21:53.032Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SalaryRecordConfiguration.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\SalaryRecordConfiguration.cs",
+              "RelativeDocumentMoniker": "src\\Infrastructure\\Configurations\\EmployeeSystem\\SalaryRecordConfiguration.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Infrastructure\\Configurations\\EmployeeSystem\\SalaryRecordConfiguration.cs",
+              "RelativeToolTip": "src\\Infrastructure\\Configurations\\EmployeeSystem\\SalaryRecordConfiguration.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-21T02:01:04.541Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "InspectionRecord.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\InspectionRecord.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\InspectionRecord.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\InspectionRecord.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\InspectionRecord.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:13:25.299Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "FinancialRecord.cs",
+              "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\FinancialRecord.cs",
+              "RelativeDocumentMoniker": "src\\Domain\\Entities\\EmployeeSystem\\FinancialRecord.cs",
+              "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\EmployeeSystem\\FinancialRecord.cs",
+              "RelativeToolTip": "src\\Domain\\Entities\\EmployeeSystem\\FinancialRecord.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-20T15:13:20.346Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "Blacklist.cs",
               "DocumentMoniker": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\UserSystem\\Blacklist.cs",
               "RelativeDocumentMoniker": "src\\Domain\\Entities\\UserSystem\\Blacklist.cs",
               "ToolTip": "C:\\Users\\Lenovo\\DatabaseApplication-Server\\src\\Domain\\Entities\\UserSystem\\Blacklist.cs",
               "RelativeToolTip": "src\\Domain\\Entities\\UserSystem\\Blacklist.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T14:32:53.61Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-08-20T14:32:53.61Z"
             }
           ]
         }

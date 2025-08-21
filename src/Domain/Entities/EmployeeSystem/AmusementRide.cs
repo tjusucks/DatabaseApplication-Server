@@ -1,4 +1,6 @@
-namespace DbApp.Domain.Entities;
+using DbApp.Domain.Entities;
+
+namespace DbApp.Domain.Enums;
 
 /// <summary>
 /// 游乐设施表
@@ -33,7 +35,7 @@ public class AmusementRide
     /// <summary>
     /// 设施状态
     /// </summary>
-    public string RideStatus { get; set; } = null!;
+    public RideStatus RideStatus { get; set; }
 
     /// <summary>
     /// 容量

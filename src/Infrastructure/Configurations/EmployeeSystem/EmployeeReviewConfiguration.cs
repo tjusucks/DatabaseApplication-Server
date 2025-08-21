@@ -34,7 +34,8 @@ public class EmployeeReviewConfiguration : IEntityTypeConfiguration<EmployeeRevi
         builder.Property(r => r.EvaluationLevel)
             .HasColumnName("EVALUATION_LEVEL")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(r => r.EvaluatorId)
             .HasColumnName("EVALUATOR_ID")

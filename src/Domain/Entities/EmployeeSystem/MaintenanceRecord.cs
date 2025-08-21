@@ -1,5 +1,5 @@
 namespace DbApp.Domain.Entities;
-
+using DbApp.Domain.Enums;
 /// <summary>
 /// 设施维护记录
 /// </summary>
@@ -28,7 +28,7 @@ public class MaintenanceRecord
     /// <summary>
     /// 维护类型
     /// </summary>
-    public string MaintenanceType { get; set; } = null!;
+    public MaintenanceType MaintenanceType { get; set; }
 
     /// <summary>
     /// 开始时间

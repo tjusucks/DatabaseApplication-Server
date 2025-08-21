@@ -1,5 +1,5 @@
 namespace DbApp.Domain.Entities;
-
+using DbApp.Domain.Enums;
 /// <summary>
 /// 财务记录表
 /// </summary>
@@ -23,12 +23,13 @@ public class FinancialRecord
     /// <summary>
     /// 交易类型
     /// </summary>
-    public string TransactionType { get; set; } = null!;
+    public TransactionType TransactionType { get; set; }
+
 
     /// <summary>
     /// 支付方式
     /// </summary>
-    public string? PaymentMethod { get; set; }
+    public PaymentMethod? PaymentMethod { get; set; }
 
     /// <summary>
     /// 负责员工ID

@@ -1,5 +1,6 @@
-namespace DbApp.Domain.Entities;
 
+namespace DbApp.Domain.Entities;
+using DbApp.Domain.Enums;
 /// <summary>
 /// 游乐设施检查记录
 /// </summary>
@@ -28,7 +29,7 @@ public class InspectionRecord
     /// <summary>
     /// 检查类型
     /// </summary>
-    public string CheckType { get; set; } = null!;
+    public CheckType CheckType { get; set; }
 
     /// <summary>
     /// 是否通过

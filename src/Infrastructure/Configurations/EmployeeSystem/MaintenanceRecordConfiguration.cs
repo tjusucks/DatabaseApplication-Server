@@ -33,7 +33,8 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
             .IsRequired()
             .HasColumnName("MAINTENANCE_TYPE")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(r => r.StartTime)
             .HasColumnName("START_TIME");

@@ -1,5 +1,5 @@
 namespace DbApp.Domain.Entities;
-
+using DbApp.Domain.Enums;
 /// <summary>
 /// 季节性活动表
 /// </summary>
@@ -18,7 +18,7 @@ public class SeasonalEvent
     /// <summary>
     /// 活动类型
     /// </summary>
-    public string EventType { get; set; } = null!;
+    public EventType EventType { get; set; }
 
     /// <summary>
     /// 活动描述
@@ -58,7 +58,7 @@ public class SeasonalEvent
     /// <summary>
     /// 活动状态
     /// </summary>
-    public string Status { get; set; } = null!;
+    public EventStatus Status { get; set; }
 
     /// <summary>
     /// 创建时间

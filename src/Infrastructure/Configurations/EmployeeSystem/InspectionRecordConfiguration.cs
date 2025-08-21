@@ -32,7 +32,8 @@ public class InspectionRecordConfiguration : IEntityTypeConfiguration<Inspection
             .IsRequired()
             .HasColumnName("CHECK_TYPE")
             .HasMaxLength(30)
-            .IsUnicode(false);
+            .IsUnicode(false)
+            .HasConversion<string>();
 
         builder.Property(r => r.IsPassed)
             .HasColumnName("IS_PASSED")
