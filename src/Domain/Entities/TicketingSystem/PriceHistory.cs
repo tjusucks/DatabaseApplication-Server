@@ -12,7 +12,7 @@ public class PriceHistory
     public DateTime ChangeDatetime { get; set; }
     public int EmployeeId { get; set; }
     public string? Reason { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public TicketType TicketType { get; set; } = null!;
     public PriceRule? PriceRule { get; set; }
     public Employee Employee { get; set; } = null!;

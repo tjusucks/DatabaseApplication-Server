@@ -16,11 +16,10 @@ public class Coupon
     public bool IsUsed { get; set; }
     public int? UsedById { get; set; }
     public DateTime? UsedTime { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
     public Promotion Promotion { get; set; } = null!;
     public Visitor? UsedBy { get; set; }
 }
-

@@ -17,7 +17,7 @@ public class RefundRecord
     public RefundStatus RefundStatus { get; set; }
     public int? ProcessorId { get; set; }
     public string? ProcessingNotes { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
@@ -25,4 +25,3 @@ public class RefundRecord
     public Visitor Visitor { get; set; } = null!;
     public Employee? Processor { get; set; } = null!;
 }
-

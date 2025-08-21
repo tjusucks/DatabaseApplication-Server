@@ -19,7 +19,7 @@ public class Promotion
     public bool IsActive { get; set; }
     public bool IsCombinable { get; set; }
     public int EmployeeId { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
@@ -29,4 +29,3 @@ public class Promotion
     public ICollection<PromotionAction> Actions { get; set; } = [];
     public ICollection<Coupon> Coupons { get; set; } = [];
 }
-

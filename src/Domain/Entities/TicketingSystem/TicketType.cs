@@ -13,7 +13,7 @@ public class TicketType
     public decimal BasePrice { get; set; }
     public string? RulesText { get; set; }
     public int? MaxSaleLimit { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
@@ -22,4 +22,3 @@ public class TicketType
     public ICollection<PromotionTicketType> ApplicablePromotions { get; set; } = [];
     public ICollection<PriceRule> PriceRules { get; set; } = [];
 }
-

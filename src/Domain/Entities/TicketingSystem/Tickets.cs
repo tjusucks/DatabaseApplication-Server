@@ -14,7 +14,7 @@ public class Ticket
     public DateTime ValidTo { get; set; }
     public TicketStatus Status { get; set; }
     public DateTime? UsedTime { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
     // 导航属性
     public RefundRecord? RefundRecord { get; set; }
@@ -22,4 +22,3 @@ public class Ticket
     public TicketType TicketType { get; set; } = null!;
     public Visitor? Visitor { get; set; }
 }
-

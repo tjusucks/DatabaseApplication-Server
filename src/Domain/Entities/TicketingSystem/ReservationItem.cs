@@ -18,7 +18,7 @@ public class ReservationItem
 
     [Range(0, double.MaxValue)]
     public decimal LineTotal { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
@@ -29,4 +29,3 @@ public class ReservationItem
     // 一个预订项目会生成多张票 (Ticket)
     public ICollection<Ticket> Tickets { get; set; } = [];
 }
-

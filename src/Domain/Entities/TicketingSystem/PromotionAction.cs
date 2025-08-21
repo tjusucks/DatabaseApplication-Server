@@ -26,7 +26,7 @@ public class PromotionAction
 
     [Range(1, int.MaxValue)]
     public int? FreeTicketQuantity { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
@@ -38,4 +38,3 @@ public class PromotionAction
     // 赠送票种：如果动作是赠送票，赠送的是哪个种类的票
     public TicketType? FreeTicketType { get; set; }
 }
-

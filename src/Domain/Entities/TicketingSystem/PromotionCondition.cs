@@ -17,7 +17,7 @@ public class PromotionCondition
     public DateTime? DateTo { get; set; }
     public int? DayOfWeek { get; set; } // 1-7, 对应周一到周日
     public int Priority { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性

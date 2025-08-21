@@ -16,7 +16,7 @@ public class PriceRule
 
     [Range(0, double.MaxValue)]
     public decimal Price { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
     public int? CreatedById { get; set; }
 
@@ -24,4 +24,3 @@ public class PriceRule
     public TicketType TicketType { get; set; } = null!;
     public Employee? CreatedBy { get; set; }
 }
-

@@ -19,7 +19,7 @@ public class Reservation
     public string? PaymentMethod { get; set; }
     public int? PromotionId { get; set; }
     public string? SpecialRequests { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
@@ -29,4 +29,3 @@ public class Reservation
     // 一个预订包含多个预订项目 (ReservationItem)
     public ICollection<ReservationItem> ReservationItems { get; set; } = [];
 }
-

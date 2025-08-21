@@ -35,23 +35,23 @@ public class ReservationItemConfiguration : IEntityTypeConfiguration<Reservation
 
         // 配置外键关系
         builder.HasOne(ri => ri.Reservation)
-               .WithMany(r => r.ReservationItems) // 对应 Reservation 实体中的集合
-               .HasForeignKey(ri => ri.ReservationId)
-               .OnDelete(DeleteBehavior.Cascade); // 预订被删除，其下的项目也应一并删除
+            .WithMany(r => r.ReservationItems) // 对应 Reservation 实体中的集合
+            .HasForeignKey(ri => ri.ReservationId)
+            .OnDelete(DeleteBehavior.Cascade); // 预订被删除，其下的项目也应一并删除
 
         builder.HasOne(ri => ri.TicketType)
-               .WithMany() // TicketType 不需要反向导航
-               .HasForeignKey(ri => ri.TicketTypeId)
-               .OnDelete(DeleteBehavior.Restrict); // 禁止删除已被预订的票种
+            .WithMany() // TicketType 不需要反向导航
+            .HasForeignKey(ri => ri.TicketTypeId)
+            .OnDelete(DeleteBehavior.Restrict); // 禁止删除已被预订的票种
 
         builder.HasOne(ri => ri.AppliedPriceRule)
-               .WithMany() // PriceRule 不需要反向导航
-               .HasForeignKey(ri => ri.AppliedPriceRuleId)
-               .OnDelete(DeleteBehavior.SetNull); // 价格规则被删除，将ID设为null
+            .WithMany() // PriceRule 不需要反向导航
+            .HasForeignKey(ri => ri.AppliedPriceRuleId)
+            .OnDelete(DeleteBehavior.SetNull); // 价格规则被删除，将ID设为null
 
         // 配置与 Ticket 的一对多关系
         builder.HasMany(ri => ri.Tickets)
-               .WithOne(t => t.ReservationItem)
-               .HasForeignKey(t => t.ReservationItemId);
+            .WithOne(t => t.ReservationItem)
+            .HasForeignKey(t => t.ReservationItemId);
     }
 }

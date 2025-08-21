@@ -28,6 +28,10 @@ public class PromotionTicketTypeConfiguration : IEntityTypeConfiguration<Promoti
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
+        builder.Property(ptt => ptt.UpdatedAt)
+            .HasColumnName("updated_at")
+            .HasColumnType("TIMESTAMP(0)");
+
         // 3. 配置多对多关系
         // 配置与 Promotion 的关系
         builder.HasOne(ptt => ptt.Promotion)

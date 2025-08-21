@@ -1,3 +1,5 @@
+using DbApp.Domain.Entities.TicketingSystem;
+
 namespace DbApp.Domain.Entities.UserSystem;
 
 /// <summary>
@@ -53,8 +55,5 @@ public class EntryRecord
 
     // Navigation properties.
     public Visitor Visitor { get; set; } = null!;
-
-#pragma warning disable S125
-    // public Ticket? Ticket { get; set; }
-#pragma warning restore S125
+    public Ticket? Ticket { get; set; }
 }
