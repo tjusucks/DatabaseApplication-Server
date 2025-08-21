@@ -1,8 +1,8 @@
-using DbApp.Domain.Entities;
-using DbApp.Domain.Interfaces;
+using DbApp.Domain.Entities.UserSystem;
+using DbApp.Domain.Interfaces.UserSystem;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbApp.Infrastructure.Repositories;
+namespace DbApp.Infrastructure.Repositories.UserSystem;
 
 public class UserRepository(ApplicationDbContext dbContext) : IUserRepository
 {

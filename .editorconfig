@@ -1,5 +1,13 @@
 root = true
 
+# Default to LF line endings for all files.
+[*]
+end_of_line = lf
+
+# Override for Windows-specific scripts.
+[*.{bat,cmd}]
+end_of_line = crlf
+
 [*.{csproj,props,targets}]
 indent_style = space
 indent_size = 2
