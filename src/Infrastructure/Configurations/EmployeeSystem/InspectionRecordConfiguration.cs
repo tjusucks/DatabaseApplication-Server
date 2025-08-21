@@ -67,9 +67,9 @@ public class InspectionRecordConfiguration : IEntityTypeConfiguration<Inspection
             .IsRequired();
 
         // 与检查组的关系
-        builder.HasOne(r => r.Team)
-            .WithMany(t => t.InspectionRecords)
-            .HasForeignKey(r => r.TeamId)
-            .IsRequired();
+        //builder.HasOne(r => r.Team)
+        //.WithMany(t => t.InspectionRecords)
+        //.HasForeignKey(r => r.TeamId)
+        //.IsRequired();
     }
 }

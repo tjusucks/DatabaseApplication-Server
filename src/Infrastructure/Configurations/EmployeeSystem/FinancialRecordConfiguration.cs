@@ -59,13 +59,13 @@ public class FinancialRecordConfiguration : IEntityTypeConfiguration<FinancialRe
 
         // 关系配置
         // 与审批人员工的关系
-        builder.HasOne(r => r.ApprovedByNavigation)
-            .WithMany(e => e.FinancialRecordApprovedByNavigations)
-            .HasForeignKey(r => r.ApprovedBy);
+        //builder.HasOne(r => r.ApprovedByNavigation)
+        //.WithMany(e => e.FinancialRecordApprovedByNavigations)
+        //.HasForeignKey(r => r.ApprovedBy);
 
         // 与负责人员工的关系
-        builder.HasOne(r => r.ResponsibleEmployee)
-            .WithMany(e => e.FinancialRecordResponsibleEmployees)
-            .HasForeignKey(r => r.ResponsibleEmployeeId);
+        //builder.HasOne(r => r.ResponsibleEmployee)
+        //.WithMany(e => e.FinancialRecordResponsibleEmployees)
+        //.HasForeignKey(r => r.ResponsibleEmployeeId);
     }
 }

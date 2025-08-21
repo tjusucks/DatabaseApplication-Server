@@ -47,6 +47,6 @@ public class EmployeeReview
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    public Employee Employee { get; set; } = null!;
-    public Employee? Evaluator { get; set; }
+    //public Employee Employee { get; set; } = null!;
+    //public Employee? Evaluator { get; set; }
 }

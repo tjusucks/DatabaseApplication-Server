@@ -51,5 +51,5 @@ public class Attendance
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    public Employee Employee { get; set; } = null!;
+    //public Employee Employee { get; set; } = null!;
 }

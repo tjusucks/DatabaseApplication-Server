@@ -86,7 +86,7 @@ public class MaintenanceRecord
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    public StaffTeam Group { get; set; } = null!;
-    public Employee? Manager { get; set; }
+    //public StaffTeam Group { get; set; } = null!;
+    //public Employee? Manager { get; set; }
     public AmusementRide Ride { get; set; } = null!;
 }

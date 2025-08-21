@@ -39,9 +39,9 @@ public class SalaryRecordConfiguration : IEntityTypeConfiguration<SalaryRecord>
         builder.HasIndex(r => r.PayDate, "SALARY_RECORDS_PAY_DATE_IDX");
 
         // 关系配置
-        builder.HasOne(r => r.Employee)
-            .WithMany(e => e.SalaryRecords)
-            .HasForeignKey(r => r.EmployeeId)
-            .IsRequired();
+        //builder.HasOne(r => r.Employee)
+        //.WithMany(e => e.SalaryRecords)
+        //.HasForeignKey(r => r.EmployeeId)
+        //.IsRequired();
     }
 }

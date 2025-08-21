@@ -94,14 +94,14 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
             .IsRequired();
 
         // 与维修组的关系
-        builder.HasOne(r => r.Group)
-            .WithMany(t => t.MaintenanceRecords)
-            .HasForeignKey(r => r.GroupId)
-            .IsRequired();
+        //builder.HasOne(r => r.Group)
+        //.WithMany(t => t.MaintenanceRecords)
+        //.HasForeignKey(r => r.GroupId)
+        //.IsRequired();
 
         // 与管理员的关系
-        builder.HasOne(r => r.Manager)
-            .WithMany(e => e.MaintenanceRecords)
-            .HasForeignKey(r => r.ManagerId);
+        //builder.HasOne(r => r.Manager)
+        //.WithMany(e => e.MaintenanceRecords)
+        //.HasForeignKey(r => r.ManagerId);
     }
 }

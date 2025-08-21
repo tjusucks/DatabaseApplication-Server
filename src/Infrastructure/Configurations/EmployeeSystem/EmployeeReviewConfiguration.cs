@@ -53,15 +53,15 @@ public class EmployeeReviewConfiguration : IEntityTypeConfiguration<EmployeeRevi
 
         // 关系配置
         // 与被评价员工的关系
-        builder.HasOne(r => r.Employee)
-            .WithMany(e => e.EmployeeReviewEmployees)
-            .HasForeignKey(r => r.EmployeeId)
-            .OnDelete(DeleteBehavior.Restrict); // 避免级联删除冲突
+        //builder.HasOne(r => r.Employee)
+        //.WithMany(e => e.EmployeeReviewEmployees)
+        //.HasForeignKey(r => r.EmployeeId)
+        //.OnDelete(DeleteBehavior.Restrict); // 避免级联删除冲突
 
         // 与评价人员工的关系
-        builder.HasOne(r => r.Evaluator)
-            .WithMany(e => e.EmployeeReviewEvaluators)
-            .HasForeignKey(r => r.EvaluatorId)
-            .OnDelete(DeleteBehavior.Restrict); // 避免级联删除冲突
+        //builder.HasOne(r => r.Evaluator)
+        //.WithMany(e => e.EmployeeReviewEvaluators)
+        //.HasForeignKey(r => r.EvaluatorId)
+        //.OnDelete(DeleteBehavior.Restrict); // 避免级联删除冲突
     }
 }

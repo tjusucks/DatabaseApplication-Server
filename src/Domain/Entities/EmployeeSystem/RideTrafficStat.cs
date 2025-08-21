@@ -1,6 +1,7 @@
 namespace DbApp.Domain.Entities;
 
 using DbApp.Domain.Entities;
+using DbApp.Domain.Enums;
 
 /// <summary>
 /// 游乐设施流量统计表（复合主键：设施ID + 记录时间）

@@ -58,5 +58,5 @@ public class InspectionRecord
 
     // 导航属性
     public AmusementRide Ride { get; set; } = null!;
-    public StaffTeam Team { get; set; } = null!;
+    //public StaffTeam Team { get; set; } = null!;
 }

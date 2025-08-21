@@ -73,7 +73,7 @@ public class AmusementRide
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    public Employee? Manager { get; set; }
+    //public Employee? Manager { get; set; }
 
     // 集合导航属性
     public ICollection<InspectionRecord> InspectionRecords { get; set; } = new List<InspectionRecord>();

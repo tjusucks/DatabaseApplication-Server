@@ -52,6 +52,6 @@ public class FinancialRecord
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    public Employee? ApprovedByNavigation { get; set; }
-    public Employee? ResponsibleEmployee { get; set; }
+    //public Employee? ApprovedByNavigation { get; set; }
+    //public Employee? ResponsibleEmployee { get; set; }
 }
