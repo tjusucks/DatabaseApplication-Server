@@ -8,7 +8,10 @@ public class TicketTypeConfiguration : IEntityTypeConfiguration<TicketType>
 {
     public void Configure(EntityTypeBuilder<TicketType> builder)
     {
-        builder.ToTable("ticket_types");
+        builder.ToTable("ticket_types", tt =>
+        {
+            tt.HasCheckConstraint("CK_ticket_types_base_price_Range", "\"base_price\" >= 0.0");
+        });
 
         builder.HasKey(tt => tt.TicketTypeId);
 

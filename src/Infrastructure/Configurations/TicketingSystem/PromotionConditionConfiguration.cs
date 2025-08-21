@@ -32,7 +32,7 @@ public class PromotionConditionConfiguration : IEntityTypeConfiguration<Promotio
             .IsRequired();
 
         builder.Property(pc => pc.TicketTypeId).HasColumnName("ticket_type_id").HasColumnType("NUMBER(10)");
-        builder.Property(pc => pc.MinQuantity).HasColumnName("min_quantity").HasColumnType("NUMBER(5)");
+        builder.Property(pc => pc.MinQuantity).HasColumnName("min_quantity").HasColumnType("NUMBER(10)");
         builder.Property(pc => pc.MinAmount).HasColumnName("min_amount").HasColumnType("NUMBER(10,2)");
         builder.Property(pc => pc.VisitorType).HasColumnName("visitor_type").HasColumnType("VARCHAR2(30 CHAR)");
         builder.Property(pc => pc.MemberLevel).HasColumnName("member_level").HasColumnType("VARCHAR2(30 CHAR)");
@@ -45,7 +45,7 @@ public class PromotionConditionConfiguration : IEntityTypeConfiguration<Promotio
 
         builder.Property(pc => pc.Priority)
             .HasColumnName("priority")
-            .HasColumnType("NUMBER(5)")
+            .HasColumnType("NUMBER(10)")
             .IsRequired()
             .HasDefaultValue(10);
 

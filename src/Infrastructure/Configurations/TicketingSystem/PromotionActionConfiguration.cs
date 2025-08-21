@@ -8,7 +8,12 @@ public class PromotionActionConfiguration : IEntityTypeConfiguration<PromotionAc
 {
     public void Configure(EntityTypeBuilder<PromotionAction> builder)
     {
-        builder.ToTable("promotion_actions");
+        builder.ToTable("promotion_actions", t =>
+        {
+            t.HasCheckConstraint("CK_promotion_actions_discount_percentage_Range", "\"discount_percentage\" BETWEEN 0.0 AND 100.0");
+            t.HasCheckConstraint("CK_promotion_actions_discount_amount_Range", "\"discount_amount\" >= 0.0");
+            t.HasCheckConstraint("CK_promotion_actions_fixed_price_Range", "\"fixed_price\" >= 0.0");
+        });
 
         builder.HasKey(pa => pa.ActionId);
 
@@ -32,7 +37,7 @@ public class PromotionActionConfiguration : IEntityTypeConfiguration<PromotionAc
 
         builder.Property(pa => pa.FreeTicketTypeId).HasColumnName("free_ticket_type_id").HasColumnType("NUMBER(10)");
 
-        builder.Property(pa => pa.FreeTicketQuantity).HasColumnName("free_ticket_quantity").HasColumnType("NUMBER(5)");
+        builder.Property(pa => pa.FreeTicketQuantity).HasColumnName("free_ticket_quantity").HasColumnType("NUMBER(10)");
 
         builder.Property(pa => pa.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
         builder.Property(pa => pa.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");

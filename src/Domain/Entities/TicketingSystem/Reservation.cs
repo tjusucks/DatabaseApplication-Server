@@ -10,10 +10,13 @@ public class Reservation
     public int VisitorId { get; set; }
     public DateTime ReservationTime { get; set; }
     public DateTime VisitDate { get; set; }
+
+    [Range(0.0, double.MaxValue)]
     public decimal DiscountAmount { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0.0, double.MaxValue)]
     public decimal TotalAmount { get; set; }
+
     public PaymentStatus PaymentStatus { get; set; }
     public ReservationStatus Status { get; set; }
     public string? PaymentMethod { get; set; }

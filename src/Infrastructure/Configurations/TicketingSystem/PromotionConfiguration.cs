@@ -41,7 +41,7 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
 
         builder.Property(p => p.UsageLimitPerUser)
             .HasColumnName("usage_limit_per_user")
-            .HasColumnType("NUMBER(5)");
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(p => p.TotalUsageLimit)
             .HasColumnName("total_usage_limit")
@@ -56,7 +56,7 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
 
         builder.Property(p => p.DisplayPriority)
             .HasColumnName("display_priority")
-            .HasColumnType("NUMBER(5)")
+            .HasColumnType("NUMBER(10)")
             .IsRequired()
             .HasDefaultValue(100);
 

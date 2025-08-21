@@ -8,7 +8,12 @@ public class ReservationItemConfiguration : IEntityTypeConfiguration<Reservation
 {
     public void Configure(EntityTypeBuilder<ReservationItem> builder)
     {
-        builder.ToTable("reservation_items");
+        builder.ToTable("reservation_items", ri =>
+        {
+            ri.HasCheckConstraint("CK_reservation_items_unit_price_Range", "\"unit_price\" >= 0.0");
+            ri.HasCheckConstraint("CK_reservation_items_discount_amount_Range", "\"discount_amount\" >= 0.0");
+            ri.HasCheckConstraint("CK_reservation_items_total_amount_Range", "\"total_amount\" >= 0.0");
+        });
 
         builder.HasKey(ri => ri.ItemId);
 
@@ -16,7 +21,7 @@ public class ReservationItemConfiguration : IEntityTypeConfiguration<Reservation
         builder.Property(ri => ri.ReservationId).HasColumnName("reservation_id").HasColumnType("NUMBER(10)").IsRequired();
         builder.Property(ri => ri.TicketTypeId).HasColumnName("ticket_type_id").HasColumnType("NUMBER(10)").IsRequired();
 
-        builder.Property(ri => ri.Quantity).HasColumnName("quantity").HasColumnType("NUMBER(5)").IsRequired();
+        builder.Property(ri => ri.Quantity).HasColumnName("quantity").HasColumnType("NUMBER(10)").IsRequired();
 
         builder.Property(ri => ri.UnitPrice).HasColumnName("unit_price").HasColumnType("NUMBER(10,2)").IsRequired();
 
@@ -24,7 +29,7 @@ public class ReservationItemConfiguration : IEntityTypeConfiguration<Reservation
 
         builder.Property(ri => ri.DiscountAmount).HasColumnName("discount_amount").HasColumnType("NUMBER(10,2)").IsRequired().HasDefaultValue(0);
 
-        builder.Property(ri => ri.LineTotal).HasColumnName("line_total").HasColumnType("NUMBER(10,2)").IsRequired();
+        builder.Property(ri => ri.TotalAmount).HasColumnName("total_amount").HasColumnType("NUMBER(10,2)").IsRequired();
 
         builder.Property(ri => ri.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
         builder.Property(ri => ri.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");

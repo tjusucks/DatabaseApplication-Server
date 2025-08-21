@@ -8,7 +8,11 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 {
     public void Configure(EntityTypeBuilder<Reservation> builder)
     {
-        builder.ToTable("reservations");
+        builder.ToTable("reservations", r =>
+        {
+            r.HasCheckConstraint("CK_reservations_discount_amount_Range", "\"discount_amount\" >= 0");
+            r.HasCheckConstraint("CK_reservations_total_amount_Range", "\"total_amount\" >= 0");
+        });
 
         builder.HasKey(r => r.ReservationId);
 

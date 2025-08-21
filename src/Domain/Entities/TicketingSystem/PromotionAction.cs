@@ -11,17 +11,18 @@ public class PromotionAction
     public PromotionActionType ActionType { get; set; }
     public int? TargetTicketTypeId { get; set; }
 
-    [Range(0, 100)]
+    [Range(0.0, 100.0)]
     public decimal? DiscountPercentage { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0.0, double.MaxValue)]
     public decimal? DiscountAmount { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0.0, double.MaxValue)]
     public decimal? FixedPrice { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0, int.MaxValue)]
     public int? PointsAwarded { get; set; }
+
     public int? FreeTicketTypeId { get; set; }
 
     [Range(1, int.MaxValue)]

@@ -10,7 +10,7 @@ public class RefundRecord
     public int TicketId { get; set; }
     public int VisitorId { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0.0, double.MaxValue)]
     public decimal RefundAmount { get; set; }
     public DateTime RefundTime { get; set; }
     public string? RefundReason { get; set; }

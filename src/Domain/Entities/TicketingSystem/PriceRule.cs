@@ -1,7 +1,7 @@
-namespace DbApp.Domain.Entities.TicketingSystem;
-
 using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
+
+namespace DbApp.Domain.Entities.TicketingSystem;
 
 public class PriceRule
 {
@@ -14,7 +14,7 @@ public class PriceRule
     public int? MinQuantity { get; set; }
     public int? MaxQuantity { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0.0, double.MaxValue)]
     public decimal Price { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }

@@ -11,13 +11,17 @@ public class ReservationItem
     [Range(1, int.MaxValue)]
     public int Quantity { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0.0, double.MaxValue)]
     public decimal UnitPrice { get; set; }
+
     public int? AppliedPriceRuleId { get; set; }
+
+    [Range(0.0, double.MaxValue)]
     public decimal DiscountAmount { get; set; }
 
-    [Range(0, double.MaxValue)]
-    public decimal LineTotal { get; set; }
+    [Range(0.0, double.MaxValue)]
+    public decimal TotalAmount { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; }
 

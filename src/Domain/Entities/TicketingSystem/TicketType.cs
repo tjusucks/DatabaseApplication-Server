@@ -9,7 +9,7 @@ public class TicketType
     public string TypeName { get; set; } = string.Empty;
     public string? Description { get; set; }
 
-    [Range(0, double.MaxValue)]
+    [Range(0.0, double.MaxValue)]
     public decimal BasePrice { get; set; }
     public string? RulesText { get; set; }
     public int? MaxSaleLimit { get; set; }

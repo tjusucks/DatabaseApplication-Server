@@ -9,7 +9,10 @@ public class PriceRuleConfiguration : IEntityTypeConfiguration<PriceRule>
 {
     public void Configure(EntityTypeBuilder<PriceRule> builder)
     {
-        builder.ToTable("price_rules");
+        builder.ToTable("price_rules", t =>
+        {
+            t.HasCheckConstraint("CK_price_rules_price_Range", "\"price\" >= 0");
+        });
 
         builder.HasKey(pr => pr.PriceRuleId);
 
@@ -29,7 +32,7 @@ public class PriceRuleConfiguration : IEntityTypeConfiguration<PriceRule>
 
         builder.Property(pr => pr.Priority)
             .HasColumnName("priority")
-            .HasColumnType("NUMBER(5)")
+            .HasColumnType("NUMBER(10)")
             .IsRequired();
 
         builder.Property(pr => pr.EffectiveStartDate)
@@ -44,7 +47,7 @@ public class PriceRuleConfiguration : IEntityTypeConfiguration<PriceRule>
 
         builder.Property(pr => pr.MinQuantity)
             .HasColumnName("min_quantity")
-            .HasColumnType("NUMBER(5)"); // 可空
+            .HasColumnType("NUMBER(10)"); // 可空
 
         builder.Property(pr => pr.MaxQuantity)
             .HasColumnName("max_quantity")

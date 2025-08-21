@@ -8,7 +8,10 @@ public class RefundRecordConfiguration : IEntityTypeConfiguration<RefundRecord>
 {
     public void Configure(EntityTypeBuilder<RefundRecord> builder)
     {
-        builder.ToTable("refund_records");
+        builder.ToTable("refund_records", rr =>
+        {
+            rr.HasCheckConstraint("CK_refund_records_refund_amount_Range", "\"refund_amount\" >= 0.0");
+        });
 
         builder.HasKey(rr => rr.RefundId);
 
