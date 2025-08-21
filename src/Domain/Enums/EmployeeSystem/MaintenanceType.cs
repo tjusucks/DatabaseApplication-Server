@@ -1,12 +1,27 @@
-namespace DbApp.Domain.Enums.EmployeeSystem
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+namespace DbApp.Domain.Enums;
 
-    internal class MaintenanceType
-    {
-    }
+/// <summary>
+/// 设施维护类型
+/// </summary>
+public enum MaintenanceType
+{
+    /// <summary>
+    /// 预防性维护
+    /// </summary>
+    Preventive,
+
+    /// <summary>
+    /// 紧急维修
+    /// </summary>
+    Emergency,
+
+    /// <summary>
+    /// 部件更换
+    /// </summary>
+    Replacement,
+
+    /// <summary>
+    /// 软件升级
+    /// </summary>
+    SoftwareUpdate
 }

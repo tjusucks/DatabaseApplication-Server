@@ -1,12 +1,27 @@
-namespace DbApp.Domain.Enums.EmployeeSystem
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+namespace DbApp.Domain.Enums;
 
-    internal class AttendanceStatus
-    {
-    }
+/// <summary>
+/// 员工考勤状态
+/// </summary>
+public enum AttendanceStatus
+{
+    /// <summary>
+    /// 正常
+    /// </summary>
+    Present,
+
+    /// <summary>
+    /// 迟到
+    /// </summary>
+    Late,
+
+    /// <summary>
+    /// 缺勤
+    /// </summary>
+    Absent,
+
+    /// <summary>
+    /// 请假
+    /// </summary>
+    Leave
 }
