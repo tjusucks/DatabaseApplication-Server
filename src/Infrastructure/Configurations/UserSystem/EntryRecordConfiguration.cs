@@ -70,7 +70,7 @@ public class EntryRecordConfiguration : IEntityTypeConfiguration<EntryRecord>
 
         // Foreign key relationship to visitors table.
         builder.HasOne(er => er.Visitor)
-            .WithMany()
+            .WithMany(v => v.EntryRecords)
             .HasForeignKey(er => er.VisitorId)
             .OnDelete(DeleteBehavior.Cascade);
 
