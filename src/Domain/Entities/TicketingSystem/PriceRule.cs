@@ -1,5 +1,6 @@
 namespace DbApp.Domain.Entities.TicketingSystem;
 
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 
 public class PriceRule
@@ -12,6 +13,8 @@ public class PriceRule
     public DateTime EffectiveEndDate { get; set; }
     public int? MinQuantity { get; set; }
     public int? MaxQuantity { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal Price { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
@@ -19,7 +22,6 @@ public class PriceRule
 
     // 导航属性
     public TicketType TicketType { get; set; } = null!;
-
     public Employee? CreatedBy { get; set; }
 }
 

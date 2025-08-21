@@ -1,5 +1,4 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -35,22 +34,9 @@ public class TicketTypeConfiguration : IEntityTypeConfiguration<TicketType>
             .HasColumnType("NUMBER(10,2)")
             .IsRequired();
 
-        // 添加 base_price >= 0 的 CHECK 约束
-        builder.HasCheckConstraint("CK_ticket_types_base_price", "base_price >= 0");
-
         builder.Property(tt => tt.ApplicableCrowd)
             .HasColumnName("applicable_crowd")
-            .HasColumnType("VARCHAR2(30 CHAR)")
-            .IsRequired()
-            .HasConversion(
-                // 将 C# enum 转换为数据库中的大写字符串，以匹配 CHECK 约束
-                v => v.ToString().ToUpper(),
-                // 将数据库中的字符串转换回 C# enum (忽略大小写)
-                v => (ApplicableCrowd)Enum.Parse(typeof(ApplicableCrowd), v, true)
-            );
-
-        // 添加 applicable_crowd 的 CHECK 约束
-        builder.HasCheckConstraint("CK_ticket_types_applicable_crowd", "applicable_crowd IN ('ADULT', 'CHILD', 'SENIOR', 'FAMILY', 'ANY')");
+            .IsRequired();
 
         builder.Property(tt => tt.RulesText)
             .HasColumnName("rules_text")

@@ -1,7 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace DbApp.Infrastructure.Configurations.TicketingSystem;
 
 public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
@@ -20,23 +20,16 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
         builder.Property(r => r.DiscountAmount).HasColumnName("discount_amount").HasColumnType("NUMBER(10,2)").IsRequired().HasDefaultValue(0);
 
         builder.Property(r => r.TotalAmount).HasColumnName("total_amount").HasColumnType("NUMBER(10,2)").IsRequired();
-        builder.HasCheckConstraint("CK_reservations_total_amount", "total_amount >= 0");
 
         // 配置 PaymentStatus 枚举
         builder.Property(r => r.PaymentStatus)
             .HasColumnName("payment_status")
-            .HasColumnType("VARCHAR2(30 CHAR)")
-            .IsRequired()
-            .HasConversion(v => v.ToString().ToLower(), v => (PaymentStatus)Enum.Parse(typeof(PaymentStatus), v, true));
-        builder.HasCheckConstraint("CK_reservations_payment_status", "payment_status IN ('pending', 'paid', 'failed', 'refunded')");
+            .IsRequired();
 
         // 配置 ReservationStatus 枚举
         builder.Property(r => r.Status)
             .HasColumnName("status")
-            .HasColumnType("VARCHAR2(30 CHAR)")
-            .IsRequired()
-            .HasConversion(v => v.ToString().ToLower(), v => (ReservationStatus)Enum.Parse(typeof(ReservationStatus), v, true));
-        builder.HasCheckConstraint("CK_reservations_status", "status IN ('pending', 'confirmed', 'cancelled', 'completed')");
+            .IsRequired();
 
         builder.Property(r => r.PaymentMethod).HasColumnName("payment_method").HasColumnType("VARCHAR2(30 CHAR)");
         builder.Property(r => r.PromotionId).HasColumnName("promotion_id").HasColumnType("NUMBER(10)");

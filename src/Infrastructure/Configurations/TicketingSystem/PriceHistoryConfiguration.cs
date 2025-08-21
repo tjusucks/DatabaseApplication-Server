@@ -1,4 +1,3 @@
-using DbApp.Domain.Entities;
 using DbApp.Domain.Entities.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -24,7 +23,7 @@ public class PriceHistoryConfiguration : IEntityTypeConfiguration<PriceHistory>
 
         builder.Property(ph => ph.PriceRuleId)
             .HasColumnName("price_rule_id")
-            .HasColumnType("NUMBER(10)"); // 可空
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(ph => ph.OldPrice)
             .HasColumnName("old_price")

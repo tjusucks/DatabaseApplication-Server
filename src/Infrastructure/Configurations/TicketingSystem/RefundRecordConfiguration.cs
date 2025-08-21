@@ -1,7 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace DbApp.Infrastructure.Configurations.TicketingSystem;
 
 public class RefundRecordConfiguration : IEntityTypeConfiguration<RefundRecord>
@@ -17,7 +17,6 @@ public class RefundRecordConfiguration : IEntityTypeConfiguration<RefundRecord>
         builder.Property(rr => rr.VisitorId).HasColumnName("visitor_id").HasColumnType("NUMBER(10)").IsRequired();
 
         builder.Property(rr => rr.RefundAmount).HasColumnName("refund_amount").HasColumnType("NUMBER(10,2)").IsRequired();
-        builder.HasCheckConstraint("CK_refund_records_refund_amount", "refund_amount >= 0");
 
         builder.Property(rr => rr.RefundTime).HasColumnName("refund_time").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
         builder.Property(rr => rr.RefundReason).HasColumnName("refund_reason").HasColumnType("VARCHAR2(500 CHAR)");
@@ -25,10 +24,7 @@ public class RefundRecordConfiguration : IEntityTypeConfiguration<RefundRecord>
         // 配置 RefundStatus 枚举
         builder.Property(rr => rr.RefundStatus)
             .HasColumnName("refund_status")
-            .HasColumnType("VARCHAR2(30 CHAR)")
-            .IsRequired()
-            .HasConversion(v => v.ToString().ToLower(), v => (RefundStatus)Enum.Parse(typeof(RefundStatus), v, true));
-        builder.HasCheckConstraint("CK_refund_records_refund_status", "refund_status IN ('pending', 'approved', 'rejected', 'completed')");
+            .IsRequired();
 
         builder.Property(rr => rr.ProcessorId).HasColumnName("processor_id").HasColumnType("NUMBER(10)");
         builder.Property(rr => rr.ProcessingNotes).HasColumnName("processing_notes").HasColumnType("VARCHAR2(500 CHAR)");

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Enums.TicketingSystem;
 
 namespace DbApp.Domain.Entities.TicketingSystem;
@@ -9,11 +10,21 @@ public class PromotionAction
     public string ActionName { get; set; } = string.Empty;
     public PromotionActionType ActionType { get; set; }
     public int? TargetTicketTypeId { get; set; }
+
+    [Range(0, 100)]
     public decimal? DiscountPercentage { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal? DiscountAmount { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal? FixedPrice { get; set; }
+
+    [Range(0, double.MaxValue)]
     public int? PointsAwarded { get; set; }
     public int? FreeTicketTypeId { get; set; }
+
+    [Range(1, int.MaxValue)]
     public int? FreeTicketQuantity { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

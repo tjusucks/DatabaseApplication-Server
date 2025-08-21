@@ -1,14 +1,22 @@
 namespace DbApp.Domain.Entities.TicketingSystem;
 
+using System.ComponentModel.DataAnnotations;
+
 public class ReservationItem
 {
     public int ItemId { get; set; }
     public int ReservationId { get; set; }
     public int TicketTypeId { get; set; }
+
+    [Range(1, int.MaxValue)]
     public int Quantity { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal UnitPrice { get; set; }
     public int? AppliedPriceRuleId { get; set; }
     public decimal DiscountAmount { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal LineTotal { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

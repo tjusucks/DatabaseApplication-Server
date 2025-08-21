@@ -1,8 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 namespace DbApp.Infrastructure.Configurations.TicketingSystem;
 
 public class CouponConfiguration : IEntityTypeConfiguration<Coupon>
@@ -16,30 +15,24 @@ public class CouponConfiguration : IEntityTypeConfiguration<Coupon>
         builder.Property(c => c.CouponId).HasColumnName("coupon_id").HasColumnType("NUMBER(10)");
 
         builder.Property(c => c.CouponCode).HasColumnName("coupon_code").HasColumnType("VARCHAR2(50 CHAR)").IsRequired();
-        builder.HasIndex(c => c.CouponCode).IsUnique(); // 唯一约束
+        builder.HasIndex(c => c.CouponCode).IsUnique();
 
         builder.Property(c => c.PromotionId).HasColumnName("promotion_id").HasColumnType("NUMBER(10)").IsRequired();
 
-        // 配置 DiscountType 枚举
         builder.Property(c => c.DiscountType)
             .HasColumnName("discount_type")
-            .HasColumnType("VARCHAR2(30 CHAR)")
-            .IsRequired()
-            .HasConversion(new EnumToStringConverter<CouponDiscountType>()); // 自动转为 "Percentage", "FixedAmount"
-        builder.HasCheckConstraint("CK_coupons_discount_type", "discount_type IN ('Percentage', 'FixedAmount')");
+            .IsRequired();
 
         builder.Property(c => c.DiscountValue).HasColumnName("discount_value").HasColumnType("NUMBER(10,2)").IsRequired();
         builder.Property(c => c.MinPurchaseAmount).HasColumnName("min_purchase_amount").HasColumnType("NUMBER(10,2)").IsRequired().HasDefaultValue(0);
         builder.Property(c => c.ValidFrom).HasColumnName("valid_from").HasColumnType("TIMESTAMP(0)").IsRequired();
         builder.Property(c => c.ValidTo).HasColumnName("valid_to").HasColumnType("TIMESTAMP(0)").IsRequired();
 
-        // 配置 bool 到 NUMBER(1) 的转换
         builder.Property(c => c.IsUsed)
             .HasColumnName("is_used")
             .HasColumnType("NUMBER(1)")
             .IsRequired()
-            .HasDefaultValue(false)
-            .HasConversion(new BoolToZeroOneConverter<short>());
+            .HasDefaultValue(false);
 
         builder.Property(c => c.UsedById).HasColumnName("used_by").HasColumnType("NUMBER(10)");
         builder.Property(c => c.UsedTime).HasColumnName("used_time").HasColumnType("TIMESTAMP(0)");

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 
@@ -8,6 +9,8 @@ public class RefundRecord
     public int RefundId { get; set; }
     public int TicketId { get; set; }
     public int VisitorId { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal RefundAmount { get; set; }
     public DateTime RefundTime { get; set; }
     public string? RefundReason { get; set; }

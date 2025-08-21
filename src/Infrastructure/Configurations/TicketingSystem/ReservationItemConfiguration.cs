@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace DbApp.Infrastructure.Configurations.TicketingSystem;
 
 public class ReservationItemConfiguration : IEntityTypeConfiguration<ReservationItem>
@@ -16,17 +17,14 @@ public class ReservationItemConfiguration : IEntityTypeConfiguration<Reservation
         builder.Property(ri => ri.TicketTypeId).HasColumnName("ticket_type_id").HasColumnType("NUMBER(10)").IsRequired();
 
         builder.Property(ri => ri.Quantity).HasColumnName("quantity").HasColumnType("NUMBER(5)").IsRequired();
-        builder.HasCheckConstraint("CK_reservation_items_quantity", "quantity > 0");
 
         builder.Property(ri => ri.UnitPrice).HasColumnName("unit_price").HasColumnType("NUMBER(10,2)").IsRequired();
-        builder.HasCheckConstraint("CK_reservation_items_unit_price", "unit_price >= 0");
 
         builder.Property(ri => ri.AppliedPriceRuleId).HasColumnName("applied_price_rule_id").HasColumnType("NUMBER(10)");
 
         builder.Property(ri => ri.DiscountAmount).HasColumnName("discount_amount").HasColumnType("NUMBER(10,2)").IsRequired().HasDefaultValue(0);
 
         builder.Property(ri => ri.LineTotal).HasColumnName("line_total").HasColumnType("NUMBER(10,2)").IsRequired();
-        builder.HasCheckConstraint("CK_reservation_items_line_total", "line_total >= 0");
 
         builder.Property(ri => ri.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
         builder.Property(ri => ri.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");

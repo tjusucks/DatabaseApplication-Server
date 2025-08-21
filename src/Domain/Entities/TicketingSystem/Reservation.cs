@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 
@@ -10,6 +11,8 @@ public class Reservation
     public DateTime ReservationTime { get; set; }
     public DateTime VisitDate { get; set; }
     public decimal DiscountAmount { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal TotalAmount { get; set; }
     public PaymentStatus PaymentStatus { get; set; }
     public ReservationStatus Status { get; set; }

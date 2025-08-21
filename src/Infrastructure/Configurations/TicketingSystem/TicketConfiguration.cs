@@ -1,5 +1,4 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -37,7 +36,7 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
             .IsRequired();
 
         // 为 SerialNumber 创建唯一索引
-        builder.HasIndex(t => t.SerialNumber, "UQ_tickets_serial_number")
+        builder.HasIndex(t => t.SerialNumber)
             .IsUnique();
 
         builder.Property(t => t.ValidFrom)
@@ -52,14 +51,7 @@ public class TicketConfiguration : IEntityTypeConfiguration<Ticket>
 
         builder.Property(t => t.Status)
             .HasColumnName("status")
-            .HasColumnType("VARCHAR2(30 CHAR)")
-            .IsRequired()
-            .HasConversion(
-                v => v.ToString().ToLower(),
-                v => (TicketStatus)Enum.Parse(typeof(TicketStatus), v, true));
-
-        // 添加 CHECK 约束
-        builder.HasCheckConstraint("CK_tickets_status", "status IN ('issued', 'used', 'expired', 'refunded', 'cancelled')");
+            .IsRequired();
 
         builder.Property(t => t.UsedTime)
             .HasColumnName("used_time")

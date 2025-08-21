@@ -22,15 +22,8 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
             .IsRequired();
 
         builder.Property(p => p.PromotionType)
- .HasColumnName("promotion_type")
- .HasColumnType("VARCHAR2(30 CHAR)")
- .IsRequired()
- // 直接 new 一个转换器实例即可！
- .HasConversion(new PromotionTypeToStringConverter());
-
-        // 配置 CHECK 约束
-        builder.HasCheckConstraint("CK_promotions_promotion_type",
-            "promotion_type IN ('DISCOUNT_PERCENT', 'DISCOUNT_FIXED', 'FULL_REDUCTION', 'FULL_GIFT', 'PACKAGE_DEAL', 'COUPON_BASED')");
+            .HasColumnName("promotion_type")
+            .IsRequired();
 
         builder.Property(p => p.Description)
             .HasColumnName("description")
@@ -67,29 +60,23 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
             .IsRequired()
             .HasDefaultValue(100);
 
-        // 配置 bool 到 NUMBER(1) 的转换
-        var boolToNumberConverter = new BoolToZeroOneConverter<short>();
-
         builder.Property(p => p.AppliesToAllTickets)
             .HasColumnName("applies_to_all_tickets")
             .HasColumnType("NUMBER(1)")
             .IsRequired()
-            .HasDefaultValue(false)
-            .HasConversion(boolToNumberConverter);
+            .HasDefaultValue(false);
 
         builder.Property(p => p.IsActive)
             .HasColumnName("is_active")
             .HasColumnType("NUMBER(1)")
             .IsRequired()
-            .HasDefaultValue(true)
-            .HasConversion(boolToNumberConverter);
+            .HasDefaultValue(true);
 
         builder.Property(p => p.IsCombinable)
             .HasColumnName("is_combinable")
             .HasColumnType("NUMBER(1)")
             .IsRequired()
-            .HasDefaultValue(false)
-            .HasConversion(boolToNumberConverter);
+            .HasDefaultValue(false);
 
         builder.Property(p => p.EmployeeId)
             .HasColumnName("employee_id")
@@ -119,8 +106,8 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
 
         // 配置外键
         builder.HasOne(p => p.Employee)
-               .WithMany()
-               .HasForeignKey(p => p.EmployeeId)
-               .OnDelete(DeleteBehavior.Restrict);
+            .WithMany()
+            .HasForeignKey(p => p.EmployeeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

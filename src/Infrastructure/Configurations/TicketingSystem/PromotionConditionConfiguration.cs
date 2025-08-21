@@ -1,5 +1,4 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -30,16 +29,7 @@ public class PromotionConditionConfiguration : IEntityTypeConfiguration<Promotio
         // 配置 ConditionType 枚举
         builder.Property(pc => pc.ConditionType)
             .HasColumnName("condition_type")
-            .HasColumnType("VARCHAR2(30 CHAR)")
-            .IsRequired()
-            .HasConversion(
-                v => v.ToString().ToUpper(), // C# enum -> "MIN_QUANTITY" etc.
-                v => (ConditionType)Enum.Parse(typeof(ConditionType), v.Replace("_", ""), true)
-            );
-
-        // 配置 CHECK 约束
-        builder.HasCheckConstraint("CK_promotion_conditions_condition_type",
-            "condition_type IN ('MIN_QUANTITY', 'MIN_AMOUNT', 'SPECIFIC_TICKET', 'VISITOR_TYPE', 'VISIT_DATE', 'DAY_OF_WEEK', 'MEMBER_LEVEL')");
+            .IsRequired();
 
         builder.Property(pc => pc.TicketTypeId).HasColumnName("ticket_type_id").HasColumnType("NUMBER(10)");
         builder.Property(pc => pc.MinQuantity).HasColumnName("min_quantity").HasColumnType("NUMBER(5)");
@@ -52,8 +42,6 @@ public class PromotionConditionConfiguration : IEntityTypeConfiguration<Promotio
         builder.Property(pc => pc.DayOfWeek)
             .HasColumnName("day_of_week")
             .HasColumnType("NUMBER(1)");
-
-        builder.HasCheckConstraint("CK_promotion_conditions_day_of_week", "day_of_week BETWEEN 1 AND 7");
 
         builder.Property(pc => pc.Priority)
             .HasColumnName("priority")

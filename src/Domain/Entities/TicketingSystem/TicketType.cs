@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Enums.TicketingSystem;
 
 namespace DbApp.Domain.Entities.TicketingSystem;
@@ -7,6 +8,8 @@ public class TicketType
     public int TicketTypeId { get; set; }
     public string TypeName { get; set; } = string.Empty;
     public string? Description { get; set; }
+
+    [Range(0, double.MaxValue)]
     public decimal BasePrice { get; set; }
     public string? RulesText { get; set; }
     public int? MaxSaleLimit { get; set; }

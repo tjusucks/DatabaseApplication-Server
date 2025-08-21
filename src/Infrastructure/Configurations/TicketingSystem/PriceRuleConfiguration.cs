@@ -55,9 +55,6 @@ public class PriceRuleConfiguration : IEntityTypeConfiguration<PriceRule>
             .HasColumnType("NUMBER(10,2)")
             .IsRequired();
 
-        // 添加 price >= 0 的 CHECK 约束
-        builder.HasCheckConstraint("CK_price_rules_price", "price >= 0");
-
         builder.Property(pr => pr.CreatedAt)
             .HasColumnName("created_at")
             .HasColumnType("TIMESTAMP(0)")
