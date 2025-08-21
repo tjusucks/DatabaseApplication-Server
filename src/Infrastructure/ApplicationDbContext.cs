@@ -1,7 +1,6 @@
+using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Entities.UserSystem;
 using Microsoft.EntityFrameworkCore;
-
-using DbApp.Domain.Entities.TicketRelated;
 namespace DbApp.Infrastructure;
 
 public class ApplicationDbContext : DbContext

@@ -1,6 +1,5 @@
-using DbApp.Domain.Enums; // 确保引用了你的枚举
+using DbApp.Domain.Enums.TicketingSystem;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using System;
 namespace DbApp.Infrastructure.Converters
 {
     public class PromotionTypeToStringConverter : ValueConverter<PromotionType, string>
