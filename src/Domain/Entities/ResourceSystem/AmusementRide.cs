@@ -1,6 +1,6 @@
-using DbApp.Domain.Entities;
+using DbApp.Domain.Enums.ResourceSystem;
 
-namespace DbApp.Domain.Enums;
+namespace DbApp.Domain.Entities.ResourceSystem;
 
 /// <summary>
 /// 游乐设施表

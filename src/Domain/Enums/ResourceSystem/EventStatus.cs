@@ -1,4 +1,4 @@
-namespace DbApp.Domain.Enums;
+namespace DbApp.Domain.Enums.ResourceSystem;
 
 /// <summary>
 /// 活动生命周期状态

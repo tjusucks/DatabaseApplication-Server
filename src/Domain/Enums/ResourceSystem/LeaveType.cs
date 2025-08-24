@@ -1,4 +1,4 @@
-namespace DbApp.Domain.Enums;
+namespace DbApp.Domain.Enums.ResourceSystem;
 
 /// <summary>
 /// 员工请假类型

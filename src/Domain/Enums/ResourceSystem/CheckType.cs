@@ -1,4 +1,5 @@
-namespace DbApp.Domain.Enums;
+namespace DbApp.Domain.Enums.ResourceSystem;
+
 /// <summary>
 /// 设施检查类型
 /// </summary>

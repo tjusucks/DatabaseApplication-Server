@@ -1,9 +1,8 @@
-using DbApp.Domain.Entities;
-using DbApp.Domain.Enums;
+using DbApp.Domain.Entities.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DbApp.Infrastructure.Configurations;
+namespace DbApp.Infrastructure.Configurations.ResourceSystem;
 
 public class AmusementRideConfiguration : IEntityTypeConfiguration<AmusementRide>
 {
