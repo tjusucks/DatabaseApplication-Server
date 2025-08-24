@@ -63,11 +63,11 @@ public class AmusementRideConfiguration : IEntityTypeConfiguration<AmusementRide
         // Height limits.
         builder.Property(r => r.HeightLimitMin)
             .HasColumnName("height_limit_min")
-            .HasColumnType("NUMBER(5,2)");
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.HeightLimitMax)
             .HasColumnName("height_limit_max")
-            .HasColumnType("NUMBER(5,2)");
+            .HasColumnType("NUMBER(10)");
 
         // Open date.
         builder.Property(r => r.OpenDate)

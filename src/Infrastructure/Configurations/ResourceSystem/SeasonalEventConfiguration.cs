@@ -1,4 +1,5 @@
 using DbApp.Domain.Entities.ResourceSystem;
+using DbApp.Domain.Enums.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -56,7 +57,8 @@ public class SeasonalEventConfiguration : IEntityTypeConfiguration<SeasonalEvent
 
         builder.Property(e => e.Status)
             .IsRequired()
-            .HasColumnName("status");
+            .HasColumnName("status")
+            .HasDefaultValue(EventStatus.Planning);
 
         builder.Property(e => e.CreatedAt)
             .HasColumnName("created_at")

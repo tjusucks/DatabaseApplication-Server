@@ -9,7 +9,11 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
     public void Configure(EntityTypeBuilder<MaintenanceRecord> builder)
     {
         // 表名和基础配置
-        builder.ToTable("maintenance_records");
+        builder.ToTable("maintenance_records", r =>
+        {
+            r.HasCheckConstraint("CK_maintenance_records_cost_Range", "\"cost\" >= 0");
+        });
+
         builder.HasKey(r => r.MaintenanceId);
 
         // 属性映射

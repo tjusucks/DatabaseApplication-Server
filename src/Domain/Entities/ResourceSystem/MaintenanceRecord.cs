@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 
@@ -46,6 +47,7 @@ public class MaintenanceRecord
     /// <summary>
     /// 维护费用
     /// </summary>
+    [Range(0.0, double.MaxValue)]
     public decimal Cost { get; set; }
 
     /// <summary>
@@ -81,7 +83,7 @@ public class MaintenanceRecord
     /// <summary>
     /// 创建时间
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// 更新时间

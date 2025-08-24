@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 
@@ -26,6 +27,7 @@ public class EmployeeReview
     /// <summary>
     /// 绩效得分
     /// </summary>
+    [Range(0.0, 100.0)]
     public decimal Score { get; set; }
 
     /// <summary>
@@ -41,7 +43,7 @@ public class EmployeeReview
     /// <summary>
     /// 创建时间
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// 更新时间

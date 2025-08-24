@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 
@@ -41,22 +42,26 @@ public class AmusementRide
     /// <summary>
     /// 容量
     /// </summary>
+    [Range(1, int.MaxValue)]
     public int Capacity { get; set; }
 
     /// <summary>
     /// 单趟时间(秒)
     /// </summary>
+    [Range(1, int.MaxValue)]
     public int Duration { get; set; }
 
     /// <summary>
     /// 最低身高限制(cm)
     /// </summary>
-    public decimal? HeightLimitMin { get; set; }
+    [Range(50, 300)]
+    public int HeightLimitMin { get; set; }
 
     /// <summary>
     /// 最高身高限制(cm)
     /// </summary>
-    public decimal? HeightLimitMax { get; set; }
+    [Range(50, 300)]
+    public int HeightLimitMax { get; set; }
 
     /// <summary>
     /// 启用日期
@@ -66,7 +71,7 @@ public class AmusementRide
     /// <summary>
     /// 创建时间
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// 更新时间

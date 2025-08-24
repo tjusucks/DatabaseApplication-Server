@@ -9,7 +9,11 @@ public class EmployeeReviewConfiguration : IEntityTypeConfiguration<EmployeeRevi
     public void Configure(EntityTypeBuilder<EmployeeReview> builder)
     {
         // 表名和基础配置
-        builder.ToTable("employee_reviews");
+        builder.ToTable("employee_reviews", r =>
+        {
+            r.HasCheckConstraint("CK_employee_reviews_score_Range", "\"score\" BETWEEN 0.0 AND 100.0");
+        });
+
         builder.HasKey(r => r.ReviewId);
 
         // 属性映射

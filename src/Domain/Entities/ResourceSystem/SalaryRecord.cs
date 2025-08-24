@@ -1,5 +1,6 @@
 namespace DbApp.Domain.Entities.ResourceSystem;
 
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 
 /// <summary>
@@ -25,12 +26,13 @@ public class SalaryRecord
     /// <summary>
     /// 工资
     /// </summary>
+    [Range(0.0, double.MaxValue)]
     public decimal Salary { get; set; }
 
     /// <summary>
     /// 创建时间
     /// </summary>
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// 更新时间

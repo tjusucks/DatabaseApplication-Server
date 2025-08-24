@@ -25,19 +25,23 @@ public class RideTrafficStatConfiguration : IEntityTypeConfiguration<RideTraffic
 
         builder.Property(r => r.VisitorCount)
             .HasColumnName("visitor_count")
-            .HasColumnType("NUMBER(10)");
+            .HasColumnType("NUMBER(10)")
+            .HasDefaultValue(0);
 
         builder.Property(r => r.QueueLength)
             .HasColumnName("queue_length")
-            .HasColumnType("NUMBER(10)");
+            .HasColumnType("NUMBER(10)")
+            .HasDefaultValue(0);
 
         builder.Property(r => r.WaitingTime)
             .HasColumnName("waiting_time")
-            .HasColumnType("NUMBER(10)");
+            .HasColumnType("NUMBER(10)")
+            .HasDefaultValue(0);
 
         builder.Property(r => r.IsCrowded)
             .HasColumnName("is_crowded")
-            .HasColumnType("NUMBER(1)");
+            .HasColumnType("NUMBER(1)")
+            .HasDefaultValue(false);
 
         builder.Property(r => r.CreatedAt)
             .HasColumnName("created_at")

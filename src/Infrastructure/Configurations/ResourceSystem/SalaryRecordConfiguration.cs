@@ -9,7 +9,11 @@ public class SalaryRecordConfiguration : IEntityTypeConfiguration<SalaryRecord>
     public void Configure(EntityTypeBuilder<SalaryRecord> builder)
     {
         // 表名和基础配置
-        builder.ToTable("salary_records");
+        builder.ToTable("salary_records", r =>
+        {
+            r.HasCheckConstraint("CK_salary_records_salary_Range", "\"salary\" >= 0");
+        });
+
         builder.HasKey(r => r.SalaryRecordId);
 
         // 属性映射
