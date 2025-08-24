@@ -37,12 +37,12 @@ public class PriceRuleConfiguration : IEntityTypeConfiguration<PriceRule>
 
         builder.Property(pr => pr.EffectiveStartDate)
             .HasColumnName("effective_start_date")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired();
 
         builder.Property(pr => pr.EffectiveEndDate)
             .HasColumnName("effective_end_date")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired();
 
         builder.Property(pr => pr.MinQuantity)
@@ -60,13 +60,13 @@ public class PriceRuleConfiguration : IEntityTypeConfiguration<PriceRule>
 
         builder.Property(pr => pr.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(pr => pr.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 

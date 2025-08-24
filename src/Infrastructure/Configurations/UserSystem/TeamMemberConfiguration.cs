@@ -33,7 +33,7 @@ public class TeamMemberConfiguration : IEntityTypeConfiguration<TeamMember>
         // Join date.
         builder.Property(tm => tm.JoinDate)
             .HasColumnName("join_date")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 

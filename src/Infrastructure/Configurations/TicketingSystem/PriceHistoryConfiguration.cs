@@ -37,7 +37,7 @@ public class PriceHistoryConfiguration : IEntityTypeConfiguration<PriceHistory>
 
         builder.Property(ph => ph.ChangeDatetime)
             .HasColumnName("change_datetime")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
@@ -52,7 +52,7 @@ public class PriceHistoryConfiguration : IEntityTypeConfiguration<PriceHistory>
 
         builder.Property(ph => ph.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 

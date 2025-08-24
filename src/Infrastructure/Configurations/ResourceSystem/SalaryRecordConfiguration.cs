@@ -27,7 +27,7 @@ public class SalaryRecordConfiguration : IEntityTypeConfiguration<SalaryRecord>
 
         builder.Property(r => r.PayDate)
             .HasColumnName("pay_date")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(r => r.Salary)
             .HasColumnName("salary")
@@ -35,12 +35,12 @@ public class SalaryRecordConfiguration : IEntityTypeConfiguration<SalaryRecord>
 
         builder.Property(r => r.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置

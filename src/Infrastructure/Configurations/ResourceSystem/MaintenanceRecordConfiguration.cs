@@ -39,11 +39,11 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
 
         builder.Property(r => r.StartTime)
             .HasColumnName("start_time")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(r => r.EndTime)
             .HasColumnName("end_time")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(r => r.Cost)
             .HasColumnName("cost")
@@ -68,7 +68,7 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
 
         builder.Property(r => r.AcceptanceDate)
             .HasColumnName("acceptance_date")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(r => r.AcceptanceComments)
             .HasColumnName("acceptance_comments")
@@ -76,12 +76,12 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
 
         builder.Property(r => r.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置

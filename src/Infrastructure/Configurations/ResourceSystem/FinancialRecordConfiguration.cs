@@ -19,7 +19,7 @@ public class FinancialRecordConfiguration : IEntityTypeConfiguration<FinancialRe
 
         builder.Property(r => r.TransactionDate)
             .HasColumnName("transaction_date")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(r => r.Amount)
             .HasColumnName("amount")
@@ -42,12 +42,12 @@ public class FinancialRecordConfiguration : IEntityTypeConfiguration<FinancialRe
 
         builder.Property(r => r.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置

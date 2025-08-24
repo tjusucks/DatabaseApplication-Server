@@ -51,13 +51,13 @@ public class TicketTypeConfiguration : IEntityTypeConfiguration<TicketType>
 
         builder.Property(tt => tt.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(tt => tt.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 

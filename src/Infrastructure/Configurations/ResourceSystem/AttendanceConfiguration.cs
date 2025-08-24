@@ -23,15 +23,15 @@ public class AttendanceConfiguration : IEntityTypeConfiguration<Attendance>
 
         builder.Property(a => a.AttendanceDate)
             .HasColumnName("attendance_date")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(a => a.CheckInTime)
             .HasColumnName("check_in_time")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(a => a.CheckOutTime)
             .HasColumnName("check_out_time")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(a => a.AttendanceStatus)
             .IsRequired()
@@ -42,12 +42,12 @@ public class AttendanceConfiguration : IEntityTypeConfiguration<Attendance>
 
         builder.Property(a => a.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(a => a.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置

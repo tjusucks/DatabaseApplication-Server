@@ -43,7 +43,7 @@ public class VisitorConfiguration : IEntityTypeConfiguration<Visitor>
         // Member since date.
         builder.Property(v => v.MemberSince)
             .HasColumnName("member_since")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         // Blacklist flag.
         builder.Property(v => v.IsBlacklisted)
@@ -61,13 +61,13 @@ public class VisitorConfiguration : IEntityTypeConfiguration<Visitor>
         // Audit fields.
         builder.Property(v => v.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(v => v.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to users table.

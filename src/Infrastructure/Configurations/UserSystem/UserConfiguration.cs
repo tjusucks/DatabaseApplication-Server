@@ -55,7 +55,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         // Birth date - optional.
         builder.Property(u => u.BirthDate)
             .HasColumnName("birth_date")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         // Gender - optional with check constraint.
         builder.Property(u => u.Gender)
@@ -64,7 +64,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         // Register time.
         builder.Property(u => u.RegisterTime)
             .HasColumnName("register_time")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
@@ -85,13 +85,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         // Audit fields.
         builder.Property(u => u.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(u => u.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Navigation property for foreign key relationship to roles table.

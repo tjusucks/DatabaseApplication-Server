@@ -21,7 +21,7 @@ public class RideTrafficStatConfiguration : IEntityTypeConfiguration<RideTraffic
 
         builder.Property(r => r.RecordTime)
             .HasColumnName("record_time")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(r => r.VisitorCount)
             .HasColumnName("visitor_count")
@@ -45,12 +45,12 @@ public class RideTrafficStatConfiguration : IEntityTypeConfiguration<RideTraffic
 
         builder.Property(r => r.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置

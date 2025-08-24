@@ -43,13 +43,13 @@ public class StaffTeamConfiguration : IEntityTypeConfiguration<StaffTeam>
         // Audit fields.
         builder.Property(st => st.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(st => st.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to employees table for leader.

@@ -21,7 +21,7 @@ public class RefundRecordConfiguration : IEntityTypeConfiguration<RefundRecord>
 
         builder.Property(rr => rr.RefundAmount).HasColumnName("refund_amount").HasColumnType("NUMBER(10,2)").IsRequired();
 
-        builder.Property(rr => rr.RefundTime).HasColumnName("refund_time").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(rr => rr.RefundTime).HasColumnName("refund_time").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
         builder.Property(rr => rr.RefundReason).HasColumnName("refund_reason").HasColumnType("VARCHAR2(500 CHAR)");
 
         // 配置 RefundStatus 枚举
@@ -32,8 +32,8 @@ public class RefundRecordConfiguration : IEntityTypeConfiguration<RefundRecord>
         builder.Property(rr => rr.ProcessorId).HasColumnName("processor_id").HasColumnType("NUMBER(10)");
         builder.Property(rr => rr.ProcessingNotes).HasColumnName("processing_notes").HasColumnType("VARCHAR2(500 CHAR)");
 
-        builder.Property(rr => rr.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
-        builder.Property(rr => rr.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(rr => rr.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(rr => rr.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
 
         // 配置索引
         builder.HasIndex(rr => rr.TicketId).IsUnique(); // 确保一张票只有一个退款记录

@@ -33,11 +33,11 @@ public class SeasonalEventConfiguration : IEntityTypeConfiguration<SeasonalEvent
 
         builder.Property(e => e.StartDate)
             .HasColumnName("start_date")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(e => e.EndDate)
             .HasColumnName("end_date")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         builder.Property(e => e.Location)
             .HasColumnName("location")
@@ -62,12 +62,12 @@ public class SeasonalEventConfiguration : IEntityTypeConfiguration<SeasonalEvent
 
         builder.Property(e => e.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(e => e.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置

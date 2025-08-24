@@ -36,8 +36,8 @@ public class PromotionConditionConfiguration : IEntityTypeConfiguration<Promotio
         builder.Property(pc => pc.MinAmount).HasColumnName("min_amount").HasColumnType("NUMBER(10,2)");
         builder.Property(pc => pc.VisitorType).HasColumnName("visitor_type").HasColumnType("VARCHAR2(30 CHAR)");
         builder.Property(pc => pc.MemberLevel).HasColumnName("member_level").HasColumnType("VARCHAR2(30 CHAR)");
-        builder.Property(pc => pc.DateFrom).HasColumnName("date_from").HasColumnType("TIMESTAMP(0)");
-        builder.Property(pc => pc.DateTo).HasColumnName("date_to").HasColumnType("TIMESTAMP(0)");
+        builder.Property(pc => pc.DateFrom).HasColumnName("date_from").HasColumnType("TIMESTAMP");
+        builder.Property(pc => pc.DateTo).HasColumnName("date_to").HasColumnType("TIMESTAMP");
 
         builder.Property(pc => pc.DayOfWeek)
             .HasColumnName("day_of_week")
@@ -51,13 +51,13 @@ public class PromotionConditionConfiguration : IEntityTypeConfiguration<Promotio
 
         builder.Property(pc => pc.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(pc => pc.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
