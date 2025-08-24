@@ -56,3 +56,6 @@ nunit-*.xml
 # Environment files
 .env*
 !.env.example
+
+# Visual Studio generated files
+*.vs
