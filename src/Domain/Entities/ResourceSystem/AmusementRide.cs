@@ -41,12 +41,12 @@ public class AmusementRide
     /// <summary>
     /// 容量
     /// </summary>
-    public short Capacity { get; set; }
+    public int Capacity { get; set; }
 
     /// <summary>
     /// 单趟时间(秒)
     /// </summary>
-    public short Duration { get; set; }
+    public int Duration { get; set; }
 
     /// <summary>
     /// 最低身高限制(cm)

@@ -51,7 +51,7 @@ public class PriceRuleConfiguration : IEntityTypeConfiguration<PriceRule>
 
         builder.Property(pr => pr.MaxQuantity)
             .HasColumnName("max_quantity")
-            .HasColumnType("NUMBER(5)"); // 可空
+            .HasColumnType("NUMBER(10)"); // 可空
 
         builder.Property(pr => pr.Price)
             .HasColumnName("price")

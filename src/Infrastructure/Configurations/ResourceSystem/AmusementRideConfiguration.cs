@@ -4,93 +4,112 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DbApp.Infrastructure.Configurations.ResourceSystem;
 
+/// <summary>
+/// Entity Framework configuration for the AmusementRide entity.
+/// Configures the amusement_rides table structure and relationships.
+/// </summary>
 public class AmusementRideConfiguration : IEntityTypeConfiguration<AmusementRide>
 {
     public void Configure(EntityTypeBuilder<AmusementRide> builder)
     {
         // 表名和基础配置
-        builder.ToTable("AMUSEMENT_RIDES");
+        builder.ToTable("amusement_rides");
+
+        // Primary key.
         builder.HasKey(r => r.RideId);
 
-        // 属性映射
         builder.Property(r => r.RideId)
-            .HasColumnName("RIDE_ID")
-            .HasPrecision(10);
+            .HasColumnName("ride_id")
+            .HasColumnType("NUMBER(10)")
+            .ValueGeneratedOnAdd();
 
+        // Ride name - required.
         builder.Property(r => r.RideName)
-            .IsRequired()
-            .HasColumnName("RIDE_NAME")
-            .HasMaxLength(100)
-            .IsUnicode(false);
+            .HasColumnName("ride_name")
+            .HasColumnType("VARCHAR2(100 CHAR)")
+            .IsRequired();
 
+        // Manager ID - foreign key.
         builder.Property(r => r.ManagerId)
-            .HasColumnName("MANAGER_ID")
-            .HasPrecision(10);
+            .HasColumnName("manager_id")
+            .HasColumnType("NUMBER(10)");
 
+        // Location - required.
         builder.Property(r => r.Location)
-            .IsRequired()
-            .HasColumnName("LOCATION")
-            .HasMaxLength(100)
-            .IsUnicode(false);
+            .HasColumnName("location")
+            .HasColumnType("VARCHAR2(100 CHAR)")
+            .IsRequired();
 
+        // Description - optional.
         builder.Property(r => r.Description)
-            .HasColumnName("DESCRIPTION")
-            .IsUnicode(false);
+            .HasColumnName("description")
+            .HasColumnType("VARCHAR2(4000 CHAR)");
 
+        // Ride status.
         builder.Property(r => r.RideStatus)
-            .IsRequired()
-            .HasColumnName("RIDE_STATUS")
-            .HasMaxLength(30)
-            .IsUnicode(false)
-            .HasConversion<string>();
+            .HasColumnName("ride_status")
+            .IsRequired();
 
+        // Capacity.
         builder.Property(r => r.Capacity)
-            .HasColumnName("CAPACITY")
-            .HasPrecision(5);
+            .HasColumnName("capacity")
+            .HasColumnType("NUMBER(10)");
 
+        // Duration in minutes.
         builder.Property(r => r.Duration)
-            .HasColumnName("DURATION")
-            .HasPrecision(5);
+            .HasColumnName("duration")
+            .HasColumnType("NUMBER(10)");
 
+        // Height limits.
         builder.Property(r => r.HeightLimitMin)
-            .HasColumnName("HEIGHT_LIMIT_MIN")
-            .HasColumnType("decimal(5,2)");
+            .HasColumnName("height_limit_min")
+            .HasColumnType("NUMBER(5,2)");
 
         builder.Property(r => r.HeightLimitMax)
-            .HasColumnName("HEIGHT_LIMIT_MAX")
-            .HasColumnType("decimal(5,2)");
+            .HasColumnName("height_limit_max")
+            .HasColumnType("NUMBER(5,2)");
 
+        // Open date.
         builder.Property(r => r.OpenDate)
-            .HasColumnName("OPEN_DATE");
+            .HasColumnName("open_date")
+            .HasColumnType("TIMESTAMP(0)");
 
+        // Audit fields.
         builder.Property(r => r.CreatedAt)
-            .HasColumnName("CREATED_AT");
+            .HasColumnName("created_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .IsRequired()
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
-            .HasColumnName("UPDATED_AT");
+            .HasColumnName("updated_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置
-        builder.HasIndex(r => r.ManagerId, "AMUSEMENT_RIDES_MANAGER_ID_IDX");
-        builder.HasIndex(r => r.RideName, "AMUSEMENT_RIDES_RIDE_NAME_IDX");
-        builder.HasIndex(r => r.RideStatus, "AMUSEMENT_RIDES_RIDE_STATUS_IDX");
+        builder.HasIndex(r => r.ManagerId);
+        builder.HasIndex(r => r.RideName);
+        builder.HasIndex(r => r.RideStatus);
 
         // 关系配置
-        // 与管理员的关系
         builder.HasOne(r => r.Manager)
             .WithMany(e => e.AmusementRides)
-            .HasForeignKey(r => r.ManagerId);
+            .HasForeignKey(r => r.ManagerId)
+            .OnDelete(DeleteBehavior.SetNull);
 
-        // 集合关系配置
         builder.HasMany(r => r.InspectionRecords)
             .WithOne(i => i.Ride)
-            .HasForeignKey(i => i.RideId);
+            .HasForeignKey(i => i.RideId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(r => r.MaintenanceRecords)
             .WithOne(m => m.Ride)
-            .HasForeignKey(m => m.RideId);
+            .HasForeignKey(m => m.RideId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(r => r.RideTrafficStats)
             .WithOne(t => t.Ride)
-            .HasForeignKey(t => t.RideId);
+            .HasForeignKey(t => t.RideId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

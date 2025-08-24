@@ -9,43 +9,48 @@ public class RideTrafficStatConfiguration : IEntityTypeConfiguration<RideTraffic
     public void Configure(EntityTypeBuilder<RideTrafficStat> builder)
     {
         // 表名和基础配置
-        builder.ToTable("RIDE_TRAFFIC_STATS");
+        builder.ToTable("ride_traffic_stats");
 
         // 复合主键配置
         builder.HasKey(r => new { r.RideId, r.RecordTime });
 
         // 属性映射
         builder.Property(r => r.RideId)
-            .HasColumnName("RIDE_ID")
-            .HasPrecision(10);
+            .HasColumnName("ride_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.RecordTime)
-            .HasColumnName("RECORD_TIME");
+            .HasColumnName("record_time")
+            .HasColumnType("TIMESTAMP(0)");
 
         builder.Property(r => r.VisitorCount)
-            .HasColumnName("VISITOR_COUNT")
-            .HasPrecision(10);
+            .HasColumnName("visitor_count")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.QueueLength)
-            .HasColumnName("QUEUE_LENGTH")
-            .HasPrecision(10);
+            .HasColumnName("queue_length")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.WaitingTime)
-            .HasColumnName("WAITING_TIME")
-            .HasPrecision(10);
+            .HasColumnName("waiting_time")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.IsCrowded)
-            .HasColumnName("IS_CROWDED")
+            .HasColumnName("is_crowded")
             .HasColumnType("NUMBER(1)");
 
         builder.Property(r => r.CreatedAt)
-            .HasColumnName("CREATED_AT");
+            .HasColumnName("created_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
-            .HasColumnName("UPDATED_AT");
+            .HasColumnName("updated_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置
-        builder.HasIndex(r => r.IsCrowded, "RIDE_TRAFFIC_STATS_IS_CROWDED_IDX");
+        builder.HasIndex(r => r.IsCrowded);
 
         // 关系配置
         builder.HasOne(r => r.Ride)

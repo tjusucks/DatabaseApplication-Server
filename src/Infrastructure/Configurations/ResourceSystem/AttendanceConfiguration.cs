@@ -9,50 +9,51 @@ public class AttendanceConfiguration : IEntityTypeConfiguration<Attendance>
     public void Configure(EntityTypeBuilder<Attendance> builder)
     {
         // 表名和基础配置
-        builder.ToTable("ATTENDANCES");
+        builder.ToTable("attendances");
         builder.HasKey(a => a.AttendanceId);
 
         // 属性映射
         builder.Property(a => a.AttendanceId)
-            .HasColumnName("ATTENDANCE_ID")
-            .HasPrecision(10);
+            .HasColumnName("attendance_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(a => a.EmployeeId)
-            .HasColumnName("EMPLOYEE_ID")
-            .HasPrecision(10);
+            .HasColumnName("employee_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(a => a.AttendanceDate)
-            .HasColumnName("ATTENDANCE_DATE");
+            .HasColumnName("attendance_date")
+            .HasColumnType("TIMESTAMP(0)");
 
         builder.Property(a => a.CheckInTime)
-            .HasColumnName("CHECK_IN_TIME");
+            .HasColumnName("check_in_time")
+            .HasColumnType("TIMESTAMP(0)");
 
         builder.Property(a => a.CheckOutTime)
-            .HasColumnName("CHECK_OUT_TIME");
+            .HasColumnName("check_out_time")
+            .HasColumnType("TIMESTAMP(0)");
 
         builder.Property(a => a.AttendanceStatus)
             .IsRequired()
-            .HasColumnName("ATTENDANCE_STATUS")
-            .HasMaxLength(30)
-            .IsUnicode(false)
-            .HasConversion<string>();
+            .HasColumnName("attendance_status");
 
         builder.Property(a => a.LeaveType)
-            .HasColumnName("LEAVE_TYPE")
-            .HasMaxLength(30)
-            .IsUnicode(false)
-            .HasConversion<string>();
+            .HasColumnName("leave_type");
 
         builder.Property(a => a.CreatedAt)
-            .HasColumnName("CREATED_AT");
+            .HasColumnName("created_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(a => a.UpdatedAt)
-            .HasColumnName("UPDATED_AT");
+            .HasColumnName("updated_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置
-        builder.HasIndex(a => a.AttendanceDate, "ATTENDANCES_ATTENDANCE_DATE_IDX");
-        builder.HasIndex(a => a.AttendanceStatus, "ATTENDANCES_ATTENDANCE_STATUS_IDX");
-        builder.HasIndex(a => a.EmployeeId, "ATTENDANCES_EMPLOYEE_ID_IDX");
+        builder.HasIndex(a => a.AttendanceDate);
+        builder.HasIndex(a => a.AttendanceStatus);
+        builder.HasIndex(a => a.EmployeeId);
 
         // 关系配置
         builder.HasOne(a => a.Employee)

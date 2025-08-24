@@ -30,7 +30,8 @@ public class PromotionTicketTypeConfiguration : IEntityTypeConfiguration<Promoti
 
         builder.Property(ptt => ptt.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 3. 配置多对多关系
         // 配置与 Promotion 的关系

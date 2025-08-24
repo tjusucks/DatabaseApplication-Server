@@ -9,55 +9,57 @@ public class InspectionRecordConfiguration : IEntityTypeConfiguration<Inspection
     public void Configure(EntityTypeBuilder<InspectionRecord> builder)
     {
         // 表名和基础配置
-        builder.ToTable("INSPECTION_RECORDS");
+        builder.ToTable("inspection_records");
         builder.HasKey(r => r.InspectionId);
 
         // 属性映射
         builder.Property(r => r.InspectionId)
-            .HasColumnName("INSPECTION_ID")
-            .HasPrecision(10);
+            .HasColumnName("inspection_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.RideId)
-            .HasColumnName("RIDE_ID")
-            .HasPrecision(10);
+            .HasColumnName("ride_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.TeamId)
-            .HasColumnName("TEAM_ID")
-            .HasPrecision(10);
+            .HasColumnName("team_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.CheckDate)
-            .HasColumnName("CHECK_DATE");
+            .HasColumnName("check_date")
+            .HasColumnType("TIMESTAMP(0)");
 
         builder.Property(r => r.CheckType)
             .IsRequired()
-            .HasColumnName("CHECK_TYPE")
-            .HasMaxLength(30)
-            .IsUnicode(false)
-            .HasConversion<string>();
+            .HasColumnName("check_type");
 
         builder.Property(r => r.IsPassed)
-            .HasColumnName("IS_PASSED")
+            .HasColumnName("is_passed")
             .HasColumnType("NUMBER(1)");
 
         builder.Property(r => r.IssuesFound)
-            .HasColumnName("ISSUES_FOUND")
-            .IsUnicode(false);
+            .HasColumnName("issues_found")
+            .HasColumnType("VARCHAR2(4000 CHAR)");
 
         builder.Property(r => r.Recommendations)
-            .HasColumnName("RECOMMENDATIONS")
-            .IsUnicode(false);
+            .HasColumnName("recommendations")
+            .HasColumnType("VARCHAR2(4000 CHAR)");
 
         builder.Property(r => r.CreatedAt)
-            .HasColumnName("CREATED_AT");
+            .HasColumnName("created_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
-            .HasColumnName("UPDATED_AT");
+            .HasColumnName("updated_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置
-        builder.HasIndex(r => r.CheckDate, "INSPECTION_RECORDS_CHECK_DATE_IDX");
-        builder.HasIndex(r => r.IsPassed, "INSPECTION_RECORDS_IS_PASSED_IDX");
-        builder.HasIndex(r => r.RideId, "INSPECTION_RECORDS_RIDE_ID_IDX");
-        builder.HasIndex(r => r.TeamId, "INSPECTION_RECORDS_TEAM_ID_IDX");
+        builder.HasIndex(r => r.CheckDate);
+        builder.HasIndex(r => r.IsPassed);
+        builder.HasIndex(r => r.RideId);
+        builder.HasIndex(r => r.TeamId);
 
         // 关系配置
         // 与游乐设施的关系

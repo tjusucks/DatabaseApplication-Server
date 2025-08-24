@@ -9,47 +9,47 @@ public class EmployeeReviewConfiguration : IEntityTypeConfiguration<EmployeeRevi
     public void Configure(EntityTypeBuilder<EmployeeReview> builder)
     {
         // 表名和基础配置
-        builder.ToTable("EMPLOYEE_REVIEWS");
+        builder.ToTable("employee_reviews");
         builder.HasKey(r => r.ReviewId);
 
         // 属性映射
         builder.Property(r => r.ReviewId)
-            .HasColumnName("REVIEW_ID")
-            .HasPrecision(10);
+            .HasColumnName("review_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.EmployeeId)
-            .HasColumnName("EMPLOYEE_ID")
-            .HasPrecision(10);
+            .HasColumnName("employee_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.Period)
             .IsRequired()
-            .HasColumnName("PERIOD")
-            .HasMaxLength(7)
-            .IsUnicode(false);
+            .HasColumnName("period")
+            .HasColumnType("VARCHAR2(7)");
 
         builder.Property(r => r.Score)
-            .HasColumnName("SCORE")
-            .HasColumnType("decimal(5,2)");
+            .HasColumnName("score")
+            .HasColumnType("NUMBER(5,2)");
 
         builder.Property(r => r.EvaluationLevel)
-            .HasColumnName("EVALUATION_LEVEL")
-            .HasMaxLength(30)
-            .IsUnicode(false)
-            .HasConversion<string>();
+            .HasColumnName("evaluation_level");
 
         builder.Property(r => r.EvaluatorId)
-            .HasColumnName("EVALUATOR_ID")
-            .HasPrecision(10);
+            .HasColumnName("evaluator_id")
+            .HasColumnType("NUMBER(10)");
 
         builder.Property(r => r.CreatedAt)
-            .HasColumnName("CREATED_AT");
+            .HasColumnName("created_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(r => r.UpdatedAt)
-            .HasColumnName("UPDATED_AT");
+            .HasColumnName("updated_at")
+            .HasColumnType("TIMESTAMP(0)")
+            .HasDefaultValueSql("SYSTIMESTAMP");
 
         // 索引配置
-        builder.HasIndex(r => r.EmployeeId, "EMPLOYEE_REVIEWS_EMPLOYEE_ID_IDX");
-        builder.HasIndex(r => r.Period, "EMPLOYEE_REVIEWS_PERIOD_IDX");
+        builder.HasIndex(r => r.EmployeeId);
+        builder.HasIndex(r => r.Period);
 
         // 关系配置
         builder.HasOne(r => r.Employee)
