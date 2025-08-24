@@ -21,7 +21,7 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
             .HasColumnName("RIDE_ID")
             .HasPrecision(10);
 
-        builder.Property(r => r.GroupId)
+        builder.Property(r => r.TeamId)
             .HasColumnName("GROUP_ID")
             .HasPrecision(10);
 
@@ -79,7 +79,7 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
 
         // 索引配置（7个索引）
         builder.HasIndex(r => r.EndTime, "MAINTENANCE_RECORDS_END_TIME_IDX");
-        builder.HasIndex(r => r.GroupId, "MAINTENANCE_RECORDS_GROUP_ID_IDX");
+        builder.HasIndex(r => r.TeamId, "MAINTENANCE_RECORDS_GROUP_ID_IDX");
         builder.HasIndex(r => r.IsAccepted, "MAINTENANCE_RECORDS_IS_ACCEPTED_IDX");
         builder.HasIndex(r => r.IsCompleted, "MAINTENANCE_RECORDS_IS_COMPLETED_IDX");
         builder.HasIndex(r => r.ManagerId, "MAINTENANCE_RECORDS_MANAGER_ID_IDX");
@@ -94,14 +94,14 @@ public class MaintenanceRecordConfiguration : IEntityTypeConfiguration<Maintenan
             .IsRequired();
 
         // 与维修组的关系
-        //builder.HasOne(r => r.Group)
-        //.WithMany(t => t.MaintenanceRecords)
-        //.HasForeignKey(r => r.GroupId)
-        //.IsRequired();
+        builder.HasOne(r => r.Team)
+            .WithMany(t => t.MaintenanceRecords)
+            .HasForeignKey(r => r.TeamId)
+            .IsRequired();
 
         // 与管理员的关系
-        //builder.HasOne(r => r.Manager)
-        //.WithMany(e => e.MaintenanceRecords)
-        //.HasForeignKey(r => r.ManagerId);
+        builder.HasOne(r => r.Manager)
+            .WithMany()
+            .HasForeignKey(r => r.ManagerId);
     }
 }

@@ -1,3 +1,4 @@
+using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 
 namespace DbApp.Domain.Entities.ResourceSystem;
@@ -73,10 +74,8 @@ public class AmusementRide
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    //public Employee? Manager { get; set; }
-
-    // 集合导航属性
-    public ICollection<InspectionRecord> InspectionRecords { get; set; } = new List<InspectionRecord>();
-    public ICollection<MaintenanceRecord> MaintenanceRecords { get; set; } = new List<MaintenanceRecord>();
-    public ICollection<RideTrafficStat> RideTrafficStats { get; set; } = new List<RideTrafficStat>();
+    public Employee? Manager { get; set; }
+    public ICollection<InspectionRecord> InspectionRecords { get; set; } = [];
+    public ICollection<MaintenanceRecord> MaintenanceRecords { get; set; } = [];
+    public ICollection<RideTrafficStat> RideTrafficStats { get; set; } = [];
 }

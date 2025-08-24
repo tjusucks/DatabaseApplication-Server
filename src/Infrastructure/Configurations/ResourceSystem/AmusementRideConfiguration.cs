@@ -76,9 +76,9 @@ public class AmusementRideConfiguration : IEntityTypeConfiguration<AmusementRide
 
         // 关系配置
         // 与管理员的关系
-        //builder.HasOne(r => r.Manager)
-        //.WithMany(e => e.AmusementRides)
-        //.HasForeignKey(r => r.ManagerId);
+        builder.HasOne(r => r.Manager)
+            .WithMany(e => e.AmusementRides)
+            .HasForeignKey(r => r.ManagerId);
 
         // 集合关系配置
         builder.HasMany(r => r.InspectionRecords)

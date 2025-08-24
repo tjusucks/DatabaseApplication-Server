@@ -55,9 +55,9 @@ public class AttendanceConfiguration : IEntityTypeConfiguration<Attendance>
         builder.HasIndex(a => a.EmployeeId, "ATTENDANCES_EMPLOYEE_ID_IDX");
 
         // 关系配置
-        //builder.HasOne(a => a.Employee)
-        //.WithMany(e => e.Attendances)
-        //.HasForeignKey(a => a.EmployeeId)
-        //.IsRequired();
+        builder.HasOne(a => a.Employee)
+            .WithMany(e => e.Attendances)
+            .HasForeignKey(a => a.EmployeeId)
+            .IsRequired();
     }
 }

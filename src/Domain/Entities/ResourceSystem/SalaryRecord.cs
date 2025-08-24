@@ -1,5 +1,7 @@
 namespace DbApp.Domain.Entities.ResourceSystem;
 
+using DbApp.Domain.Entities.UserSystem;
+
 /// <summary>
 /// 员工薪资记录
 /// </summary>
@@ -36,5 +38,5 @@ public class SalaryRecord
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    //public Employee Employee { get; set; } = null!;
+    public Employee Employee { get; set; } = null!;
 }

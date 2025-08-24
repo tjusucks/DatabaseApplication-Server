@@ -1,3 +1,4 @@
+using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 
 namespace DbApp.Domain.Entities.ResourceSystem;
@@ -20,7 +21,7 @@ public class MaintenanceRecord
     /// <summary>
     /// 维修组ID
     /// </summary>
-    public int GroupId { get; set; }
+    public int TeamId { get; set; }
 
     /// <summary>
     /// 负责管理员ID
@@ -88,7 +89,7 @@ public class MaintenanceRecord
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    //public StaffTeam Group { get; set; } = null!;
-    //public Employee? Manager { get; set; }
+    public StaffTeam Team { get; set; } = null!;
+    public Employee? Manager { get; set; }
     public AmusementRide Ride { get; set; } = null!;
 }

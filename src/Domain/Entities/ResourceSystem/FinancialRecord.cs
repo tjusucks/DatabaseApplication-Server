@@ -1,3 +1,4 @@
+using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 
 namespace DbApp.Domain.Entities.ResourceSystem;
@@ -27,7 +28,6 @@ public class FinancialRecord
     /// </summary>
     public TransactionType TransactionType { get; set; }
 
-
     /// <summary>
     /// 支付方式
     /// </summary>
@@ -41,7 +41,7 @@ public class FinancialRecord
     /// <summary>
     /// 审批人ID
     /// </summary>
-    public int? ApprovedBy { get; set; }
+    public int? ApprovedById { get; set; }
 
     /// <summary>
     /// 创建时间
@@ -54,6 +54,6 @@ public class FinancialRecord
     public DateTime UpdatedAt { get; set; }
 
     // 导航属性
-    //public Employee? ApprovedByNavigation { get; set; }
-    //public Employee? ResponsibleEmployee { get; set; }
+    public Employee? ApprovedBy { get; set; }
+    public Employee? ResponsibleEmployee { get; set; }
 }

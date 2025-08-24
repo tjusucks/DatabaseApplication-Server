@@ -1,3 +1,4 @@
+using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.UserSystem;
 
 namespace DbApp.Domain.Entities.UserSystem;
@@ -41,4 +42,6 @@ public class StaffTeam
     public Employee Leader { get; set; } = null!;
     public ICollection<TeamMember> TeamMembers { get; set; } = [];
     public ICollection<Employee> Employees { get; set; } = [];
+    public ICollection<InspectionRecord> InspectionRecords { get; set; } = [];
+    public ICollection<MaintenanceRecord> MaintenanceRecords { get; set; } = [];
 }
