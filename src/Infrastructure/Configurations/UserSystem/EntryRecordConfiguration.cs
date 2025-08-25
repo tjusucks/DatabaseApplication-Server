@@ -32,13 +32,13 @@ public class EntryRecordConfiguration : IEntityTypeConfiguration<EntryRecord>
         // Entry time.
         builder.Property(er => er.EntryTime)
             .HasColumnName("entry_time")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired();
 
         // Exit time - optional.
         builder.Property(er => er.ExitTime)
             .HasColumnName("exit_time")
-            .HasColumnType("TIMESTAMP(0)");
+            .HasColumnType("TIMESTAMP");
 
         // Entry gate.
         builder.Property(er => er.EntryGate)
@@ -59,13 +59,13 @@ public class EntryRecordConfiguration : IEntityTypeConfiguration<EntryRecord>
         // Audit fields.
         builder.Property(er => er.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(er => er.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to visitors table.

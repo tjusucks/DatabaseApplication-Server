@@ -31,12 +31,12 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
 
         builder.Property(p => p.StartDatetime)
             .HasColumnName("start_datetime")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired();
 
         builder.Property(p => p.EndDatetime)
             .HasColumnName("end_datetime")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired();
 
         builder.Property(p => p.UsageLimitPerUser)
@@ -85,13 +85,13 @@ public class PromotionConfiguration : IEntityTypeConfiguration<Promotion>
 
         builder.Property(p => p.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(p => p.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 

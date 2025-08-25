@@ -31,8 +31,8 @@ public class ReservationItemConfiguration : IEntityTypeConfiguration<Reservation
 
         builder.Property(ri => ri.TotalAmount).HasColumnName("total_amount").HasColumnType("NUMBER(10,2)").IsRequired();
 
-        builder.Property(ri => ri.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
-        builder.Property(ri => ri.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(ri => ri.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(ri => ri.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
 
         // 配置索引
         builder.HasIndex(ri => ri.ReservationId);

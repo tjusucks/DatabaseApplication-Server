@@ -1,3 +1,4 @@
+using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.UserSystem;
 
 namespace DbApp.Domain.Entities.UserSystem;
@@ -78,4 +79,18 @@ public class Employee
     public Employee? Manager { get; set; }
     public StaffTeam? Team { get; set; }
     public ICollection<Employee> Subordinates { get; set; } = [];
+    public ICollection<Attendance> Attendances { get; set; } = [];
+    public ICollection<AmusementRide> AmusementRides { get; set; } = [];
+
+    /// <summary>
+    /// Reviews received by this employee.
+    /// </summary>
+    public ICollection<EmployeeReview> Reviews { get; set; } = [];
+
+    /// <summary>
+    /// Reviews given by this employee.
+    /// </summary>
+    public ICollection<EmployeeReview> EvaluatedReviews { get; set; } = [];
+
+    public ICollection<SalaryRecord> SalaryRecords { get; set; } = [];
 }

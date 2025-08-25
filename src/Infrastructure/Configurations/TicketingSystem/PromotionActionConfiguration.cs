@@ -39,8 +39,8 @@ public class PromotionActionConfiguration : IEntityTypeConfiguration<PromotionAc
 
         builder.Property(pa => pa.FreeTicketQuantity).HasColumnName("free_ticket_quantity").HasColumnType("NUMBER(10)");
 
-        builder.Property(pa => pa.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
-        builder.Property(pa => pa.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(pa => pa.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(pa => pa.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
 
         // 配置索引
         builder.HasIndex(pa => pa.PromotionId);
@@ -49,7 +49,7 @@ public class PromotionActionConfiguration : IEntityTypeConfiguration<PromotionAc
 
         // 配置外键
         builder.HasOne(pa => pa.Promotion)
-               .WithMany(p => p.Actions)
+               .WithMany(p => p.PromotionActions)
                .HasForeignKey(pa => pa.PromotionId)
                .OnDelete(DeleteBehavior.Cascade);
 

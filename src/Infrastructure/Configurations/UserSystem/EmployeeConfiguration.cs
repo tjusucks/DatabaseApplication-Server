@@ -52,7 +52,7 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         // Hire date.
         builder.Property(e => e.HireDate)
             .HasColumnName("hire_date")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
@@ -80,13 +80,13 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
         // Audit fields.
         builder.Property(e => e.CreatedAt)
             .HasColumnName("created_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .IsRequired()
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         builder.Property(e => e.UpdatedAt)
             .HasColumnName("updated_at")
-            .HasColumnType("TIMESTAMP(0)")
+            .HasColumnType("TIMESTAMP")
             .HasDefaultValueSql("SYSTIMESTAMP");
 
         // Foreign key relationship to users table.

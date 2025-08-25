@@ -18,8 +18,8 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 
         builder.Property(r => r.ReservationId).HasColumnName("reservation_id").HasColumnType("NUMBER(10)");
         builder.Property(r => r.VisitorId).HasColumnName("visitor_id").HasColumnType("NUMBER(10)").IsRequired();
-        builder.Property(r => r.ReservationTime).HasColumnName("reservation_time").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
-        builder.Property(r => r.VisitDate).HasColumnName("visit_date").HasColumnType("TIMESTAMP(0)").IsRequired();
+        builder.Property(r => r.ReservationTime).HasColumnName("reservation_time").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(r => r.VisitDate).HasColumnName("visit_date").HasColumnType("TIMESTAMP").IsRequired();
 
         builder.Property(r => r.DiscountAmount).HasColumnName("discount_amount").HasColumnType("NUMBER(10,2)").IsRequired().HasDefaultValue(0);
 
@@ -39,8 +39,8 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
         builder.Property(r => r.PromotionId).HasColumnName("promotion_id").HasColumnType("NUMBER(10)");
         builder.Property(r => r.SpecialRequests).HasColumnName("special_requests").HasColumnType("VARCHAR2(500 CHAR)");
 
-        builder.Property(r => r.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
-        builder.Property(r => r.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(r => r.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(r => r.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
 
         // 配置索引
         builder.HasIndex(r => r.VisitorId);
@@ -51,12 +51,12 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 
         // 配置外键
         builder.HasOne(r => r.Visitor)
-               .WithMany() // 假设 Visitor 不需要 Reservations 集合
+               .WithMany(v => v.Reservations)
                .HasForeignKey(r => r.VisitorId)
                .OnDelete(DeleteBehavior.Restrict); // 禁止删除有预订记录的游客
 
         builder.HasOne(r => r.Promotion)
-               .WithMany() // 假设 Promotion 不需要 Reservations 集合
+               .WithMany(p => p.Reservations)
                .HasForeignKey(r => r.PromotionId)
                .OnDelete(DeleteBehavior.SetNull); // 如果优惠活动被删除，将预订中的ID设为null
     }

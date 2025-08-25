@@ -25,8 +25,8 @@ public class CouponConfiguration : IEntityTypeConfiguration<Coupon>
 
         builder.Property(c => c.DiscountValue).HasColumnName("discount_value").HasColumnType("NUMBER(10,2)").IsRequired();
         builder.Property(c => c.MinPurchaseAmount).HasColumnName("min_purchase_amount").HasColumnType("NUMBER(10,2)").IsRequired().HasDefaultValue(0);
-        builder.Property(c => c.ValidFrom).HasColumnName("valid_from").HasColumnType("TIMESTAMP(0)").IsRequired();
-        builder.Property(c => c.ValidTo).HasColumnName("valid_to").HasColumnType("TIMESTAMP(0)").IsRequired();
+        builder.Property(c => c.ValidFrom).HasColumnName("valid_from").HasColumnType("TIMESTAMP").IsRequired();
+        builder.Property(c => c.ValidTo).HasColumnName("valid_to").HasColumnType("TIMESTAMP").IsRequired();
 
         builder.Property(c => c.IsUsed)
             .HasColumnName("is_used")
@@ -35,10 +35,10 @@ public class CouponConfiguration : IEntityTypeConfiguration<Coupon>
             .HasDefaultValue(false);
 
         builder.Property(c => c.UsedById).HasColumnName("used_by").HasColumnType("NUMBER(10)");
-        builder.Property(c => c.UsedTime).HasColumnName("used_time").HasColumnType("TIMESTAMP(0)");
+        builder.Property(c => c.UsedTime).HasColumnName("used_time").HasColumnType("TIMESTAMP");
 
-        builder.Property(c => c.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
-        builder.Property(c => c.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP(0)").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(c => c.CreatedAt).HasColumnName("created_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
+        builder.Property(c => c.UpdatedAt).HasColumnName("updated_at").HasColumnType("TIMESTAMP").IsRequired().HasDefaultValueSql("SYSTIMESTAMP");
 
         // 配置索引
         builder.HasIndex(c => c.PromotionId);
