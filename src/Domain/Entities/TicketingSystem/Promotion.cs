@@ -24,8 +24,9 @@ public class Promotion
 
     // 导航属性
     public Employee Employee { get; set; } = null!;
-    public ICollection<PromotionTicketType> ApplicableTicketTypes { get; set; } = [];
-    public ICollection<PromotionCondition> Conditions { get; set; } = [];
-    public ICollection<PromotionAction> Actions { get; set; } = [];
+    public ICollection<PromotionTicketType> PromotionTicketTypes { get; set; } = [];
+    public ICollection<PromotionCondition> PromotionConditions { get; set; } = [];
+    public ICollection<PromotionAction> PromotionActions { get; set; } = [];
     public ICollection<Coupon> Coupons { get; set; } = [];
+    public ICollection<Reservation> Reservations { get; set; } = [];
 }

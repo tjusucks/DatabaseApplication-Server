@@ -49,7 +49,7 @@ public class PromotionActionConfiguration : IEntityTypeConfiguration<PromotionAc
 
         // 配置外键
         builder.HasOne(pa => pa.Promotion)
-               .WithMany(p => p.Actions)
+               .WithMany(p => p.PromotionActions)
                .HasForeignKey(pa => pa.PromotionId)
                .OnDelete(DeleteBehavior.Cascade);
 

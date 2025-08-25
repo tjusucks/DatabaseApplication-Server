@@ -19,6 +19,6 @@ public class TicketType
     // 导航属性
     public ApplicableCrowd ApplicableCrowd { get; set; }
     public ICollection<Ticket> Tickets { get; set; } = [];
-    public ICollection<PromotionTicketType> ApplicablePromotions { get; set; } = [];
+    public ICollection<PromotionTicketType> PromotionTicketTypes { get; set; } = [];
     public ICollection<PriceRule> PriceRules { get; set; } = [];
 }

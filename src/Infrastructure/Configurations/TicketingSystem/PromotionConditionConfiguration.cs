@@ -69,7 +69,7 @@ public class PromotionConditionConfiguration : IEntityTypeConfiguration<Promotio
 
         // 配置外键
         builder.HasOne(pc => pc.Promotion)
-               .WithMany(p => p.Conditions)
+               .WithMany(p => p.PromotionConditions)
                .HasForeignKey(pc => pc.PromotionId)
                .OnDelete(DeleteBehavior.Cascade); // 条件依赖于活动，活动删除则条件也删除
 

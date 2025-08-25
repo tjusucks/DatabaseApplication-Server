@@ -61,4 +61,5 @@ public class Visitor
     public User User { get; set; } = null!;
     public ICollection<EntryRecord> EntryRecords { get; set; } = [];
     public ICollection<Coupon> UsedCoupons { get; set; } = [];
+    public ICollection<Reservation> Reservations { get; set; } = [];
 }

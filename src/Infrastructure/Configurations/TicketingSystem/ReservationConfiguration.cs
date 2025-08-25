@@ -51,12 +51,12 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 
         // 配置外键
         builder.HasOne(r => r.Visitor)
-               .WithMany() // 假设 Visitor 不需要 Reservations 集合
+               .WithMany(v => v.Reservations)
                .HasForeignKey(r => r.VisitorId)
                .OnDelete(DeleteBehavior.Restrict); // 禁止删除有预订记录的游客
 
         builder.HasOne(r => r.Promotion)
-               .WithMany() // 假设 Promotion 不需要 Reservations 集合
+               .WithMany(p => p.Reservations)
                .HasForeignKey(r => r.PromotionId)
                .OnDelete(DeleteBehavior.SetNull); // 如果优惠活动被删除，将预订中的ID设为null
     }
