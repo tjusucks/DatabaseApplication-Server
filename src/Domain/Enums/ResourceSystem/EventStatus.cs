@@ -8,21 +8,21 @@ public enum EventStatus
     /// <summary>
     /// 筹备中
     /// </summary>
-    Planning,
+    Planning = 0,
 
     /// <summary>
     /// 进行中
     /// </summary>
-    Ongoing,
+    Ongoing = 1,
 
     /// <summary>
     /// 已结束
     /// </summary>
-    Completed,
+    Completed = 2,
 
     /// <summary>
     /// 已取消
     /// </summary>
-    Cancelled
+    Cancelled = 3
 }
 

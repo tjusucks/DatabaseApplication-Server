@@ -8,20 +8,20 @@ public enum MaintenanceType
     /// <summary>
     /// 预防性维护
     /// </summary>
-    Preventive,
+    Preventive = 0,
 
     /// <summary>
     /// 紧急维修
     /// </summary>
-    Emergency,
+    Emergency = 1,
 
     /// <summary>
     /// 部件更换
     /// </summary>
-    Replacement,
+    Replacement = 2,
 
     /// <summary>
     /// 软件升级
     /// </summary>
-    SoftwareUpdate
+    SoftwareUpdate = 3
 }

@@ -8,20 +8,20 @@ public enum EvaluationLevel
     /// <summary>
     /// 优秀
     /// </summary>
-    Excellent,
+    Excellent = 0,
 
     /// <summary>
     /// 良好
     /// </summary>
-    Good,
+    Good = 1,
 
     /// <summary>
     /// 合格
     /// </summary>
-    Qualified,
+    Qualified = 2,
 
     /// <summary>
     /// 不合格
     /// </summary>
-    Unqualified
+    Unqualified = 3
 }

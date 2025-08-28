@@ -8,20 +8,20 @@ public enum LeaveType
     /// <summary>
     /// 事假
     /// </summary>
-    Personal,
+    Personal = 0,
 
     /// <summary>
     /// 病假
     /// </summary>
-    Sick,
+    Sick = 1,
 
     /// <summary>
     /// 年假
     /// </summary>
-    Annual,
+    Annual = 2,
 
     /// <summary>
     /// 调休
     /// </summary>
-    Compensatory
+    Compensatory = 3
 }
