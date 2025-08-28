@@ -8,20 +8,20 @@ public enum RideStatus
     /// <summary>
     /// 运行中
     /// </summary>
-    Operating,
+    Operating = 0,
 
     /// <summary>
     /// 维护中
     /// </summary>
-    Maintenance,
+    Maintenance = 1,
 
     /// <summary>
     /// 已关闭
     /// </summary>
-    Closed,
+    Closed = 2,
 
     /// <summary>
     /// 测试中
     /// </summary>
-    Testing
+    Testing = 3
 }

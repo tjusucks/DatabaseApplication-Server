@@ -8,20 +8,20 @@ public enum AttendanceStatus
     /// <summary>
     /// 正常
     /// </summary>
-    Present,
+    Present = 0,
 
     /// <summary>
     /// 迟到
     /// </summary>
-    Late,
+    Late = 1,
 
     /// <summary>
     /// 缺勤
     /// </summary>
-    Absent,
+    Absent = 2,
 
     /// <summary>
     /// 请假
     /// </summary>
-    Leave
+    Leave = 3
 }

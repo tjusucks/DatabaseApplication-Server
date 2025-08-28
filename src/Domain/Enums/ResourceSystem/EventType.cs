@@ -8,20 +8,20 @@ public enum EventType
     /// <summary>
     /// 节日活动
     /// </summary>
-    Festival,
+    Festival = 0,
 
     /// <summary>
     /// 主题展览
     /// </summary>
-    Exhibition,
+    Exhibition = 1,
 
     /// <summary>
     /// 演出表演
     /// </summary>
-    Performance,
+    Performance = 2,
 
     /// <summary>
     /// 促销活动
     /// </summary>
-    Promotion
+    Promotion = 3
 }

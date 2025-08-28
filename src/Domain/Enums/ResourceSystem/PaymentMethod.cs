@@ -8,20 +8,20 @@ public enum PaymentMethod
     /// <summary>
     /// 现金
     /// </summary>
-    Cash,
+    Cash = 0,
 
     /// <summary>
     /// 信用卡
     /// </summary>
-    CreditCard,
+    CreditCard = 1,
 
     /// <summary>
     /// 移动支付
     /// </summary>
-    MobilePay,
+    MobilePay = 2,
 
     /// <summary>
     /// 数字货币
     /// </summary>
-    Crypto
+    Crypto = 3
 }

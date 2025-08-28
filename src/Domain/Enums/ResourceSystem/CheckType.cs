@@ -8,20 +8,20 @@ public enum CheckType
     /// <summary>
     /// 日常检查
     /// </summary>
-    Daily,
+    Daily = 0,
 
     /// <summary>
     /// 月度检查
     /// </summary>
-    Monthly,
+    Monthly = 1,
 
     /// <summary>
     /// 年度检查
     /// </summary>
-    Annual,
+    Annual = 2,
 
     /// <summary>
     /// 特殊检查
     /// </summary>
-    Special
+    Special = 3
 }
