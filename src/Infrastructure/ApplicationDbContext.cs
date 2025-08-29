@@ -65,6 +65,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<SeasonalEvent> SeasonalEvents { get; set; }
 >>>>>>> 351eae1 (feat(resource): add resource system domain and API)
 
+    public DbSet<RideEntryRecord> RideEntryRecords { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Apply all configurations.  
