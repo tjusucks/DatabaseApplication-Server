@@ -24,23 +24,31 @@ public class ReservationRecordQueryHandler(
         SearchReservationRecordByVisitorQuery request,
         CancellationToken cancellationToken)
     {
-        var reservations = await _reservationRepository.SearchByVisitorAsync(
+        var reservations = await _reservationRepository.SearchAsync(
             request.VisitorId,
+            request.Keyword,
             request.StartDate,
             request.EndDate,
             request.PaymentStatus,
             request.Status,
+            request.MinAmount,
+            request.MaxAmount,
+            request.PromotionId,
             request.SortBy,
             request.Descending,
             request.Page,
             request.PageSize);
 
-        var totalCount = await _reservationRepository.CountByVisitorAsync(
+        var totalCount = await _reservationRepository.CountAsync(
             request.VisitorId,
+            request.Keyword,
             request.StartDate,
             request.EndDate,
             request.PaymentStatus,
-            request.Status);
+            request.Status,
+            request.MinAmount,
+            request.MaxAmount,
+            request.PromotionId);
 
         var summaryDtos = _mapper.Map<List<ReservationRecordSummaryDto>>(reservations);
 
@@ -61,6 +69,7 @@ public class ReservationRecordQueryHandler(
         CancellationToken cancellationToken)
     {
         var reservations = await _reservationRepository.SearchAsync(
+            request.VisitorId,
             request.Keyword,
             request.StartDate,
             request.EndDate,
@@ -75,6 +84,7 @@ public class ReservationRecordQueryHandler(
             request.PageSize);
 
         var totalCount = await _reservationRepository.CountAsync(
+            request.VisitorId,
             request.Keyword,
             request.StartDate,
             request.EndDate,

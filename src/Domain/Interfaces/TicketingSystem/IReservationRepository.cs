@@ -11,60 +11,70 @@ public interface IReservationRepository
     /// </summary>
     Task<List<Reservation>> SearchByVisitorAsync(
         int visitorId,
-        DateTime? startDate,
-        DateTime? endDate,
-        PaymentStatus? paymentStatus,
-        ReservationStatus? status,
-        string? sortBy,
-        bool descending,
-        int page,
-        int pageSize);
+        string? keyword = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        PaymentStatus? paymentStatus = null,
+        ReservationStatus? status = null,
+        decimal? minAmount = null,
+        decimal? maxAmount = null,
+        int? promotionId = null,
+        string? sortBy = "ReservationTime",
+        bool descending = true,
+        int page = 1,
+        int pageSize = 20);
 
     /// <summary>
     /// Count reservations by visitor ID with various filters.
     /// </summary>
     Task<int> CountByVisitorAsync(
         int visitorId,
-        DateTime? startDate,
-        DateTime? endDate,
-        PaymentStatus? paymentStatus,
-        ReservationStatus? status);
+        string? keyword = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        PaymentStatus? paymentStatus = null,
+        ReservationStatus? status = null,
+        decimal? minAmount = null,
+        decimal? maxAmount = null,
+        int? promotionId = null);
 
     /// <summary>
     /// Search reservations by multiple criteria (admin use).
     /// </summary>
     Task<List<Reservation>> SearchAsync(
-        string? keyword,
-        DateTime? startDate,
-        DateTime? endDate,
-        PaymentStatus? paymentStatus,
-        ReservationStatus? status,
-        decimal? minAmount,
-        decimal? maxAmount,
-        int? promotionId,
-        string? sortBy,
-        bool descending,
-        int page,
-        int pageSize);
+        int? visitorId = null,
+        string? keyword = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        PaymentStatus? paymentStatus = null,
+        ReservationStatus? status = null,
+        decimal? minAmount = null,
+        decimal? maxAmount = null,
+        int? promotionId = null,
+        string? sortBy = "ReservationTime",
+        bool descending = true,
+        int page = 1,
+        int pageSize = 20);
 
     /// <summary>
     /// Count reservations by multiple criteria (admin use).
     /// </summary>
     Task<int> CountAsync(
-        string? keyword,
-        DateTime? startDate,
-        DateTime? endDate,
-        PaymentStatus? paymentStatus,
-        ReservationStatus? status,
-        decimal? minAmount,
-        decimal? maxAmount,
-        int? promotionId);
+        int? visitorId = null,
+        string? keyword = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        PaymentStatus? paymentStatus = null,
+        ReservationStatus? status = null,
+        decimal? minAmount = null,
+        decimal? maxAmount = null,
+        int? promotionId = null);
 
     /// <summary>
     /// Get reservation statistics for a visitor.
     /// </summary>
     Task<ReservationRecordStats> GetStatsByVisitorAsync(
         int visitorId,
-        DateTime? startDate,
-        DateTime? endDate);
+        DateTime? startDate = null,
+        DateTime? endDate = null);
 }

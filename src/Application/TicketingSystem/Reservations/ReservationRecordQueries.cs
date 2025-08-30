@@ -8,10 +8,14 @@ namespace DbApp.Application.TicketingSystem.Reservations;
 /// </summary>
 public record SearchReservationRecordByVisitorQuery(
     int VisitorId,
+    string? Keyword = null, // Search in visitor name, email, phone.
     DateTime? StartDate = null,
     DateTime? EndDate = null,
     PaymentStatus? PaymentStatus = null,
     ReservationStatus? Status = null,
+    decimal? MinAmount = null,
+    decimal? MaxAmount = null,
+    int? PromotionId = null,
     string? SortBy = "ReservationTime", // ReservationTime, TotalAmount, VisitDate.
     bool Descending = true,
     int Page = 1,
@@ -22,6 +26,7 @@ public record SearchReservationRecordByVisitorQuery(
 /// Search reservation records by multiple criteria (admin use).
 /// </summary>
 public record SearchReservationRecordQuery(
+    int? VisitorId = null,
     string? Keyword = null, // Search in visitor name, email, phone.
     DateTime? StartDate = null,
     DateTime? EndDate = null,
@@ -30,7 +35,7 @@ public record SearchReservationRecordQuery(
     decimal? MinAmount = null,
     decimal? MaxAmount = null,
     int? PromotionId = null,
-    string? SortBy = "ReservationTime",
+    string? SortBy = "ReservationTime", // ReservationTime, TotalAmount, VisitDate.
     bool Descending = true,
     int Page = 1,
     int PageSize = 20
