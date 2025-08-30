@@ -23,3 +23,33 @@ public class GetEmployeeByIdQueryHandler(IEmployeeRepository employeeRepository)
         return await _employeeRepository.GetByIdAsync(request.EmployeeId);
     }
 }
+
+
+public class GetEmployeesByDepartmentQueryHandler(IEmployeeRepository employeeRepository) : IRequestHandler<GetEmployeesByDepartmentQuery, List<Employee>>
+{
+    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+
+    public async Task<List<Employee>> Handle(GetEmployeesByDepartmentQuery request, CancellationToken cancellationToken)
+    {
+        return await _employeeRepository.GetByDepartmentAsync(request.DepartmentName);
+    }
+}
+public class SearchEmployeesQueryHandler(IEmployeeRepository employeeRepository) : IRequestHandler<SearchEmployeesQuery, List<Employee>>
+{
+    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+
+    public async Task<List<Employee>> Handle(SearchEmployeesQuery request, CancellationToken cancellationToken)
+    {
+        return await _employeeRepository.SearchAsync(request.Keyword);
+    }
+}
+
+public class GetEmployeesByStaffTypeQueryHandler(IEmployeeRepository employeeRepository) : IRequestHandler<GetEmployeesByStaffTypeQuery, List<Employee>>
+{
+    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+
+    public async Task<List<Employee>> Handle(GetEmployeesByStaffTypeQuery request, CancellationToken cancellationToken)
+    {
+        return await _employeeRepository.GetByStaffTypeAsync(request.StaffType);
+    }
+}

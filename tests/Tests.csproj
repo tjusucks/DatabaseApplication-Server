@@ -1,9 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\src\Application\Application.csproj" />
     <ProjectReference Include="..\src\Infrastructure\Infrastructure.csproj" />
     <ProjectReference Include="..\src\Domain\Domain.csproj" />
+    <ProjectReference Include="..\src\Presentation\Presentation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,6 +17,8 @@
     </PackageReference>
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>

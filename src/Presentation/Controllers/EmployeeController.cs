@@ -1,4 +1,5 @@
 using DbApp.Application.UserSystem.Employees;
+using DbApp.Domain.Enums.UserSystem;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,4 +51,25 @@ public class EmployeesController(IMediator mediator) : ControllerBase
         var employees = await _mediator.Send(new GetAllEmployeesQuery());
         return Ok(employees);
     }
+
+    [HttpGet("search")]
+    public async Task<IActionResult> Search([FromQuery] string keyword)
+    {
+        var employees = await _mediator.Send(new SearchEmployeesQuery(keyword));
+        return Ok(employees);
+    }
+    [HttpGet("department/{departmentName}")]
+    public async Task<IActionResult> GetByDepartment(string departmentName)
+    {
+        var employees = await _mediator.Send(new GetEmployeesByDepartmentQuery(departmentName));
+        return Ok(employees);
+    }
+
+    [HttpGet("stafftype/{staffType}")]
+    public async Task<IActionResult> GetByStaffType(StaffType staffType)
+    {
+        var employees = await _mediator.Send(new GetEmployeesByStaffTypeQuery(staffType));
+        return Ok(employees);
+    }
 }
+

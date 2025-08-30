@@ -162,4 +162,126 @@ public class EmployeeTest
 
         Console.WriteLine("\n=== All Employee CRUD Operations Tests Passed ===");
     }
+
+    [Fact]
+    public async Task Employee_Search_Operations_With_Output_Test()
+    {
+        // Arrange
+        Console.WriteLine("=== Employee Search Operations Test ===");
+
+        var employeesList = new List<Employee>
+        {
+            new Employee
+            {
+                EmployeeId = 1,
+                StaffNumber = "EMP001",
+                Position = "Developer",
+                DepartmentName = "IT Department",
+                StaffType = StaffType.Regular,
+                TeamId = 1,
+                HireDate = DateTime.UtcNow,
+                EmploymentStatus = EmploymentStatus.Active,
+                ManagerId = null,
+                Certification = "Certified Developer",
+                ResponsibilityArea = "Backend Development",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = null
+            },
+            new Employee
+            {
+                EmployeeId = 2,
+                StaffNumber = "EMP002",
+                Position = "Manager",
+                DepartmentName = "Human Resources",
+                StaffType = StaffType.Manager,
+                TeamId = 2,
+                HireDate = DateTime.UtcNow,
+                EmploymentStatus = EmploymentStatus.Active,
+                ManagerId = null,
+                Certification = "Management Expert",
+                ResponsibilityArea = "HR Management",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = null
+            },
+            new Employee
+            {
+                EmployeeId = 3,
+                StaffNumber = "EMP003",
+                Position = "Analyst",
+                DepartmentName = "IT Support",
+                StaffType = StaffType.Regular,
+                TeamId = 1,
+                HireDate = DateTime.UtcNow,
+                EmploymentStatus = EmploymentStatus.Active,
+                ManagerId = 1,
+                Certification = "Data Analyst",
+                ResponsibilityArea = "Data Analysis",
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = null
+            }
+        };
+
+        var mockEmployeeRepository = new Mock<IEmployeeRepository>();
+
+        // Setup for Search
+        mockEmployeeRepository.Setup(repo => repo.SearchAsync(It.IsAny<string>()))
+            .ReturnsAsync((string keyword) =>
+            {
+                Console.WriteLine($"Repository: Searching employees with keyword '{keyword}'");
+                if (string.IsNullOrWhiteSpace(keyword))
+                {
+                    return employeesList;
+                }
+                
+                return employeesList.Where(e => 
+                    e.DepartmentName != null && e.DepartmentName.Contains(keyword, StringComparison.OrdinalIgnoreCase)).ToList();
+            });
+
+        Console.WriteLine("\n--- Testing Search Operation ---");
+        // Test Search
+        var searchHandler = new SearchEmployeesQueryHandler(mockEmployeeRepository.Object);
+        
+        // Search with "IT" keyword - should return 2 employees (IT Department and IT Support)
+        Console.WriteLine("Frontend: Sending SearchEmployeesQuery with keyword 'IT'");
+        var searchResult = await searchHandler.Handle(new SearchEmployeesQuery("IT"), default);
+        
+        Assert.NotNull(searchResult);
+        Assert.Equal(2, searchResult.Count);
+        Assert.Contains(searchResult, e => e.EmployeeId == 1); // IT Department
+        Assert.Contains(searchResult, e => e.EmployeeId == 3); // IT Support
+        mockEmployeeRepository.Verify(repo => repo.SearchAsync("IT"), Times.Once);
+        
+        Console.WriteLine($"Frontend: Received {searchResult.Count} employees matching keyword 'IT'");
+        foreach (var emp in searchResult)
+        {
+            Console.WriteLine($"  - Employee ID: {emp.EmployeeId}, Department: {emp.DepartmentName}");
+        }
+        Console.WriteLine("✓ Search operation test passed");
+
+        // Search with "Human" keyword - should return 1 employee
+        Console.WriteLine("\nFrontend: Sending SearchEmployeesQuery with keyword 'Human'");
+        var searchResult2 = await searchHandler.Handle(new SearchEmployeesQuery("Human"), default);
+        
+        Assert.NotNull(searchResult2);
+        Assert.Single(searchResult2);
+        Assert.Equal(2, searchResult2[0].EmployeeId); // Human Resources
+        mockEmployeeRepository.Verify(repo => repo.SearchAsync("Human"), Times.Once);
+        
+        Console.WriteLine($"Frontend: Received {searchResult2.Count} employee matching keyword 'Human'");
+        Console.WriteLine($"  - Employee ID: {searchResult2[0].EmployeeId}, Department: {searchResult2[0].DepartmentName}");
+        Console.WriteLine("✓ Search operation with 'Human' keyword test passed");
+
+        // Search with empty keyword - should return all employees
+        Console.WriteLine("\nFrontend: Sending SearchEmployeesQuery with empty keyword");
+        var searchResult3 = await searchHandler.Handle(new SearchEmployeesQuery(""), default);
+        
+        Assert.NotNull(searchResult3);
+        Assert.Equal(3, searchResult3.Count);
+        mockEmployeeRepository.Verify(repo => repo.SearchAsync(""), Times.Once);
+        
+        Console.WriteLine($"Frontend: Received {searchResult3.Count} employees with empty keyword (all employees)");
+        Console.WriteLine("✓ Search operation with empty keyword test passed");
+
+        Console.WriteLine("\n=== All Employee Search Operations Tests Passed ===");
+    }
 }
