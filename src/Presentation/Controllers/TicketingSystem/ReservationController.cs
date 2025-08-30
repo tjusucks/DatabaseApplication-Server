@@ -16,9 +16,9 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// <param name="visitorId">Visitor ID.</param>
     /// <param name="query">Search parameters.</param>
     /// <returns>Paginated reservation results.</returns>
-    [HttpGet("visitor/{visitorId}")]
+    [HttpGet("visitor/{visitorId}/search")]
     public async Task<ActionResult<ReservationRecordResult>> SearchByVisitor(
-        int visitorId,
+        [FromRoute] int visitorId,
         [FromQuery] SearchReservationRecordByVisitorQuery query)
     {
         var queryWithVisitorId = query with { VisitorId = visitorId };
@@ -31,7 +31,7 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <param name="query">Search parameters.</param>
     /// <returns>Paginated reservation results.</returns>
-    [HttpGet]
+    [HttpGet("search")]
     public async Task<ActionResult<ReservationRecordResult>> Search(
         [FromQuery] SearchReservationRecordQuery query)
     {
@@ -45,9 +45,9 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// <param name="visitorId">Visitor ID.</param>
     /// <param name="query">Statistics parameters.</param>
     /// <returns>Visitor reservation statistics.</returns>
-    [HttpGet("visitor/{visitorId}/stats")]
+    [HttpGet("visitor/{visitorId}/stats/search")]
     public async Task<ActionResult<ReservationRecordStatsDto>> GetVisitorStats(
-        int visitorId,
+        [FromRoute] int visitorId,
         [FromQuery] GetVisitorReservationRecordStatsQuery query)
     {
         var queryWithVisitorId = query with { VisitorId = visitorId };
