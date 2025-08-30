@@ -20,5 +20,5 @@ public class Ticket
     public RefundRecord? RefundRecord { get; set; }
     public ReservationItem ReservationItem { get; set; } = null!;
     public TicketType TicketType { get; set; } = null!;
-    public Visitor? Visitor { get; set; }
+    public Visitor Visitor { get; set; } = null!;
 }

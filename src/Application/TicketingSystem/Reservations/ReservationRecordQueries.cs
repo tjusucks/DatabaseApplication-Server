@@ -4,9 +4,9 @@ using MediatR;
 namespace DbApp.Application.TicketingSystem.Reservations;
 
 /// <summary>
-/// Search reservations by visitor with filtering options.
+/// Search reservation records by visitor with filtering options.
 /// </summary>
-public record SearchReservationsByVisitorQuery(
+public record SearchReservationRecordByVisitorQuery(
     int VisitorId,
     DateTime? StartDate = null,
     DateTime? EndDate = null,
@@ -16,12 +16,12 @@ public record SearchReservationsByVisitorQuery(
     bool Descending = true,
     int Page = 1,
     int PageSize = 20
-) : IRequest<SearchReservationsResult>;
+) : IRequest<ReservationRecordResult>;
 
 /// <summary>
-/// Search reservations by multiple criteria (admin use).
+/// Search reservation records by multiple criteria (admin use).
 /// </summary>
-public record SearchReservationsQuery(
+public record SearchReservationRecordQuery(
     string? Keyword = null, // Search in visitor name, email, phone.
     DateTime? StartDate = null,
     DateTime? EndDate = null,
@@ -34,14 +34,13 @@ public record SearchReservationsQuery(
     bool Descending = true,
     int Page = 1,
     int PageSize = 20
-) : IRequest<SearchReservationsResult>;
+) : IRequest<ReservationRecordResult>;
 
 /// <summary>
-/// Get reservation statistics for a visitor.
+/// Get reservation record statistics for a visitor.
 /// </summary>
-public record GetVisitorReservationStatsQuery(
+public record GetVisitorReservationRecordStatsQuery(
     int VisitorId,
     DateTime? StartDate = null,
     DateTime? EndDate = null
-) : IRequest<ReservationStatsDto>;
-
+) : IRequest<ReservationRecordStatsDto>;

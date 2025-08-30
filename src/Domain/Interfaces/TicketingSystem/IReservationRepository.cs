@@ -63,7 +63,7 @@ public interface IReservationRepository
     /// <summary>
     /// Get reservation statistics for a visitor.
     /// </summary>
-    Task<ReservationStats> GetStatsByVisitorAsync(
+    Task<ReservationRecordStats> GetStatsByVisitorAsync(
         int visitorId,
         DateTime? startDate,
         DateTime? endDate);

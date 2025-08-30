@@ -142,10 +142,6 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
             .ToListAsync();
     }
 
-
-    /// <summary>
-    /// Count reservations by multiple criteria (admin use).
-    /// </summary>
     public async Task<int> CountAsync(
         string? keyword,
         DateTime? startDate,
@@ -186,7 +182,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         return await query.CountAsync();
     }
 
-    public async Task<ReservationStats> GetStatsByVisitorAsync(
+    public async Task<ReservationRecordStats> GetStatsByVisitorAsync(
         int visitorId,
         DateTime? startDate,
         DateTime? endDate)
@@ -209,7 +205,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         var lastReservation = await query.OrderByDescending(r => r.ReservationTime)
             .Select(r => (DateTime?)r.ReservationTime).FirstOrDefaultAsync();
 
-        return new ReservationStats
+        return new ReservationRecordStats
         {
             TotalReservations = totalReservations,
             TotalSpent = totalSpent,
