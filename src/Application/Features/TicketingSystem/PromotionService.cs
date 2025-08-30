@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DbApp.Application.Interfaces.Services.TicketSystem;
+using DbApp.Application.Interfaces.Services.TicketingSystem;
 using DbApp.Application.DTOs;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbApp.Application.Features.TicketSystem
-{
+namespace DbApp.Application.Features.TicketingSystem{
+
     public class PromotionService : IPromotionService
     {
         private readonly ApplicationDbContext _dbContext;
@@ -90,7 +90,7 @@ namespace DbApp.Application.Features.TicketSystem
             {
                 var promotion = new Promotion
                 {
-                    PromotionName  = dto.PromotionName,
+                    PromotionName = dto.PromotionName,
                     PromotionType = dto.PromotionType,
                     StartDatetime = dto.StartDate,
                     EndDatetime = dto.EndDate,
@@ -113,8 +113,8 @@ namespace DbApp.Application.Features.TicketSystem
                 {
                     var newConditions = dto.Conditions.Select(cond => new PromotionCondition
                     {
-   
-                        PromotionId = promotion.PromotionId, 
+
+                        PromotionId = promotion.PromotionId,
                         ConditionName = cond.ConditionName,
                         ConditionType = cond.ConditionType,
                         TicketTypeId = cond.TicketTypeId,
@@ -125,7 +125,7 @@ namespace DbApp.Application.Features.TicketSystem
                     await _dbContext.PromotionConditions.AddRangeAsync(newConditions);
                 }
 
-                if (dto.Actions != null && dto.Actions.Any()) 
+                if (dto.Actions != null && dto.Actions.Any())
                 {
                     var newActions = dto.Actions.Select(act => new PromotionAction
                     {
@@ -136,7 +136,7 @@ namespace DbApp.Application.Features.TicketSystem
                         DiscountAmount = act.DiscountAmount
 
                     }).ToList();
-                    await _dbContext.PromotionActions.AddRangeAsync(newActions); 
+                    await _dbContext.PromotionActions.AddRangeAsync(newActions);
                 }
 
                 await _dbContext.SaveChangesAsync();

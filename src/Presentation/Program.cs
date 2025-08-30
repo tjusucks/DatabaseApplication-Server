@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DbApp.Application.Features.TicketSystem;
-using DbApp.Application.Interfaces.Services.TicketSystem;
+using DbApp.Application.Features.TicketingSystem;
+using DbApp.Application.Interfaces.Services.TicketingSystem;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;

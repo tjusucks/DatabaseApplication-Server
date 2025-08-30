@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using DbApp.Application.DTOs;
 
 
-namespace DbApp.Application.Interfaces.Services.TicketSystem
+namespace DbApp.Application.Interfaces.Services.TicketingSystem
 {
     public interface IPriceService
     {
