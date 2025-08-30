@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Application.Features.TicketingSystem;
 
-public class PriceService : IPriceRepository
+public class PriceRepository : IPriceRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public PriceService(ApplicationDbContext dbContext)
+    public PriceRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }

@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Application.Features.TicketingSystem;
 
-public class PromotionService : IPromotionRepository
+public class PromotionRepository : IPromotionRepository
 {
     private readonly ApplicationDbContext _dbContext;
 
-    public PromotionService(ApplicationDbContext dbContext)
+    public PromotionRepository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
     }
