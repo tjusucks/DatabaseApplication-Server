@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using DbApp.Application.Interfaces.Services.TicketSystem;
+using DbApp.Application.Interfaces.Services.TicketingSystem;
 using DbApp.Domain.Entities.TicketingSystem;
 using System.Threading.Tasks;
 using DbApp.Application.DTOs;

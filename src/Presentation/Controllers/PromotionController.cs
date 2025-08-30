@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using DbApp.Application;
 using System.Threading.Tasks;
-using DbApp.Application.Interfaces.Services.TicketSystem;
+using DbApp.Application.Interfaces.Services.TicketingSystem;
 using DbApp.Application.DTOs;
 namespace DbApp.Presentation.Controllers;
 [ApiController]

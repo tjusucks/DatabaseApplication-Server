@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DbApp.Application.Interfaces.Services.TicketSystem;
+using DbApp.Application.Interfaces.Services.TicketingSystem;
 using DbApp.Application.DTOs;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-namespace DbApp.Application.Features.TicketSystem
+
+namespace DbApp.Application.Features.TicketingSystem
 {
+
     public class PriceService : IPriceService
     {
         private readonly ApplicationDbContext _dbContext;
