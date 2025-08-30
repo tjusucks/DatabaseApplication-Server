@@ -8,7 +8,7 @@ namespace DbApp.Application.TicketingSystem.Reservations;
 /// </summary>
 public record SearchReservationRecordByVisitorQuery(
     int VisitorId,
-    string? Keyword = null, // Search in visitor name, email, phone.
+    string? Keyword = null, // Search in visitor name, email, phone, promotion name, ticket type name.
     DateTime? StartDate = null,
     DateTime? EndDate = null,
     PaymentStatus? PaymentStatus = null,
@@ -27,7 +27,7 @@ public record SearchReservationRecordByVisitorQuery(
 /// </summary>
 public record SearchReservationRecordQuery(
     int? VisitorId = null,
-    string? Keyword = null, // Search in visitor name, email, phone.
+    string? Keyword = null, // Search in visitor name, email, phone, promotion name, ticket type name.
     DateTime? StartDate = null,
     DateTime? EndDate = null,
     PaymentStatus? PaymentStatus = null,

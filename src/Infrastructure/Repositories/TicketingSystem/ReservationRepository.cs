@@ -29,6 +29,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
             .Include(r => r.Visitor.User)
             .Include(r => r.Promotion)
             .Include(r => r.ReservationItems)
+                .ThenInclude(ri => ri.TicketType)
             .AsQueryable();
 
         query = ApplyFilters(query, visitorId, keyword, startDate, endDate, paymentStatus, status, minAmount, maxAmount, promotionId);
@@ -76,6 +77,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
             .Include(r => r.Visitor.User)
             .Include(r => r.Promotion)
             .Include(r => r.ReservationItems)
+                .ThenInclude(ri => ri.TicketType)
             .AsQueryable();
 
         query = ApplyFilters(query, visitorId, keyword, startDate, endDate, paymentStatus, status, minAmount, maxAmount, promotionId);
@@ -157,7 +159,8 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
                     r.Visitor.User.Email.Contains(keyword) ||
                     (r.Visitor.User.PhoneNumber != null && r.Visitor.User.PhoneNumber.Contains(keyword))
                 )) ||
-                (r.Promotion != null && r.Promotion.PromotionName.Contains(keyword))
+                (r.Promotion != null && r.Promotion.PromotionName.Contains(keyword)) ||
+                r.ReservationItems.Any(ri => ri.TicketType.TypeName.Contains(keyword))
             );
         }
 
