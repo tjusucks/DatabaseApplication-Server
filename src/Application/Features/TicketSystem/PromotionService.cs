@@ -125,16 +125,18 @@ namespace DbApp.Application.Features.TicketSystem
                     await _dbContext.PromotionConditions.AddRangeAsync(newConditions);
                 }
 
-                if (dto.Actions != null)
+                if (dto.Actions != null && dto.Actions.Any()) 
                 {
-                    foreach (var act in dto.Actions)
+                    var newActions = dto.Actions.Select(act => new PromotionAction
                     {
-                        var pa = new PromotionAction
-                        {
-                            PromotionId = promotion.PromotionId,
-                        };
-                        await _dbContext.PromotionActions.AddAsync(pa);
-                    }
+                        PromotionId = promotion.PromotionId,
+                        ActionName = act.ActionName,
+                        ActionType = act.ActionType,
+                        DiscountPercentage = act.DiscountPercentage,
+                        DiscountAmount = act.DiscountAmount
+
+                    }).ToList();
+                    await _dbContext.PromotionActions.AddRangeAsync(newActions); 
                 }
 
                 await _dbContext.SaveChangesAsync();
