@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using DbApp.Application.Interfaces.Services.TicketingSystem;
+using DbApp.Application.Interfaces.TicketingSystem;
 using DbApp.Domain.Entities.TicketingSystem;
 using System.Threading.Tasks;
 using DbApp.Application.DTOs;
@@ -9,9 +9,9 @@ namespace DbApp.Presentation.Controllers;
 [Route("api/ticket-types")]
 public class TicketTypeController : ControllerBase
 {
-    private readonly IPriceService _priceService;
+    private readonly IPriceRepository _priceService;
 
-    public TicketTypeController(IPriceService priceService)
+    public TicketTypeController(IPriceRepository priceService)
     {
         _priceService = priceService;
     }

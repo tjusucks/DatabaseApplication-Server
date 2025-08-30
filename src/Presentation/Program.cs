@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DbApp.Application.Features.TicketingSystem;
-using DbApp.Application.Interfaces.Services.TicketingSystem;
+using DbApp.Application.Interfaces.TicketingSystem;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;
@@ -20,8 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<IPriceService, PriceService>();
-builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<IPriceRepository, PriceService>();
+builder.Services.AddScoped<IPromotionRepository, PromotionService>();
 // Add MVC controllers and enum converters for API endpoints.
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
