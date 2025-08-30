@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DbApp.Application.Interfaces.Services.TicketingSystem;
+using DbApp.Application.Interfaces.TicketingSystem;
 using DbApp.Application.DTOs;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Infrastructure;
@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Application.Features.TicketingSystem;
 
-public class PromotionService : IPromotionService
+public class PromotionService : IPromotionRepository
 {
     private readonly ApplicationDbContext _dbContext;
 

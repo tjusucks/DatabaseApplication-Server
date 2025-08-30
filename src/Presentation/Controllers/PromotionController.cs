@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using DbApp.Application;
 using System.Threading.Tasks;
-using DbApp.Application.Interfaces.Services.TicketingSystem;
+using DbApp.Application.Interfaces.TicketingSystem;
 using DbApp.Application.DTOs;
 namespace DbApp.Presentation.Controllers;
 [ApiController]
 [Route("api/promotions")]
 public class PromotionController : ControllerBase
 {
-    private readonly IPromotionService _promotionService;
+    private readonly IPromotionRepository _promotionService;
 
-    public PromotionController(IPromotionService promotionService)
+    public PromotionController(IPromotionRepository promotionService)
     {
         _promotionService = promotionService;
     }

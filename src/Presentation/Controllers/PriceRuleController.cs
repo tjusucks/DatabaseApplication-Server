@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using DbApp.Application;
 using System.Threading.Tasks;
-using DbApp.Application.Interfaces.Services.TicketingSystem;
+using DbApp.Application.Interfaces.TicketingSystem;
 using DbApp.Application.DTOs;
 namespace DbApp.Presentation.Controllers;
 [ApiController]
 [Route("api/ticket-types/{ticketTypeId}/price-rules")]
 public class PriceRuleController : ControllerBase
 {
-    private readonly IPriceService _priceService;
+    private readonly IPriceRepository _priceService;
 
-    public PriceRuleController(IPriceService priceService)
+    public PriceRuleController(IPriceRepository priceService)
     {
         _priceService = priceService;
     }

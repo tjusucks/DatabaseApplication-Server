@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using DbApp.Application.DTOs;
 
 
-namespace DbApp.Application.Interfaces.Services.TicketingSystem;
+namespace DbApp.Application.Interfaces.TicketingSystem;
 
-public interface IPriceService
+public interface IPriceRepository
 {
     Task<List<TicketTypeSummaryDto>> GetAllTicketTypesAsync();
     Task<TicketTypeSummaryDto> GetTicketTypeByIdAsync(int id);

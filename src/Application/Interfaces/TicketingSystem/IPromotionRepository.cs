@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DbApp.Application.DTOs;
 
-namespace DbApp.Application.Interfaces.Services.TicketingSystem;
+namespace DbApp.Application.Interfaces.TicketingSystem;
 
-public interface IPromotionService
+public interface IPromotionRepository
 {
     Task<List<PromotionSummaryDto>> GetAllPromotionsAsync();
     Task<PromotionDetailDto> GetPromotionDetailAsync(int id);
