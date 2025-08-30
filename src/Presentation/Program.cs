@@ -20,8 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<IPriceRepository, PriceService>();
-builder.Services.AddScoped<IPromotionRepository, PromotionService>();
+builder.Services.AddScoped<IPriceRepository, PriceRepository>();
+builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 // Add MVC controllers and enum converters for API endpoints.
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
