@@ -21,7 +21,7 @@ public class AmusementRideTests
             HeightLimitMin = 110,
             HeightLimitMax = 190,
             Description = "Thrilling roller coaster experience",
-            OpenDate = new DateTime(2023, 6, 15,0,0,0,DateTimeKind.Utc)
+            OpenDate = new DateTime(2023, 6, 15, 0, 0, 0, DateTimeKind.Utc)
         };
 
         // Assert  
@@ -33,7 +33,7 @@ public class AmusementRideTests
         Assert.Equal(110, ride.HeightLimitMin);
         Assert.Equal(190, ride.HeightLimitMax);
         Assert.Equal("Thrilling roller coaster experience", ride.Description);
-        Assert.Equal(new DateTime(2023, 6, 15,0,0,0,DateTimeKind.Utc), ride.OpenDate);
+        Assert.Equal(new DateTime(2023, 6, 15, 0, 0, 0, DateTimeKind.Utc), ride.OpenDate);
     }
 
     [Theory]

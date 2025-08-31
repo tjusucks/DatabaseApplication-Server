@@ -1,11 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DbApp.Application.ResourceSystem.RideTrafficStats;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
-using DbApp.Application.ResourceSystem.RideTrafficStats;  
 
 // Load environment variables from .env file if it exists.
 if (File.Exists(".env"))
@@ -81,7 +81,7 @@ foreach (var interfaceType in repositoryInterfaces)
 }
 
 // Register background services for ResourceSystem  
-builder.Services.AddScoped<IRideTrafficStatService, RideTrafficStatService>(); 
+builder.Services.AddScoped<IRideTrafficStatService, RideTrafficStatService>();
 
 var app = builder.Build();
 
