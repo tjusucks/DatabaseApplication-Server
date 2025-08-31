@@ -11,40 +11,12 @@ public interface IMaintenanceRecordRepository
     Task UpdateAsync(MaintenanceRecord record);
     Task DeleteAsync(MaintenanceRecord record);
 
-    // 统一搜索方法  
-    Task<IEnumerable<MaintenanceRecord>> SearchAsync(
-        string? searchTerm,
-        int? rideId,
-        int? teamId,
-        int? managerId,
-        MaintenanceType? maintenanceType,
-        bool? isCompleted,
-        bool? isAccepted,
-        DateTime? startTimeFrom,
-        DateTime? startTimeTo,
-        DateTime? endTimeFrom,
-        DateTime? endTimeTo,
-        decimal? minCost,
-        decimal? maxCost,
-        int page,
-        int pageSize);
-
-    // 统一计数方法  
-    Task<int> CountAsync(
-        string? searchTerm,
-        int? rideId,
-        int? teamId,
-        int? managerId,
-        MaintenanceType? maintenanceType,
-        bool? isCompleted,
-        bool? isAccepted,
-        DateTime? startTimeFrom,
-        DateTime? startTimeTo,
-        DateTime? endTimeFrom,
-        DateTime? endTimeTo,
-        decimal? minCost,
-        decimal? maxCost);
-
-    // 统计方法  
+    // 搜索方法  
+    Task<IEnumerable<MaintenanceRecord>> SearchAsync(string? searchTerm, int page, int pageSize);
+    Task<int> CountAsync(string? searchTerm);
+    Task<IEnumerable<MaintenanceRecord>> SearchByRideAsync(int rideId, int page, int pageSize);
+    Task<int> CountByRideAsync(int rideId);
+    Task<IEnumerable<MaintenanceRecord>> SearchByStatusAsync(bool isCompleted, bool? isAccepted, int page, int pageSize);
+    Task<int> CountByStatusAsync(bool isCompleted, bool? isAccepted);
     Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate);
 }
