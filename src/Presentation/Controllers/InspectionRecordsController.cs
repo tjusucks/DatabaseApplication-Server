@@ -1,7 +1,7 @@
-using DbApp.Application.ResourceSystem.InspectionRecords;  
-using MediatR;  
-using Microsoft.AspNetCore.Mvc;  
-  
+using DbApp.Application.ResourceSystem.InspectionRecords;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
 namespace DbApp.Presentation.Controllers.ResourceSystem;
 
 [ApiController]
