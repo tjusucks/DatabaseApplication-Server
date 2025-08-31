@@ -30,6 +30,11 @@ public class SalaryRecord
     public decimal Salary { get; set; }
 
     /// <summary>
+    /// 备注信息
+    /// </summary>
+    public string? Notes { get; set; }
+
+    /// <summary>
     /// 创建时间
     /// </summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
