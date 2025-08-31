@@ -114,23 +114,23 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
         };
     }
 
-    public async Task<RideTrafficStat> AddAsync(RideTrafficStat stat)  
-    {  
-        _dbContext.RideTrafficStats.Add(stat);  
-        await _dbContext.SaveChangesAsync();  
-        return stat;  
-    }  
-  
-    public async Task UpdateAsync(RideTrafficStat stat)  
-    {  
+    public async Task<RideTrafficStat> AddAsync(RideTrafficStat stat)
+    {
+        _dbContext.RideTrafficStats.Add(stat);
+        await _dbContext.SaveChangesAsync();
+        return stat;
+    }
+
+    public async Task UpdateAsync(RideTrafficStat stat)
+    {
         stat.UpdatedAt = DateTime.UtcNow;  // 更新时间戳  
-        _dbContext.RideTrafficStats.Update(stat);  
-        await _dbContext.SaveChangesAsync();  
-    }  
-  
-    public async Task DeleteAsync(RideTrafficStat stat)  
-    {  
-        _dbContext.RideTrafficStats.Remove(stat);  
-        await _dbContext.SaveChangesAsync();  
+        _dbContext.RideTrafficStats.Update(stat);
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(RideTrafficStat stat)
+    {
+        _dbContext.RideTrafficStats.Remove(stat);
+        await _dbContext.SaveChangesAsync();
     }
 }
