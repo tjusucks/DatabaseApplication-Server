@@ -4,6 +4,7 @@ using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using DbApp.Application.ResourceSystem.RideTrafficStats;  
 
 // Load environment variables from .env file if it exists.
 if (File.Exists(".env"))
@@ -30,6 +31,9 @@ builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(typeof(DbApp.Application.IMediatorModule).Assembly);
 });
+
+// Register AutoMapper for DTO mapping  
+builder.Services.AddAutoMapper(typeof(DbApp.Application.IMediatorModule).Assembly);
 
 // Configure Entity Framework with Oracle database and check constraints.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -66,6 +70,9 @@ foreach (var interfaceType in repositoryInterfaces)
         builder.Services.Decorate(interfaceType, cachedType);
     }
 }
+
+// Register background services for ResourceSystem  
+builder.Services.AddScoped<IRideTrafficStatService, RideTrafficStatService>(); 
 
 var app = builder.Build();
 
