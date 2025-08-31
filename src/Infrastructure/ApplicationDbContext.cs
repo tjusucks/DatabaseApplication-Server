@@ -41,7 +41,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<MaintenanceRecord> MaintenanceRecords { get; set; }
     public DbSet<RideTrafficStat> RideTrafficStats { get; set; }
     public DbSet<SeasonalEvent> SeasonalEvents { get; set; }
-    public DbSet<RideEntryRecord> RideEntryRecords { get; set; }  
     public DbSet<FinancialRecord> FinancialRecords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
