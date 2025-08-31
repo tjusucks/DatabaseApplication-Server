@@ -33,6 +33,10 @@ public class SalaryRecordConfiguration : IEntityTypeConfiguration<SalaryRecord>
             .HasColumnName("salary")
             .HasColumnType("NUMBER(10,2)");
 
+        builder.Property(r => r.Notes)
+            .HasColumnName("notes")
+            .HasColumnType("NVARCHAR2(500)");
+
         builder.Property(r => r.CreatedAt)
             .HasColumnName("created_at")
             .HasColumnType("TIMESTAMP")

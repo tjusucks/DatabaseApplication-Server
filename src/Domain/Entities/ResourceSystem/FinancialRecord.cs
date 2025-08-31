@@ -44,6 +44,11 @@ public class FinancialRecord
     public int? ApprovedById { get; set; }
 
     /// <summary>
+    /// 交易描述
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
     /// 创建时间
     /// </summary>
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
