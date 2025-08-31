@@ -31,6 +31,12 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(DbApp.Application.IMediatorModule).Assembly);
 });
 
+// Register AutoMapper for object mapping.
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddMaps(typeof(DbApp.Application.IMediatorModule).Assembly);
+});
+
 // Configure Entity Framework with Oracle database and check constraints.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {

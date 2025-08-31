@@ -40,6 +40,10 @@ public class FinancialRecordConfiguration : IEntityTypeConfiguration<FinancialRe
             .HasColumnName("approved_by_id")
             .HasColumnType("NUMBER(10)");
 
+        builder.Property(r => r.Description)
+            .HasColumnName("description")
+            .HasColumnType("NVARCHAR2(500)");
+
         builder.Property(r => r.CreatedAt)
             .HasColumnName("created_at")
             .HasColumnType("TIMESTAMP")
