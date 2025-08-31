@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
+using DbApp.Domain.Specifications.TicketingSystem;
 using DbApp.Domain.Statistics.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,20 +11,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    public async Task<List<Reservation>> SearchByVisitorAsync(
-        int visitorId,
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        PaymentStatus? paymentStatus = null,
-        ReservationStatus? status = null,
-        decimal? minAmount = null,
-        decimal? maxAmount = null,
-        int? promotionId = null,
-        string? sortBy = "ReservationTime",
-        bool descending = true,
-        int page = 1,
-        int pageSize = 20)
+    public async Task<List<Reservation>> SearchByVisitorAsync(ReservationSearchByVisitorSpec spec)
     {
         var query = _dbContext.Reservations
             .Include(r => r.Visitor.User)
@@ -32,46 +20,26 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
                 .ThenInclude(ri => ri.TicketType)
             .AsQueryable();
 
-        query = ApplyFilters(query, visitorId, keyword, startDate, endDate, paymentStatus, status, minAmount, maxAmount, promotionId);
+        query = ApplyFilters(query, spec.VisitorId, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.PaymentStatus, spec.Status, spec.MinAmount, spec.MaxAmount, spec.PromotionId);
 
-        query = ApplySorting(query, sortBy, descending);
+        query = ApplySorting(query, spec.SortBy, spec.Descending);
 
         return await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
+            .Skip((spec.Page - 1) * spec.PageSize)
+            .Take(spec.PageSize)
             .ToListAsync();
     }
 
-    public async Task<int> CountByVisitorAsync(
-        int visitorId,
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        PaymentStatus? paymentStatus = null,
-        ReservationStatus? status = null,
-        decimal? minAmount = null,
-        decimal? maxAmount = null,
-        int? promotionId = null)
+    public async Task<int> CountByVisitorAsync(ReservationCountByVisitorSpec spec)
     {
         var query = _dbContext.Reservations.AsQueryable();
-        query = ApplyFilters(query, visitorId, keyword, startDate, endDate, paymentStatus, status, minAmount, maxAmount, promotionId);
+        query = ApplyFilters(query, spec.VisitorId, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.PaymentStatus, spec.Status, spec.MinAmount, spec.MaxAmount, spec.PromotionId);
         return await query.CountAsync();
     }
 
-    public async Task<List<Reservation>> SearchAsync(
-        int? visitorId = null,
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        PaymentStatus? paymentStatus = null,
-        ReservationStatus? status = null,
-        decimal? minAmount = null,
-        decimal? maxAmount = null,
-        int? promotionId = null,
-        string? sortBy = "ReservationTime",
-        bool descending = true,
-        int page = 1,
-        int pageSize = 20)
+    public async Task<List<Reservation>> SearchAsync(ReservationSearchSpec spec)
     {
         var query = _dbContext.Reservations
             .Include(r => r.Visitor.User)
@@ -80,39 +48,29 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
                 .ThenInclude(ri => ri.TicketType)
             .AsQueryable();
 
-        query = ApplyFilters(query, visitorId, keyword, startDate, endDate, paymentStatus, status, minAmount, maxAmount, promotionId);
+        query = ApplyFilters(query, spec.VisitorId, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.PaymentStatus, spec.Status, spec.MinAmount, spec.MaxAmount, spec.PromotionId);
 
-        query = ApplySorting(query, sortBy, descending);
+        query = ApplySorting(query, spec.SortBy, spec.Descending);
 
         return await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
+            .Skip((spec.Page - 1) * spec.PageSize)
+            .Take(spec.PageSize)
             .ToListAsync();
     }
 
-    public async Task<int> CountAsync(
-        int? visitorId = null,
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        PaymentStatus? paymentStatus = null,
-        ReservationStatus? status = null,
-        decimal? minAmount = null,
-        decimal? maxAmount = null,
-        int? promotionId = null)
+    public async Task<int> CountAsync(ReservationCountSpec spec)
     {
         var query = _dbContext.Reservations.AsQueryable();
-        query = ApplyFilters(query, visitorId, keyword, startDate, endDate, paymentStatus, status, minAmount, maxAmount, promotionId);
+        query = ApplyFilters(query, spec.VisitorId, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.PaymentStatus, spec.Status, spec.MinAmount, spec.MaxAmount, spec.PromotionId);
         return await query.CountAsync();
     }
 
-    public async Task<ReservationRecordStats> GetStatsByVisitorAsync(
-        int visitorId,
-        DateTime? startDate = null,
-        DateTime? endDate = null)
+    public async Task<ReservationStats> GetStatsByVisitorAsync(ReservationStatsByVisitorSpec spec)
     {
         var query = _dbContext.Reservations.AsQueryable();
-        query = ApplyFilters(query, visitorId, null, startDate, endDate, null, null, null, null, null);
+        query = ApplyFilters(query, spec.VisitorId, null, spec.StartDate, spec.EndDate, null, null, null, null, null);
 
         var totalReservations = await query.CountAsync();
         var totalSpent = await query.SumAsync(r => r.TotalAmount);
@@ -125,7 +83,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         var lastReservation = await query.OrderByDescending(r => r.ReservationTime)
             .Select(r => (DateTime?)r.ReservationTime).FirstOrDefaultAsync();
 
-        return new ReservationRecordStats
+        return new ReservationStats
         {
             TotalReservations = totalReservations,
             TotalSpent = totalSpent,

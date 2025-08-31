@@ -17,9 +17,9 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// <param name="query">Search parameters.</param>
     /// <returns>Paginated reservation results.</returns>
     [HttpGet("visitor/{visitorId}/search")]
-    public async Task<ActionResult<ReservationRecordResult>> SearchByVisitor(
+    public async Task<ActionResult<ReservationSearchResult>> SearchByVisitor(
         [FromRoute] int visitorId,
-        [FromQuery] SearchReservationRecordByVisitorQuery query)
+        [FromQuery] SearchReservationByVisitorQuery query)
     {
         var queryWithVisitorId = query with { VisitorId = visitorId };
         var result = await _mediator.Send(queryWithVisitorId);
@@ -32,8 +32,8 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// <param name="query">Search parameters.</param>
     /// <returns>Paginated reservation results.</returns>
     [HttpGet("search")]
-    public async Task<ActionResult<ReservationRecordResult>> Search(
-        [FromQuery] SearchReservationRecordQuery query)
+    public async Task<ActionResult<ReservationSearchResult>> Search(
+        [FromQuery] SearchReservationQuery query)
     {
         var result = await _mediator.Send(query);
         return Ok(result);
@@ -46,9 +46,9 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// <param name="query">Statistics parameters.</param>
     /// <returns>Visitor reservation statistics.</returns>
     [HttpGet("visitor/{visitorId}/stats/search")]
-    public async Task<ActionResult<ReservationRecordStatsDto>> GetVisitorStats(
+    public async Task<ActionResult<ReservationStatsDto>> GetVisitorStats(
         [FromRoute] int visitorId,
-        [FromQuery] GetVisitorReservationRecordStatsQuery query)
+        [FromQuery] GetVisitorReservationStatsQuery query)
     {
         var queryWithVisitorId = query with { VisitorId = visitorId };
         var result = await _mediator.Send(queryWithVisitorId);

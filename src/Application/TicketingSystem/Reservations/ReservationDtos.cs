@@ -3,9 +3,9 @@ using DbApp.Domain.Enums.TicketingSystem;
 namespace DbApp.Application.TicketingSystem.Reservations;
 
 /// <summary>
-/// Summary DTO for reservation record search results.
+/// Summary DTO for reservation search results.
 /// </summary>
-public class ReservationRecordSummaryDto
+public class ReservationSummaryDto
 {
     public int ReservationId { get; set; }
     public DateTime ReservationTime { get; set; }
@@ -22,9 +22,9 @@ public class ReservationRecordSummaryDto
 }
 
 /// <summary>
-/// Visitor reservation record statistics.
+/// Visitor reservation statistics.
 /// </summary>
-public class ReservationRecordStatsDto
+public class ReservationStatsDto
 {
     public int TotalReservations { get; set; }
     public decimal TotalSpent { get; set; }
@@ -37,11 +37,11 @@ public class ReservationRecordStatsDto
 }
 
 /// <summary>
-/// Search result containing reservation record and pagination info.
+/// Search result containing reservation and pagination info.
 /// </summary>
-public class ReservationRecordResult
+public class ReservationSearchResult
 {
-    public List<ReservationRecordSummaryDto> Reservations { get; set; } = [];
+    public List<ReservationSummaryDto> Reservations { get; set; } = [];
     public int TotalCount { get; set; }
     public int Page { get; set; }
     public int PageSize { get; set; }

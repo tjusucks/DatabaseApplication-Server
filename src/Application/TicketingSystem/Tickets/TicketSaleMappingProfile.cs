@@ -1,5 +1,6 @@
 using AutoMapper;
 using DbApp.Domain.Entities.TicketingSystem;
+using DbApp.Domain.Specifications.TicketingSystem;
 using DbApp.Domain.Statistics.TicketingSystem;
 
 namespace DbApp.Application.TicketingSystem.Tickets;
@@ -8,6 +9,13 @@ public class TicketSaleMappingProfile : Profile
 {
     public TicketSaleMappingProfile()
     {
+        // Query to Spec mappings
+        CreateMap<SearchTicketSaleQuery, TicketSaleSearchSpec>();
+        CreateMap<SearchTicketSaleQuery, TicketSaleCountSpec>();
+        CreateMap<GetTicketSaleStatsQuery, TicketSaleStatsSpec>();
+        CreateMap<GetGroupedTicketSaleStatsQuery, TicketSaleGroupedStatsSpec>();
+
+        // Entity to DTO mappings
         CreateMap<Ticket, TicketSaleSummaryDto>()
             .ForMember(dest => dest.TicketTypeName, opt =>
                 opt.MapFrom(src => src.TicketType.TypeName))

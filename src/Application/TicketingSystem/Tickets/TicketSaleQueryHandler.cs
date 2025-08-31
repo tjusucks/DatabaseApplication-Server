@@ -1,9 +1,13 @@
 using AutoMapper;
 using DbApp.Domain.Interfaces.TicketingSystem;
+using DbApp.Domain.Specifications.TicketingSystem;
 using MediatR;
 
 namespace DbApp.Application.TicketingSystem.Tickets;
 
+/// <summary>
+/// Handler for all ticket sale queries.
+/// </summary>
 public class TicketSaleQueryHandler(
     ITicketRepository ticketRepository,
     IMapper mapper) :
@@ -16,25 +20,11 @@ public class TicketSaleQueryHandler(
 
     public async Task<TicketSaleResult> Handle(SearchTicketSaleQuery request, CancellationToken cancellationToken)
     {
-        var tickets = await _ticketRepository.SearchAsync(
-            request.Keyword,
-            request.StartDate,
-            request.EndDate,
-            request.TicketTypeId,
-            request.PromotionId,
-            request.PaymentStatus,
-            request.SortBy,
-            request.Descending,
-            request.Page,
-            request.PageSize);
+        var searchSpec = _mapper.Map<TicketSaleSearchSpec>(request);
+        var countSpec = _mapper.Map<TicketSaleCountSpec>(request);
 
-        var totalCount = await _ticketRepository.CountAsync(
-            request.Keyword,
-            request.StartDate,
-            request.EndDate,
-            request.TicketTypeId,
-            request.PromotionId,
-            request.PaymentStatus);
+        var tickets = await _ticketRepository.SearchAsync(searchSpec);
+        var totalCount = await _ticketRepository.CountAsync(countSpec);
 
         var summaryDtos = _mapper.Map<List<TicketSaleSummaryDto>>(tickets);
 
@@ -49,29 +39,16 @@ public class TicketSaleQueryHandler(
 
     public async Task<TicketSaleStatsDto> Handle(GetTicketSaleStatsQuery request, CancellationToken cancellationToken)
     {
-        var stats = await _ticketRepository.GetStatsAsync(
-            request.Keyword,
-            request.StartDate,
-            request.EndDate,
-            request.TicketTypeId,
-            request.PromotionId,
-            request.PaymentStatus);
+        var statsSpec = _mapper.Map<TicketSaleStatsSpec>(request);
+        var stats = await _ticketRepository.GetStatsAsync(statsSpec);
 
         return _mapper.Map<TicketSaleStatsDto>(stats);
     }
 
     public async Task<List<GroupedTicketSaleStatsDto>> Handle(GetGroupedTicketSaleStatsQuery request, CancellationToken cancellationToken)
     {
-        var groupedStats = await _ticketRepository.GetGroupedStatsAsync(
-            request.Keyword,
-            request.StartDate,
-            request.EndDate,
-            request.TicketTypeId,
-            request.PromotionId,
-            request.PaymentStatus,
-            request.GroupBy,
-            request.SortBy,
-            request.Descending);
+        var groupedStatsSpec = _mapper.Map<TicketSaleGroupedStatsSpec>(request);
+        var groupedStats = await _ticketRepository.GetGroupedStatsAsync(groupedStatsSpec);
 
         return _mapper.Map<List<GroupedTicketSaleStatsDto>>(groupedStats);
     }

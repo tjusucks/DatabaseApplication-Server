@@ -4,9 +4,9 @@ using MediatR;
 namespace DbApp.Application.TicketingSystem.Reservations;
 
 /// <summary>
-/// Search reservation records by visitor with filtering options.
+/// Search reservations by visitor with filtering options.
 /// </summary>
-public record SearchReservationRecordByVisitorQuery(
+public record SearchReservationByVisitorQuery(
     int VisitorId,
     string? Keyword = null, // Search in visitor name, email, phone, promotion name, ticket type name.
     DateTime? StartDate = null,
@@ -20,12 +20,12 @@ public record SearchReservationRecordByVisitorQuery(
     bool Descending = true,
     int Page = 1,
     int PageSize = 20
-) : IRequest<ReservationRecordResult>;
+) : IRequest<ReservationSearchResult>;
 
 /// <summary>
-/// Search reservation records by multiple criteria (admin use).
+/// Search reservations by multiple criteria (admin use).
 /// </summary>
-public record SearchReservationRecordQuery(
+public record SearchReservationQuery(
     int? VisitorId = null,
     string? Keyword = null, // Search in visitor name, email, phone, promotion name, ticket type name.
     DateTime? StartDate = null,
@@ -39,13 +39,13 @@ public record SearchReservationRecordQuery(
     bool Descending = true,
     int Page = 1,
     int PageSize = 20
-) : IRequest<ReservationRecordResult>;
+) : IRequest<ReservationSearchResult>;
 
 /// <summary>
-/// Get reservation record statistics for a visitor.
+/// Get reservation statistics for a visitor.
 /// </summary>
-public record GetVisitorReservationRecordStatsQuery(
+public record GetVisitorReservationStatsQuery(
     int VisitorId,
     DateTime? StartDate = null,
     DateTime? EndDate = null
-) : IRequest<ReservationRecordStatsDto>;
+) : IRequest<ReservationStatsDto>;

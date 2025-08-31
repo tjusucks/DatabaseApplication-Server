@@ -3,7 +3,7 @@ namespace DbApp.Domain.Statistics.TicketingSystem;
 /// <summary>
 /// Domain layer reservation statistics entity, used for aggregation and calculation.
 /// </summary>
-public class ReservationRecordStats
+public class ReservationStats
 {
     public int TotalReservations { get; set; }
     public decimal TotalSpent { get; set; }

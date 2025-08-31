@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
+using DbApp.Domain.Specifications.TicketingSystem;
 using DbApp.Domain.Statistics.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,17 +11,7 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    public async Task<List<Ticket>> SearchAsync(
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        int? ticketTypeId = null,
-        int? promotionId = null,
-        PaymentStatus? paymentStatus = null,
-        string? sortBy = "SalesDate",
-        bool descending = true,
-        int page = 1,
-        int pageSize = 20)
+    public async Task<List<Ticket>> SearchAsync(TicketSaleSearchSpec spec)
     {
         var query = _dbContext.Tickets
             .Include(t => t.TicketType)
@@ -28,42 +19,33 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
             .Include(t => t.ReservationItem.Reservation.Promotion)
             .AsQueryable();
 
-        query = ApplyFilters(query, keyword, startDate, endDate, ticketTypeId, promotionId, paymentStatus);
+        query = ApplyFilters(query, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.TicketTypeId, spec.PromotionId, spec.PaymentStatus);
 
-        query = ApplySorting(query, sortBy, descending);
+        query = ApplySorting(query, spec.SortBy, spec.Descending);
 
         return await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
+            .Skip((spec.Page - 1) * spec.PageSize)
+            .Take(spec.PageSize)
             .ToListAsync();
     }
 
-    public async Task<int> CountAsync(
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        int? ticketTypeId = null,
-        int? promotionId = null,
-        PaymentStatus? paymentStatus = null)
+    public async Task<int> CountAsync(TicketSaleCountSpec spec)
     {
         var query = _dbContext.Tickets.AsQueryable();
-        query = ApplyFilters(query, keyword, startDate, endDate, ticketTypeId, promotionId, paymentStatus);
+        query = ApplyFilters(query, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.TicketTypeId, spec.PromotionId, spec.PaymentStatus);
         return await query.CountAsync();
     }
 
-    public async Task<TicketSaleStats> GetStatsAsync(
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        int? ticketTypeId = null,
-        int? promotionId = null,
-        PaymentStatus? paymentStatus = null)
+    public async Task<TicketSaleStats> GetStatsAsync(TicketSaleStatsSpec spec)
     {
         var query = _dbContext.Tickets
             .Include(t => t.ReservationItem)
             .AsQueryable();
 
-        query = ApplyFilters(query, keyword, startDate, endDate, ticketTypeId, promotionId, paymentStatus);
+        query = ApplyFilters(query, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.TicketTypeId, spec.PromotionId, spec.PaymentStatus);
 
         var totalTicketsSold = await query.CountAsync();
         var totalRevenue = await query
@@ -99,25 +81,17 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
         };
     }
 
-    public async Task<List<GroupedTicketSaleStats>> GetGroupedStatsAsync(
-        string? keyword = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        int? ticketTypeId = null,
-        int? promotionId = null,
-        PaymentStatus? paymentStatus = null,
-        string groupBy = "TicketType",
-        string? sortBy = "Revenue",
-        bool descending = true)
+    public async Task<List<GroupedTicketSaleStats>> GetGroupedStatsAsync(TicketSaleGroupedStatsSpec spec)
     {
         var query = _dbContext.Tickets
             .Include(t => t.TicketType)
             .Include(t => t.ReservationItem.Reservation.Promotion)
             .AsQueryable();
 
-        query = ApplyFilters(query, keyword, startDate, endDate, ticketTypeId, promotionId, paymentStatus);
+        query = ApplyFilters(query, spec.Keyword, spec.StartDate, spec.EndDate,
+            spec.TicketTypeId, spec.PromotionId, spec.PaymentStatus);
 
-        var groupedQuery = groupBy switch
+        var groupedQuery = spec.GroupBy switch
         {
             "TicketType" => query.GroupBy(t => new
             {
@@ -172,7 +146,7 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
         }
 
         // Apply sorting to grouped results.
-        results = ApplyGroupedSorting(results, sortBy, descending);
+        results = ApplyGroupedSorting(results, spec.SortBy, spec.Descending);
 
         return results;
     }
