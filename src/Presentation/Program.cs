@@ -1,11 +1,15 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DbApp.Application.Features.TicketingSystem;
-using DbApp.Application.Interfaces.TicketingSystem;
+using DbApp.Application.TicketingSystem.PriceRules;
+using DbApp.Application.TicketingSystem.Promotions;
+using DbApp.Application.TicketingSystem.TicketTypes;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using DbApp.Domain.Interfaces.TicketingSystem;
+using DbApp.Infrastructure.Repositories.TicketingSystem;
+using DbApp.Domain.Interfaces;
 
 // Load environment variables from .env file if it exists.
 if (File.Exists(".env"))
@@ -18,9 +22,26 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<IPriceRepository, PriceRepository>();
-builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 // Add MVC controllers and enum converters for API endpoints.
+
+// In Program.cs or a service registration file
+
+// 1. Register MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTicketTypesQuery).Assembly));
+
+// 2. Register your new repositories
+builder.Services.AddScoped<ITicketTypeRepository, TicketTypeRepository>();
+builder.Services.AddScoped<IPriceRuleRepository, PriceRuleRepository>();
+builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
+builder.Services.AddScoped<IPriceHistoryRepository, PriceHistoryRepository>();
+// ... and so on
+
+// 3. Register a Unit of Work if you are using one
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+
+
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     // Convert enums to strings in JSON serialization.

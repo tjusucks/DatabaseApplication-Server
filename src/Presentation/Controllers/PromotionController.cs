@@ -1,40 +1,66 @@
+using DbApp.Application.TicketingSystem.Promotions;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using DbApp.Application;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using DbApp.Application.Interfaces.TicketingSystem;
-using DbApp.Application.DTOs;
+
 namespace DbApp.Presentation.Controllers;
+
 [ApiController]
 [Route("api/promotions")]
 public class PromotionController : ControllerBase
 {
-    private readonly IPromotionRepository _promotionService;
+    private readonly IMediator _mediator;
 
-    public PromotionController(IPromotionRepository promotionService)
+    public PromotionController(IMediator mediator)
     {
-        _promotionService = promotionService;
+        _mediator = mediator;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<List<PromotionSummaryDto>>> GetAll()
     {
-        var result = await _promotionService.GetAllPromotionsAsync();
+        var result = await _mediator.Send(new GetAllPromotionsQuery());
         return Ok(result);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(CreatePromotionRequest dto)
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PromotionDetailDto>> GetDetail(int id)
     {
-        var promotion = await _promotionService.CreatePromotionAsync(dto);
-        if (promotion == null) return BadRequest();
+        var detail = await _mediator.Send(new GetPromotionDetailQuery(id));
+        if (detail == null)
+        {
+            return NotFound($"Promotion with ID {id} not found.");
+        }
+        return Ok(detail);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<PromotionDetailDto>> Create([FromBody] CreatePromotionRequest dto)
+    {
+        var promotion = await _mediator.Send(new CreatePromotionCommand(dto));
+        return CreatedAtAction(nameof(GetDetail), new { id = promotion.Id }, promotion);
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<PromotionDetailDto>> Update(int id, [FromBody] UpdatePromotionRequest dto)
+    {
+        var promotion = await _mediator.Send(new UpdatePromotionCommand(id, dto));
+        if (promotion == null)
+        {
+            return NotFound($"Promotion with ID {id} not found.");
+        }
         return Ok(promotion);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetDetail(int id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
     {
-        var detail = await _promotionService.GetPromotionDetailAsync(id);
-        if (detail == null) return NotFound();
-        return Ok(detail);
+        var success = await _mediator.Send(new DeletePromotionCommand(id));
+        if (!success)
+        {
+            return NotFound($"Promotion with ID {id} not found.");
+        }
+        return NoContent();
     }
 }
