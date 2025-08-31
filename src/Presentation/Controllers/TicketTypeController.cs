@@ -1,41 +1,65 @@
+using DbApp.Application.TicketingSystem.TicketTypes; 
+using MediatR; 
 using Microsoft.AspNetCore.Mvc;
-using DbApp.Application.Interfaces.TicketingSystem;
-using DbApp.Domain.Entities.TicketingSystem;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using DbApp.Application.DTOs;
 
 namespace DbApp.Presentation.Controllers;
+
 [ApiController]
 [Route("api/ticket-types")]
 public class TicketTypeController : ControllerBase
 {
-    private readonly IPriceRepository _priceService;
+    private readonly IMediator _mediator; // Inject IMediator
 
-    public TicketTypeController(IPriceRepository priceService)
+    public TicketTypeController(IMediator mediator)
     {
-        _priceService = priceService;
+        _mediator = mediator;
     }
 
+    /// <summary>
+    /// Get all ticket types.
+    /// </summary>
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<List<TicketTypeSummaryDto>>> GetAll()
     {
-        var result = await _priceService.GetAllTicketTypesAsync();
+        var query = new GetAllTicketTypesQuery();
+        var result = await _mediator.Send(query);
         return Ok(result);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    /// <summary>
+    /// Get a ticket type by ID.
+    /// </summary>
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<TicketTypeSummaryDto>> GetById(int id)
     {
-        var result = await _priceService.GetTicketTypeByIdAsync(id);
-        if (result == null) return NotFound();
+        var query = new GetTicketTypeByIdQuery(id); // Assuming you created this query
+        var result = await _mediator.Send(query);
+
+        if (result == null)
+        {
+            return NotFound($"Ticket type with ID {id} not found.");
+        }
+
         return Ok(result);
     }
 
-    [HttpPut("{id}/base-price")]
-    public async Task<IActionResult> UpdateBasePrice(int id, UpdateBasePriceRequest dto)
+    /// <summary>
+    /// Update the base price of a ticket type.
+    /// </summary>
+    [HttpPut("{id:int}/base-price")]
+    public async Task<IActionResult> UpdateBasePrice(int id, [FromBody] UpdateBasePriceRequest dto)
     {
-        var success = await _priceService.UpdateBasePriceAsync(id, dto);
-        if (!success) return BadRequest();
-        return NoContent();
+        var command = new UpdateBasePriceCommand(id, dto);
+        var success = await _mediator.Send(command);
+
+        if (!success)
+        {
+            // The handler can return false for validation errors (e.g., ticket not found)
+            return BadRequest("Failed to update base price. Check ticket ID and price value.");
+        }
+
+        return NoContent(); // Correct response for a successful update with no content to return
     }
 }

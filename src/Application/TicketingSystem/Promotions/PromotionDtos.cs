@@ -1,21 +1,17 @@
 
-
-// 在文件顶部添加这个 using，以引入 PromotionType 等枚举
 using DbApp.Domain.Enums.TicketingSystem;
+using DbApp.Application.TicketingSystem.TicketTypes;
+namespace DbApp.Application.TicketingSystem.Promotions;
 
-
-namespace DbApp.Application.DTOs
+public class PromotionSummaryDto
 {
-    // --- 用于 GET 列表的简要 DTO ---
-    public class PromotionSummaryDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty; // 初始化以避免 nullable 警告
-        public string Type { get; set; } = string.Empty;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public bool IsActive { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty; // 初始化以避免 nullable 警告
+    public string Type { get; set; } = string.Empty;
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public bool IsActive { get; set; }
+}
 
     // --- 用于 GET 单个详情的复合 DTO ---
     public class PromotionDetailDto
@@ -108,4 +104,3 @@ namespace DbApp.Application.DTOs
         public DateTime EndDate { get; set; }
         public bool IsActive { get; set; }
     }
-}

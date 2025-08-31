@@ -1,4 +1,4 @@
-namespace DbApp.Application.DTOs{
+namespace DbApp.Application.TicketingSystem.TicketTypes;
     public class TicketTypeSummaryDto
     {
         public int Id { get; set; }
@@ -13,4 +13,3 @@ namespace DbApp.Application.DTOs{
         public int EmployeeId { get; set; }
 
     }
-}

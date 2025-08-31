@@ -1,15 +1,15 @@
-namespace DbApp.Application.DTOs
+namespace DbApp.Application.TicketingSystem.PriceRules;
+
+public class PriceRuleDto
 {
-    public class PriceRuleDto
-    {
-        public int Id { get; set; }
-        public string RuleName { get; set; }
-        public int Priority { get; set; }
-        public decimal Price { get; set; }
-        public DateTime EffectiveStartDate { get; set; }
-        public DateTime EffectiveEndDate { get; set; }
-        // 其他字段...
-    }
+    public int Id { get; set; }
+    public string RuleName { get; set; }
+    public int Priority { get; set; }
+    public decimal Price { get; set; }
+    public DateTime EffectiveStartDate { get; set; }
+    public DateTime EffectiveEndDate { get; set; }
+    // 其他字段...
+}
 
     public class CreatePriceRuleRequest
     {
@@ -28,4 +28,3 @@ namespace DbApp.Application.DTOs
         public DateTime EffectiveStartDate { get; set; }
         public DateTime EffectiveEndDate { get; set; }
     }
-}

@@ -1,7 +1,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DbApp.Application.Features.TicketingSystem;
-using DbApp.Application.Interfaces.TicketingSystem;
+using DbApp.Application.TicketingSystem.PriceRules;
+using DbApp.Application.TicketingSystem.Promotions;
+using DbApp.Application.TicketingSystem.TicketTypes;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;
@@ -20,9 +21,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<IPriceRepository, PriceRepository>();
-builder.Services.AddScoped<IPromotionRepository, PromotionRepository>();
 // Add MVC controllers and enum converters for API endpoints.
+
+// In Program.cs or a service registration file
+
+// 1. Register MediatR
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(GetAllTicketTypesQuery).Assembly));
+
+
+
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     // Convert enums to strings in JSON serialization.
