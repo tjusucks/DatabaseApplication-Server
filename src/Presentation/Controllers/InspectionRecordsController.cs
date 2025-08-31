@@ -1,91 +1,66 @@
-using DbApp.Application.ResourceSystem.InspectionRecords;
-using DbApp.Domain.Entities.ResourceSystem;
-using DbApp.Domain.Enums.ResourceSystem;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-
-namespace DbApp.Presentation.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class InspectionRecordsController(IMediator mediator) : ControllerBase
-{
-    private readonly IMediator _mediator = mediator;
-
-    [HttpPost]
-    public async Task<ActionResult<int>> CreateInspectionRecord([FromBody] CreateInspectionRecordCommand command)
-    {
-        var recordId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetInspectionRecord), new { id = recordId }, recordId);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<InspectionRecord>> GetInspectionRecord(int id)
-    {
-        var record = await _mediator.Send(new GetInspectionRecordByIdQuery(id));
-        return record == null ? NotFound() : Ok(record);
-    }
-
-    [HttpGet]
-    public async Task<ActionResult<List<InspectionRecord>>> GetAllInspectionRecords()
-    {
-        var records = await _mediator.Send(new GetAllInspectionRecordsQuery());
-        return Ok(records);
-    }
-
-    [HttpGet("ride/{rideId}")]
-    public async Task<ActionResult<List<InspectionRecord>>> GetInspectionRecordsByRide(int rideId)
-    {
-        var records = await _mediator.Send(new GetInspectionRecordsByRideQuery(rideId));
-        return Ok(records);
-    }
-
-    [HttpGet("failed")]
-    public async Task<ActionResult<List<InspectionRecord>>> GetFailedInspections()
-    {
-        var records = await _mediator.Send(new GetFailedInspectionsQuery());
-        return Ok(records);
-    }
-
-    [HttpGet("type/{checkType}")]
-    public async Task<ActionResult<List<InspectionRecord>>> GetInspectionRecordsByType(CheckType checkType)
-    {
-        var records = await _mediator.Send(new GetInspectionRecordsByTypeQuery(checkType));
-        return Ok(records);
-    }
-
-    [HttpGet("daterange")]
-    public async Task<ActionResult<List<InspectionRecord>>> GetInspectionRecordsByDateRange(
-        [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
-    {
-        var records = await _mediator.Send(new GetInspectionRecordsByDateRangeQuery(startDate, endDate));
-        return Ok(records);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<ActionResult> UpdateInspectionRecord(int id, [FromBody] UpdateInspectionRecordCommand command)
-    {
-        if (id != command.InspectionId)
-            return BadRequest("ID mismatch");
-
-        await _mediator.Send(command);
-        return NoContent();
-    }
-
-    [HttpPut("{id}/complete")]
-    public async Task<ActionResult> CompleteInspectionRecord(int id, [FromBody] CompleteInspectionCommand command)
-    {
-        if (id != command.InspectionId)
-            return BadRequest("ID mismatch");
-
-        await _mediator.Send(command);
-        return NoContent();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteInspectionRecord(int id)
-    {
-        await _mediator.Send(new DeleteInspectionRecordCommand(id));
-        return NoContent();
-    }
+using DbApp.Application.ResourceSystem.InspectionRecords;  
+using MediatR;  
+using Microsoft.AspNetCore.Mvc;  
+  
+namespace DbApp.Presentation.Controllers.ResourceSystem;  
+  
+[ApiController]  
+[Route("api/resource/inspection-records")]  
+public class InspectionRecordsController(IMediator mediator) : ControllerBase  
+{  
+    private readonly IMediator _mediator = mediator;  
+  
+    /// <summary>  
+    /// Search inspection records by ride ID with filtering options.  
+    /// </summary>  
+    /// <param name="rideId">Ride ID.</param>  
+    /// <param name="query">Search parameters.</param>  
+    /// <returns>Paginated inspection record results.</returns>  
+    [HttpGet("ride/{rideId}/search")]  
+    public async Task<ActionResult<InspectionRecordResult>> SearchByRide(  
+        [FromRoute] int rideId,  
+        [FromQuery] SearchInspectionRecordsByRideQuery query)  
+    {  
+        var queryWithRideId = query with { RideId = rideId };  
+        var result = await _mediator.Send(queryWithRideId);  
+        return Ok(result);  
+    }  
+  
+    /// <summary>  
+    /// Search inspection records by multiple criteria (admin use).  
+    /// </summary>  
+    /// <param name="query">Search parameters.</param>  
+    /// <returns>Paginated inspection record results.</returns>  
+    [HttpGet("search")]  
+    public async Task<ActionResult<InspectionRecordResult>> Search(  
+        [FromQuery] SearchInspectionRecordsQuery query)  
+    {  
+        var result = await _mediator.Send(query);  
+        return Ok(result);  
+    }  
+  
+    /// <summary>  
+    /// Get inspection record statistics.  
+    /// </summary>  
+    /// <param name="query">Statistics parameters.</param>  
+    /// <returns>Inspection record statistics.</returns>  
+    [HttpGet("stats/search")]  
+    public async Task<ActionResult<InspectionRecordStatsDto>> GetStats(  
+        [FromQuery] GetInspectionRecordStatsQuery query)  
+    {  
+        var result = await _mediator.Send(query);  
+        return Ok(result);  
+    }  
+  
+    /// <summary>  
+    /// Get inspection record by ID.  
+    /// </summary>  
+    /// <param name="id">Inspection ID.</param>  
+    /// <returns>Inspection record details.</returns>  
+    [HttpGet("{id}")]  
+    public async Task<ActionResult<InspectionRecordSummaryDto>> GetById(int id)  
+    {  
+        var record = await _mediator.Send(new GetInspectionRecordByIdQuery(id));  
+        return record == null ? NotFound() : Ok(record);  
+    }  
 }

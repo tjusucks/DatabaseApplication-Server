@@ -1,59 +1,103 @@
-using DbApp.Domain.Entities.ResourceSystem;
-using DbApp.Domain.Interfaces.ResourceSystem;
-using MediatR;
-
-namespace DbApp.Application.ResourceSystem.RideTrafficStats;
-
-public class GetRideTrafficStatByIdQueryHandler(IRideTrafficStatRepository repository)
-    : IRequestHandler<GetRideTrafficStatByIdQuery, RideTrafficStat?>
-{
-    public async Task<RideTrafficStat?> Handle(GetRideTrafficStatByIdQuery request, CancellationToken cancellationToken)
-    {
-        return await repository.GetByIdAsync(request.RideId, request.RecordTime);
-    }
-}
-
-public class GetRideTrafficStatsByRideQueryHandler(IRideTrafficStatRepository repository)
-    : IRequestHandler<GetRideTrafficStatsByRideQuery, List<RideTrafficStat>>
-{
-    public async Task<List<RideTrafficStat>> Handle(GetRideTrafficStatsByRideQuery request, CancellationToken cancellationToken)
-    {
-        return await repository.GetByRideIdAsync(request.RideId);
-    }
-}
-
-public class GetRideTrafficStatsByDateRangeQueryHandler(IRideTrafficStatRepository repository)
-    : IRequestHandler<GetRideTrafficStatsByDateRangeQuery, List<RideTrafficStat>>
-{
-    public async Task<List<RideTrafficStat>> Handle(GetRideTrafficStatsByDateRangeQuery request, CancellationToken cancellationToken)
-    {
-        return await repository.GetByDateRangeAsync(request.RideId, request.StartDate, request.EndDate);
-    }
-}
-
-public class GetCrowdedRidesQueryHandler(IRideTrafficStatRepository repository)
-    : IRequestHandler<GetCrowdedRidesQuery, List<RideTrafficStat>>
-{
-    public async Task<List<RideTrafficStat>> Handle(GetCrowdedRidesQuery request, CancellationToken cancellationToken)
-    {
-        return await repository.GetCrowdedRidesAsync(request.Date);
-    }
-}
-
-public class GetRidePopularityReportQueryHandler(IRideTrafficStatRepository repository)
-    : IRequestHandler<GetRidePopularityReportQuery, List<RideTrafficStat>>
-{
-    public async Task<List<RideTrafficStat>> Handle(GetRidePopularityReportQuery request, CancellationToken cancellationToken)
-    {
-        return await repository.GetPopularityReportAsync(request.StartDate, request.EndDate);
-    }
-}
-
-public class GetPeakHoursAnalysisQueryHandler(IRideTrafficStatRepository repository)
-    : IRequestHandler<GetPeakHoursAnalysisQuery, List<RideTrafficStat>>
-{
-    public async Task<List<RideTrafficStat>> Handle(GetPeakHoursAnalysisQuery request, CancellationToken cancellationToken)
-    {
-        return await repository.GetPeakHoursAnalysisAsync(request.RideId, request.Date);
-    }
+using AutoMapper;  
+using DbApp.Domain.Interfaces.ResourceSystem;  
+using MediatR;  
+  
+namespace DbApp.Application.ResourceSystem.RideTrafficStats;  
+  
+/// <summary>  
+/// Combined handler for all ride traffic stat queries.  
+/// </summary>  
+public class RideTrafficStatQueryHandler(  
+    IRideTrafficStatRepository rideTrafficStatRepository,  
+    IMapper mapper) :  
+    IRequestHandler<GetRideTrafficStatByIdQuery, RideTrafficStatSummaryDto?>,  
+    IRequestHandler<SearchRideTrafficStatsQuery, RideTrafficStatResult>,  
+    IRequestHandler<SearchRideTrafficStatsByRideQuery, RideTrafficStatResult>,  
+    IRequestHandler<SearchRideTrafficStatsByCrowdedQuery, RideTrafficStatResult>,  
+    IRequestHandler<GetRideTrafficStatsQuery, RideTrafficStatsDto>  
+{  
+    private readonly IRideTrafficStatRepository _rideTrafficStatRepository = rideTrafficStatRepository;  
+    private readonly IMapper _mapper = mapper;  
+  
+    public async Task<RideTrafficStatSummaryDto?> Handle(  
+        GetRideTrafficStatByIdQuery request,  
+        CancellationToken cancellationToken)  
+    {  
+        var stat = await _rideTrafficStatRepository.GetByIdAsync(request.RideId, request.RecordTime);  
+        return stat == null ? null : _mapper.Map<RideTrafficStatSummaryDto>(stat);  
+    }  
+  
+    public async Task<RideTrafficStatResult> Handle(  
+        SearchRideTrafficStatsQuery request,  
+        CancellationToken cancellationToken)  
+    {  
+        var stats = await _rideTrafficStatRepository.SearchAsync(  
+            request.SearchTerm,  
+            request.Page,  
+            request.PageSize);  
+  
+        var totalCount = await _rideTrafficStatRepository.CountAsync(request.SearchTerm);  
+        var statDtos = _mapper.Map<List<RideTrafficStatSummaryDto>>(stats);  
+  
+        return new RideTrafficStatResult  
+        {  
+            RideTrafficStats = statDtos,  
+            TotalCount = totalCount,  
+            Page = request.Page,  
+            PageSize = request.PageSize  
+        };  
+    }  
+  
+    public async Task<RideTrafficStatResult> Handle(  
+        SearchRideTrafficStatsByRideQuery request,  
+        CancellationToken cancellationToken)  
+    {  
+        var stats = await _rideTrafficStatRepository.SearchByRideAsync(  
+            request.RideId,  
+            request.Page,  
+            request.PageSize);  
+  
+        var totalCount = await _rideTrafficStatRepository.CountByRideAsync(request.RideId);  
+        var statDtos = _mapper.Map<List<RideTrafficStatSummaryDto>>(stats);  
+  
+        return new RideTrafficStatResult  
+        {  
+            RideTrafficStats = statDtos,  
+            TotalCount = totalCount,  
+            Page = request.Page,  
+            PageSize = request.PageSize  
+        };  
+    }  
+  
+    public async Task<RideTrafficStatResult> Handle(  
+        SearchRideTrafficStatsByCrowdedQuery request,  
+        CancellationToken cancellationToken)  
+    {  
+        var stats = await _rideTrafficStatRepository.SearchByCrowdedAsync(  
+            request.IsCrowded,  
+            request.Page,  
+            request.PageSize);  
+  
+        var totalCount = await _rideTrafficStatRepository.CountByCrowdedAsync(request.IsCrowded);  
+        var statDtos = _mapper.Map<List<RideTrafficStatSummaryDto>>(stats);  
+  
+        return new RideTrafficStatResult  
+        {  
+            RideTrafficStats = statDtos,  
+            TotalCount = totalCount,  
+            Page = request.Page,  
+            PageSize = request.PageSize  
+        };  
+    }  
+  
+    public async Task<RideTrafficStatsDto> Handle(  
+        GetRideTrafficStatsQuery request,  
+        CancellationToken cancellationToken)  
+    {  
+        var stats = await _rideTrafficStatRepository.GetStatsAsync(  
+            request.StartDate,  
+            request.EndDate);  
+  
+        return _mapper.Map<RideTrafficStatsDto>(stats);  
+    }  
 }

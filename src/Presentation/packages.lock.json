@@ -111,6 +111,15 @@
           "Microsoft.IdentityModel.JsonWebTokens": "8.0.1"
         }
       },
+      "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+        "type": "Transitive",
+        "resolved": "12.0.1",
+        "contentHash": "+g/K+Vpe3gGMKGzjslMOdqNlkikScDjWfVvmWTayrDHaG/n2pPmFBMa+jKX1r/h6BDGFdkyRjAuhFE3ykW+r1g==",
+        "dependencies": {
+          "AutoMapper": "[12.0.1]",
+          "Microsoft.Extensions.Options": "6.0.0"
+        }
+      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",
@@ -1452,6 +1461,7 @@
         "type": "Project",
         "dependencies": {
           "AutoMapper": "[15.0.1, )",
+          "AutoMapper.Extensions.Microsoft.DependencyInjection": "[12.0.1, )",
           "Domain": "[1.0.0, )",
           "mediatr": "[13.0.0, )"
         }
