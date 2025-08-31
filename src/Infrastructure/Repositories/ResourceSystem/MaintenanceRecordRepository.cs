@@ -14,7 +14,7 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
             .Include(r => r.Ride)
             .Include(r => r.Team)
             .Include(r => r.Manager)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m!.User)
             .FirstOrDefaultAsync(r => r.MaintenanceId == maintenanceId);
     }
 
@@ -43,7 +43,7 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
             .Include(r => r.Ride)
             .Include(r => r.Team)
             .Include(r => r.Manager)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m!.User)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(searchTerm))
@@ -81,7 +81,7 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
             .Include(r => r.Ride)
             .Include(r => r.Team)
             .Include(r => r.Manager)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m!.User)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -101,7 +101,7 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
             .Include(r => r.Ride)
             .Include(r => r.Team)
             .Include(r => r.Manager)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m!.User)
             .AsQueryable();
 
         if (isAccepted.HasValue)
