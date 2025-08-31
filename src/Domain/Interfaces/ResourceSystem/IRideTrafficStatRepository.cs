@@ -6,7 +6,9 @@ public interface IRideTrafficStatRepository
 {
     // 只保留查询操作
     Task<RideTrafficStat?> GetByIdAsync(int rideId, DateTime recordTime);
-
+    Task<RideTrafficStat> AddAsync(RideTrafficStat stat);  
+    Task UpdateAsync(RideTrafficStat stat);  // 添加更新方法  
+    Task DeleteAsync(RideTrafficStat stat);  // 添加删除方法  
     // 搜索方法  
     Task<IEnumerable<RideTrafficStat>> SearchAsync(string? searchTerm, int page, int pageSize);
     Task<int> CountAsync(string? searchTerm);

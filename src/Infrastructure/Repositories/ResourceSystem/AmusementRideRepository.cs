@@ -13,7 +13,7 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
     {
         return await _dbContext.AmusementRides
             .Include(r => r.Manager)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m!.User)
             .FirstOrDefaultAsync(r => r.RideId == rideId);
     }
 
@@ -40,7 +40,7 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
     {
         var query = _dbContext.AmusementRides
             .Include(r => r.Manager)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m!.User)
             .AsQueryable();
 
         if (!string.IsNullOrEmpty(searchTerm))
@@ -73,7 +73,7 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
         return await _dbContext.AmusementRides
             .Where(r => r.RideStatus == status)
             .Include(r => r.Manager)
-            .ThenInclude(m => m.User)
+            .ThenInclude(m => m!.User)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
