@@ -1,24 +1,16 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DbApp.Infrastructure.Repositories.TicketingSystem;
 
-public class PriceRuleRepository : IPriceRuleRepository
+public class PriceRuleRepository(ApplicationDbContext dbContext) : IPriceRuleRepository
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext = dbContext;
 
-    public PriceRuleRepository(ApplicationDbContext dbContext)
+    public async Task<PriceRule?> GetByIdAsync(int priceRuleId)
     {
-        _dbContext = dbContext;
-    }
-
-    public async Task<PriceRule> GetByIdAsync(int id)
-    {
-        return await _dbContext.PriceRules.FindAsync(id);
+        return await _dbContext.PriceRules.FindAsync(priceRuleId);
     }
 
     public async Task<List<PriceRule>> GetByTicketTypeIdAsync(int ticketTypeId)
@@ -28,19 +20,22 @@ public class PriceRuleRepository : IPriceRuleRepository
             .ToListAsync();
     }
 
-    public async Task<PriceRule> AddAsync(PriceRule priceRule)
+    public async Task<int> CreateAsync(PriceRule priceRule)
     {
         await _dbContext.PriceRules.AddAsync(priceRule);
-        return priceRule;
+        await _dbContext.SaveChangesAsync();
+        return priceRule.PriceRuleId;
     }
 
-    public void Update(PriceRule priceRule)
+    public async Task UpdateAsync(PriceRule priceRule)
     {
-        _dbContext.Entry(priceRule).State = EntityState.Modified;
+        _dbContext.PriceRules.Update(priceRule);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Delete(PriceRule priceRule)
+    public async Task DeleteAsync(PriceRule priceRule)
     {
         _dbContext.PriceRules.Remove(priceRule);
+        await _dbContext.SaveChangesAsync();
     }
 }

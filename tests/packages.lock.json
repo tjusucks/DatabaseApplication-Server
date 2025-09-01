@@ -1740,7 +1740,6 @@
         "dependencies": {
           "AutoMapper": "[15.0.1, )",
           "Domain": "[1.0.0, )",
-          "Infrastructure": "[1.0.0, )",
           "mediatr": "[13.0.0, )"
         }
       },
