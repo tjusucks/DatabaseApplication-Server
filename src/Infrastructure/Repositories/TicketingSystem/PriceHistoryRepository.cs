@@ -1,20 +1,14 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
-using System.Threading.Tasks;
 
 namespace DbApp.Infrastructure.Repositories.TicketingSystem;
 
 /// <summary>
 /// Implements the repository for handling price history data using Entity Framework Core.
 /// </summary>
-public class PriceHistoryRepository : IPriceHistoryRepository
+public class PriceHistoryRepository(ApplicationDbContext dbContext) : IPriceHistoryRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public PriceHistoryRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    private readonly ApplicationDbContext _dbContext = dbContext;
 
     /// <summary>
     /// Adds a new price history record to the DbContext.

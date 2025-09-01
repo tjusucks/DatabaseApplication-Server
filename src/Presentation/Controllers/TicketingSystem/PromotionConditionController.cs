@@ -1,13 +1,11 @@
-
-using DbApp.Application.TicketingSystem.Promotions;
+using DbApp.Application.TicketingSystem.PromotionConditions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace DbApp.Presentation.Controllers.TicketingSystem;
 
 [ApiController]
-[Route("api/promotion-conditions")]
+[Route("api/ticketing/promotions/{promotionId:int}/conditions")]
 public class PromotionConditionController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -17,37 +15,43 @@ public class PromotionConditionController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Updates an existing promotion condition.
-    /// </summary>
-    [HttpPut("{conditionId:int}")]
-    public async Task<ActionResult<PromotionConditionDto>> UpdateCondition(int conditionId, [FromBody] CreateConditionRequest dto)
+    [HttpGet]
+    public async Task<ActionResult<List<PromotionConditionDto>>> GetConditions(int promotionId)
     {
-        var command = new UpdatePromotionConditionCommand(conditionId, dto);
-        var result = await _mediator.Send(command);
-
-        if (result == null)
-        {
-            return NotFound($"Condition with ID {conditionId} not found.");
-        }
-
+        var result = await _mediator.Send(new GetPromotionConditionsByPromotionIdQuery(promotionId));
         return Ok(result);
     }
 
-    /// <summary>
-    /// Deletes a promotion condition.
-    /// </summary>
-    [HttpDelete("{conditionId:int}")]
-    public async Task<IActionResult> DeleteCondition(int conditionId)
+    [HttpGet("{conditionId:int}")]
+    public async Task<ActionResult<PromotionConditionDto>> GetConditionById(int promotionId, int conditionId)
     {
-        var command = new DeletePromotionConditionCommand(conditionId);
-        var success = await _mediator.Send(command);
+        var result = await _mediator.Send(new GetPromotionConditionByIdQuery(promotionId, conditionId));
+        return Ok(result);
+    }
 
-        if (!success)
+    [HttpPost]
+    public async Task<ActionResult<int>> Create([FromBody] CreatePromotionConditionCommand command)
+    {
+        var newConditionId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetConditionById), new { promotionId = command.PromotionId, conditionId = newConditionId }, null);
+    }
+
+    [HttpPut("{conditionId:int}")]
+    public async Task<IActionResult> Update(int conditionId, [FromBody] UpdatePromotionConditionCommand command)
+    {
+        if (conditionId != command.ConditionId)
         {
-            return NotFound($"Condition with ID {conditionId} not found.");
+            return BadRequest("Condition ID mismatch");
         }
 
+        await _mediator.Send(command);
+        return NoContent();
+    }
+
+    [HttpDelete("{conditionId:int}")]
+    public async Task<IActionResult> Delete(int conditionId)
+    {
+        await _mediator.Send(new DeletePromotionConditionCommand(conditionId));
         return NoContent();
     }
 }
