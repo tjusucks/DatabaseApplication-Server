@@ -1,0 +1,100 @@
+using System.Text.Json;
+using DbApp.Domain.Entities.UserSystem;
+using DbApp.Domain.Enums.UserSystem;
+using DbApp.Domain.Interfaces.UserSystem;
+using Microsoft.Extensions.Caching.Distributed;
+
+namespace DbApp.Infrastructure.Repositories.UserSystem;
+
+/// <summary>
+/// Cached decorator for Visitor repository operations.
+/// </summary>
+public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache cache) : IVisitorRepository
+{
+    private readonly IVisitorRepository _inner = inner;
+    private readonly IDistributedCache _cache = cache;
+    private readonly JsonSerializerOptions _jsonOptions = new();
+
+    public async Task<int> CreateAsync(Visitor visitor)
+    {
+        var id = await _inner.CreateAsync(visitor);
+        return id;
+    }
+
+    public async Task<Visitor?> GetByIdAsync(int visitorId)
+    {
+        string key = $"visitor:{visitorId}";
+        var cached = await _cache.GetStringAsync(key);
+        if (cached != null)
+        {
+            return JsonSerializer.Deserialize<Visitor>(cached, _jsonOptions);
+        }
+
+        var entity = await _inner.GetByIdAsync(visitorId);
+        if (entity != null)
+        {
+            await _cache.SetStringAsync(key, JsonSerializer.Serialize(entity, _jsonOptions),
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) });
+        }
+        return entity;
+    }
+
+    public async Task<Visitor?> GetByUserIdAsync(int userId)
+    {
+        string key = $"visitor:user:{userId}";
+        var cached = await _cache.GetStringAsync(key);
+        if (cached != null)
+        {
+            return JsonSerializer.Deserialize<Visitor>(cached, _jsonOptions);
+        }
+
+        var entity = await _inner.GetByUserIdAsync(userId);
+        if (entity != null)
+        {
+            await _cache.SetStringAsync(key, JsonSerializer.Serialize(entity, _jsonOptions),
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) });
+        }
+        return entity;
+    }
+
+    public Task<List<Visitor>> GetAllAsync() => _inner.GetAllAsync();
+
+    public Task<List<Visitor>> GetByTypeAsync(VisitorType visitorType) => _inner.GetByTypeAsync(visitorType);
+
+    public Task<List<Visitor>> GetByMemberLevelAsync(string memberLevel) => _inner.GetByMemberLevelAsync(memberLevel);
+
+    public Task<List<Visitor>> GetByPointsRangeAsync(int minPoints, int maxPoints) => 
+        _inner.GetByPointsRangeAsync(minPoints, maxPoints);
+
+    public async Task UpdateAsync(Visitor visitor)
+    {
+        await _inner.UpdateAsync(visitor);
+        await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitor.VisitorId}");
+    }
+
+    public async Task DeleteAsync(Visitor visitor)
+    {
+        await _inner.DeleteAsync(visitor);
+        await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitor.VisitorId}");
+    }
+
+    public async Task AddPointsAsync(int visitorId, int points)
+    {
+        await _inner.AddPointsAsync(visitorId, points);
+        await _cache.RemoveAsync($"visitor:{visitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitorId}");
+    }
+
+    public async Task<bool> DeductPointsAsync(int visitorId, int points)
+    {
+        var result = await _inner.DeductPointsAsync(visitorId, points);
+        if (result)
+        {
+            await _cache.RemoveAsync($"visitor:{visitorId}");
+            await _cache.RemoveAsync($"visitor:user:{visitorId}");
+        }
+        return result;
+    }
+}
