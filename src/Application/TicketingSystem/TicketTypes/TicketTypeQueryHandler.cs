@@ -1,5 +1,5 @@
-using DbApp.Domain.Interfaces.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
+using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
 
 namespace DbApp.Application.TicketingSystem.TicketTypes;

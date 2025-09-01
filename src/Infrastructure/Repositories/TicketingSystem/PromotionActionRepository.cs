@@ -1,22 +1,16 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
-// ... other usings
 
 namespace DbApp.Infrastructure.Repositories.TicketingSystem;
 
-public class PromotionActionRepository : IPromotionActionRepository
+public class PromotionActionRepository(ApplicationDbContext dbContext) : IPromotionActionRepository
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly ApplicationDbContext _dbContext = dbContext;
 
-    public PromotionActionRepository(ApplicationDbContext dbContext)
+    public async Task<PromotionAction?> GetByIdAsync(int actionId)
     {
-        _dbContext = dbContext;
-    }
-
-    public async Task<PromotionAction> GetByIdAsync(int id)
-    {
-        return await _dbContext.PromotionActions.FindAsync(id);
+        return await _dbContext.PromotionActions.FindAsync(actionId);
     }
     public async Task<List<PromotionAction>> GetByPromotionIdAsync(int promotionId)
     {
@@ -25,25 +19,22 @@ public class PromotionActionRepository : IPromotionActionRepository
             .ToListAsync();
     }
 
-    public async Task<PromotionAction> AddAsync(PromotionAction action)
+    public async Task<int> CreateAsync(PromotionAction action)
     {
         await _dbContext.PromotionActions.AddAsync(action);
-        // New: Save changes here
         await _dbContext.SaveChangesAsync();
-        return action;
+        return action.ActionId;
     }
 
     public async Task UpdateAsync(PromotionAction action)
     {
         _dbContext.Entry(action).State = EntityState.Modified;
-        // New: Save changes here
         await _dbContext.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(PromotionAction action)
     {
         _dbContext.PromotionActions.Remove(action);
-        // New: Save changes here
         await _dbContext.SaveChangesAsync();
     }
 }

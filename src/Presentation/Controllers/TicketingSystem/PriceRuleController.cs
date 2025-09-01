@@ -29,7 +29,7 @@ public class PriceRuleController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PriceRuleDto>> Create([FromBody] CreatePriceRuleCommand command)
+    public async Task<ActionResult<int>> Create([FromBody] CreatePriceRuleCommand command)
     {
         var newRuleId = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetRuleById), new { ticketTypeId = command.TicketTypeId, ruleId = newRuleId }, null);

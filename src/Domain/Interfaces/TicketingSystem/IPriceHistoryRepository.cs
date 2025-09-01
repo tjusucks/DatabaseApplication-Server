@@ -1,5 +1,4 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using System.Threading.Tasks;
 
 namespace DbApp.Domain.Interfaces.TicketingSystem;
 
