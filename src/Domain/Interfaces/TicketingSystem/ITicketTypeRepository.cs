@@ -1,14 +1,12 @@
 using DbApp.Domain.Entities.TicketingSystem;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace DbApp.Domain.Interfaces.TicketingSystem;
 
 public interface ITicketTypeRepository
 {
-    Task<TicketType> GetByIdAsync(int id);
+    Task<TicketType?> GetByIdAsync(int ticketTypeId);
     Task<List<TicketType>> GetAllAsync();
-    Task<TicketType> AddAsync(TicketType ticketType);
-    Task UpdateAsync(TicketType ticketType); // Often returns void or Task
-    Task DeleteAsync(int id);
+    Task<int> CreateAsync(TicketType ticketType);
+    Task UpdateAsync(TicketType ticketType);
+    Task DeleteAsync(TicketType ticketType);
 }
