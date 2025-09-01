@@ -34,3 +34,46 @@ public class PromotionDetailDto : PromotionDto
 #pragma warning restore S125
 
 }
+
+public class PromotionConditionDto
+{
+    public int ConditionId { get; set; }
+    public string ConditionName { get; set; } = string.Empty;
+    public ConditionType ConditionType { get; set; }
+    public int? TicketTypeId { get; set; }
+    public int? MinQuantity { get; set; }
+    public decimal? MinAmount { get; set; }
+    public int Priority { get; set; }
+}
+
+public class PromotionActionDto
+{
+    public int ActionId { get; set; }
+    public string ActionName { get; set; } = string.Empty;
+    public PromotionActionType ActionType { get; set; }
+    public decimal? DiscountPercentage { get; set; }
+    public decimal? DiscountAmount { get; set; }
+}
+
+public class CreateConditionRequest
+{
+    public string ConditionName { get; set; } = string.Empty;
+    public ConditionType ConditionType { get; set; }
+    public int? TicketTypeId { get; set; }
+    public int? MinQuantity { get; set; }
+    public decimal? MinAmount { get; set; }
+    public int Priority { get; set; }
+}
+
+public class CreateActionRequest
+{
+    public string ActionName { get; set; } = string.Empty;
+    public PromotionActionType ActionType { get; set; }
+    public decimal? DiscountPercentage { get; set; }
+    public decimal? DiscountAmount { get; set; }
+}
+
+// ***************************************************************
+// ***                     补全内容结束                      ***
+// ***************************************************************
+
