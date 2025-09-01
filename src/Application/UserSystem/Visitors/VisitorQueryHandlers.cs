@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+using DbApp.Domain.Constants;
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
@@ -8,7 +12,12 @@ namespace DbApp.Application.UserSystem.Visitors;
 /// <summary>
 /// Handler for getting all visitors.
 /// </summary>
+<<<<<<< HEAD
 public class GetAllVisitorsQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetAllVisitorsQuery, List<Visitor>>
+=======
+public class GetAllVisitorsQueryHandler(IVisitorRepository visitorRepository) 
+    : IRequestHandler<GetAllVisitorsQuery, List<Visitor>>
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
@@ -21,7 +30,12 @@ public class GetAllVisitorsQueryHandler(IVisitorRepository visitorRepository) : 
 /// <summary>
 /// Handler for getting a visitor by ID.
 /// </summary>
+<<<<<<< HEAD
 public class GetVisitorByIdQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetVisitorByIdQuery, Visitor?>
+=======
+public class GetVisitorByIdQueryHandler(IVisitorRepository visitorRepository) 
+    : IRequestHandler<GetVisitorByIdQuery, Visitor?>
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
@@ -34,7 +48,12 @@ public class GetVisitorByIdQueryHandler(IVisitorRepository visitorRepository) : 
 /// <summary>
 /// Handler for getting a visitor by user ID.
 /// </summary>
+<<<<<<< HEAD
 public class GetVisitorByUserIdQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetVisitorByUserIdQuery, Visitor?>
+=======
+public class GetVisitorByUserIdQueryHandler(IVisitorRepository visitorRepository) 
+    : IRequestHandler<GetVisitorByUserIdQuery, Visitor?>
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
@@ -45,6 +64,7 @@ public class GetVisitorByUserIdQueryHandler(IVisitorRepository visitorRepository
 }
 
 /// <summary>
+<<<<<<< HEAD
 /// Handler for searching visitors by name.
 /// </summary>
 public class SearchVisitorsByNameQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<SearchVisitorsByNameQuery, List<Visitor>>
@@ -87,16 +107,27 @@ public class GetVisitorsByBlacklistStatusQueryHandler(IVisitorRepository visitor
 /// Handler for getting visitors by visitor type.
 /// </summary>
 public class GetVisitorsByTypeQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetVisitorsByTypeQuery, List<Visitor>>
+=======
+/// Handler for getting visitors by type.
+/// </summary>
+public class GetVisitorsByTypeQueryHandler(IVisitorRepository visitorRepository) 
+    : IRequestHandler<GetVisitorsByTypeQuery, List<Visitor>>
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
     public async Task<List<Visitor>> Handle(GetVisitorsByTypeQuery request, CancellationToken cancellationToken)
     {
+<<<<<<< HEAD
         return await _visitorRepository.GetByVisitorTypeAsync(request.VisitorType);
+=======
+        return await _visitorRepository.GetByTypeAsync(request.VisitorType);
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
 }
 
 /// <summary>
+<<<<<<< HEAD
 /// Handler for getting visitors by registration date range.
 /// </summary>
 public class GetVisitorsByRegistrationDateRangeQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetVisitorsByRegistrationDateRangeQuery, List<Visitor>>
@@ -106,10 +137,23 @@ public class GetVisitorsByRegistrationDateRangeQueryHandler(IVisitorRepository v
     public async Task<List<Visitor>> Handle(GetVisitorsByRegistrationDateRangeQuery request, CancellationToken cancellationToken)
     {
         return await _visitorRepository.GetByRegistrationDateRangeAsync(request.StartDate, request.EndDate);
+=======
+/// Handler for getting visitors by member level.
+/// </summary>
+public class GetVisitorsByMemberLevelQueryHandler(IVisitorRepository visitorRepository) 
+    : IRequestHandler<GetVisitorsByMemberLevelQuery, List<Visitor>>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+
+    public async Task<List<Visitor>> Handle(GetVisitorsByMemberLevelQuery request, CancellationToken cancellationToken)
+    {
+        return await _visitorRepository.GetByMemberLevelAsync(request.MemberLevel);
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
 }
 
 /// <summary>
+<<<<<<< HEAD
 /// Handler for searching visitors with multiple criteria.
 /// </summary>
 public class SearchVisitorsQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<SearchVisitorsQuery, List<Visitor>>
@@ -125,10 +169,23 @@ public class SearchVisitorsQueryHandler(IVisitorRepository visitorRepository) : 
             request.VisitorType,
             request.StartDate,
             request.EndDate);
+=======
+/// Handler for getting visitors by points range.
+/// </summary>
+public class GetVisitorsByPointsRangeQueryHandler(IVisitorRepository visitorRepository) 
+    : IRequestHandler<GetVisitorsByPointsRangeQuery, List<Visitor>>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+
+    public async Task<List<Visitor>> Handle(GetVisitorsByPointsRangeQuery request, CancellationToken cancellationToken)
+    {
+        return await _visitorRepository.GetByPointsRangeAsync(request.MinPoints, request.MaxPoints);
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
 }
 
 /// <summary>
+<<<<<<< HEAD
 /// Handler for getting visitor history information including entry records.
 /// </summary>
 public class GetVisitorHistoryQueryHandler(
@@ -195,5 +252,39 @@ public class GetVisitorHistoryQueryHandler(
             lastVisitDate,
             recentEntryRecords
         );
+=======
+/// Handler for getting membership statistics.
+/// </summary>
+public class GetMembershipStatisticsQueryHandler(IVisitorRepository visitorRepository) 
+    : IRequestHandler<GetMembershipStatisticsQuery, MembershipStatistics>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+
+    public async Task<MembershipStatistics> Handle(GetMembershipStatisticsQuery request, CancellationToken cancellationToken)
+    {
+        var allVisitors = await _visitorRepository.GetAllAsync();
+        var members = allVisitors.Where(v => v.VisitorType == VisitorType.Member).ToList();
+
+        var bronzeMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Bronze);
+        var silverMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Silver);
+        var goldMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Gold);
+        var platinumMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Platinum);
+
+        var totalPoints = members.Sum(m => m.Points);
+        var averagePoints = members.Count > 0 ? (double)totalPoints / members.Count : 0;
+
+        return new MembershipStatistics
+        {
+            TotalVisitors = allVisitors.Count,
+            TotalMembers = members.Count,
+            BronzeMembers = bronzeMembers,
+            SilverMembers = silverMembers,
+            GoldMembers = goldMembers,
+            PlatinumMembers = platinumMembers,
+            MembershipRate = allVisitors.Count > 0 ? (decimal)members.Count / allVisitors.Count * 100 : 0,
+            TotalPointsIssued = totalPoints,
+            AveragePointsPerMember = averagePoints
+        };
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
 }

@@ -5,6 +5,7 @@ using MediatR;
 namespace DbApp.Application.UserSystem.Visitors;
 
 /// <summary>
+<<<<<<< HEAD
 /// DTO for visitor history information including user details and entry records.
 /// </summary>
 /// <param name="VisitorId">The visitor ID.</param>
@@ -91,6 +92,8 @@ public record VisitorBasicInfoDto(
 );
 
 /// <summary>
+=======
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// Query to get all visitors.
 /// </summary>
 public record GetAllVisitorsQuery : IRequest<List<Visitor>>;
@@ -102,12 +105,17 @@ public record GetAllVisitorsQuery : IRequest<List<Visitor>>;
 public record GetVisitorByIdQuery(int VisitorId) : IRequest<Visitor?>;
 
 /// <summary>
+<<<<<<< HEAD
 /// Query to get visitor by user ID.
+=======
+/// Query to get a visitor by user ID.
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// </summary>
 /// <param name="UserId">The user ID.</param>
 public record GetVisitorByUserIdQuery(int UserId) : IRequest<Visitor?>;
 
 /// <summary>
+<<<<<<< HEAD
 /// Query to search visitors by name (display name or username).
 /// </summary>
 /// <param name="Name">The name to search for (partial match).</param>
@@ -127,11 +135,15 @@ public record GetVisitorsByBlacklistStatusQuery(bool IsBlacklisted) : IRequest<L
 
 /// <summary>
 /// Query to get visitors by visitor type.
+=======
+/// Query to get visitors by type.
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// </summary>
 /// <param name="VisitorType">The visitor type to filter by.</param>
 public record GetVisitorsByTypeQuery(VisitorType VisitorType) : IRequest<List<Visitor>>;
 
 /// <summary>
+<<<<<<< HEAD
 /// Query to get visitors registered within a date range.
 /// </summary>
 /// <param name="StartDate">Start date for registration.</param>
@@ -164,3 +176,37 @@ public record SearchVisitorsQuery(
     DateTime? StartDate = null,
     DateTime? EndDate = null
 ) : IRequest<List<Visitor>>;
+=======
+/// Query to get visitors by member level.
+/// </summary>
+/// <param name="MemberLevel">The member level to filter by.</param>
+public record GetVisitorsByMemberLevelQuery(string MemberLevel) : IRequest<List<Visitor>>;
+
+/// <summary>
+/// Query to get visitors by points range.
+/// </summary>
+/// <param name="MinPoints">Minimum points.</param>
+/// <param name="MaxPoints">Maximum points.</param>
+public record GetVisitorsByPointsRangeQuery(int MinPoints, int MaxPoints) : IRequest<List<Visitor>>;
+
+/// <summary>
+/// Query to get member statistics.
+/// </summary>
+public record GetMembershipStatisticsQuery : IRequest<MembershipStatistics>;
+
+/// <summary>
+/// Membership statistics data transfer object.
+/// </summary>
+public class MembershipStatistics
+{
+    public int TotalVisitors { get; set; }
+    public int TotalMembers { get; set; }
+    public int BronzeMembers { get; set; }
+    public int SilverMembers { get; set; }
+    public int GoldMembers { get; set; }
+    public int PlatinumMembers { get; set; }
+    public decimal MembershipRate { get; set; }
+    public int TotalPointsIssued { get; set; }
+    public double AveragePointsPerMember { get; set; }
+}
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)

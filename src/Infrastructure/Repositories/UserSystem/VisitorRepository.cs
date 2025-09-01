@@ -6,7 +6,11 @@ using Microsoft.EntityFrameworkCore;
 namespace DbApp.Infrastructure.Repositories.UserSystem;
 
 /// <summary>
+<<<<<<< HEAD
 /// Repository implementation for Visitor entity.
+=======
+/// Repository implementation for Visitor entity operations.
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// </summary>
 public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorRepository
 {
@@ -26,6 +30,16 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
             .FirstOrDefaultAsync(v => v.VisitorId == visitorId);
     }
 
+<<<<<<< HEAD
+=======
+    public async Task<Visitor?> GetByUserIdAsync(int userId)
+    {
+        return await _dbContext.Visitors
+            .Include(v => v.User)
+            .FirstOrDefaultAsync(v => v.VisitorId == userId);
+    }
+
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     public async Task<List<Visitor>> GetAllAsync()
     {
         return await _dbContext.Visitors
@@ -33,6 +47,33 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
             .ToListAsync();
     }
 
+<<<<<<< HEAD
+=======
+    public async Task<List<Visitor>> GetByTypeAsync(VisitorType visitorType)
+    {
+        return await _dbContext.Visitors
+            .Include(v => v.User)
+            .Where(v => v.VisitorType == visitorType)
+            .ToListAsync();
+    }
+
+    public async Task<List<Visitor>> GetByMemberLevelAsync(string memberLevel)
+    {
+        return await _dbContext.Visitors
+            .Include(v => v.User)
+            .Where(v => v.MemberLevel == memberLevel)
+            .ToListAsync();
+    }
+
+    public async Task<List<Visitor>> GetByPointsRangeAsync(int minPoints, int maxPoints)
+    {
+        return await _dbContext.Visitors
+            .Include(v => v.User)
+            .Where(v => v.Points >= minPoints && v.Points <= maxPoints)
+            .ToListAsync();
+    }
+
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     public async Task UpdateAsync(Visitor visitor)
     {
         visitor.UpdatedAt = DateTime.UtcNow;
@@ -46,6 +87,7 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         await _dbContext.SaveChangesAsync();
     }
 
+<<<<<<< HEAD
     public async Task<Visitor?> GetByUserIdAsync(int userId)
     {
         return await _dbContext.Visitors
@@ -143,5 +185,27 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         return await query
             .OrderBy(v => v.User.DisplayName)
             .ToListAsync();
+=======
+    public async Task AddPointsAsync(int visitorId, int points)
+    {
+        var visitor = await GetByIdAsync(visitorId);
+        if (visitor != null)
+        {
+            visitor.Points += points;
+            await UpdateAsync(visitor);
+        }
+    }
+
+    public async Task<bool> DeductPointsAsync(int visitorId, int points)
+    {
+        var visitor = await GetByIdAsync(visitorId);
+        if (visitor != null && visitor.Points >= points)
+        {
+            visitor.Points -= points;
+            await UpdateAsync(visitor);
+            return true;
+        }
+        return false;
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
 }

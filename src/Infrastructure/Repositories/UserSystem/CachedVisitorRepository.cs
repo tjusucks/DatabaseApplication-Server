@@ -7,8 +7,12 @@ using Microsoft.Extensions.Caching.Distributed;
 namespace DbApp.Infrastructure.Repositories.UserSystem;
 
 /// <summary>
+<<<<<<< HEAD
 /// Cached repository implementation for Visitor entity.
 /// Provides caching layer over the base VisitorRepository.
+=======
+/// Cached decorator for Visitor repository operations.
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// </summary>
 public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache cache) : IVisitorRepository
 {
@@ -40,6 +44,7 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         return entity;
     }
 
+<<<<<<< HEAD
     public Task<List<Visitor>> GetAllAsync() => _inner.GetAllAsync();
 
     public async Task UpdateAsync(Visitor visitor)
@@ -54,6 +59,8 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
     }
 
+=======
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     public async Task<Visitor?> GetByUserIdAsync(int userId)
     {
         string key = $"visitor:user:{userId}";
@@ -72,6 +79,7 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         return entity;
     }
 
+<<<<<<< HEAD
     public Task<List<Visitor>> SearchByNameAsync(string name) => _inner.SearchByNameAsync(name);
 
     public Task<List<Visitor>> SearchByPhoneNumberAsync(string phoneNumber) => _inner.SearchByPhoneNumberAsync(phoneNumber);
@@ -91,4 +99,46 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         DateTime? startDate = null,
         DateTime? endDate = null) =>
         _inner.SearchAsync(name, phoneNumber, isBlacklisted, visitorType, startDate, endDate);
+=======
+    public Task<List<Visitor>> GetAllAsync() => _inner.GetAllAsync();
+
+    public Task<List<Visitor>> GetByTypeAsync(VisitorType visitorType) => _inner.GetByTypeAsync(visitorType);
+
+    public Task<List<Visitor>> GetByMemberLevelAsync(string memberLevel) => _inner.GetByMemberLevelAsync(memberLevel);
+
+    public Task<List<Visitor>> GetByPointsRangeAsync(int minPoints, int maxPoints) => 
+        _inner.GetByPointsRangeAsync(minPoints, maxPoints);
+
+    public async Task UpdateAsync(Visitor visitor)
+    {
+        await _inner.UpdateAsync(visitor);
+        await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitor.VisitorId}");
+    }
+
+    public async Task DeleteAsync(Visitor visitor)
+    {
+        await _inner.DeleteAsync(visitor);
+        await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitor.VisitorId}");
+    }
+
+    public async Task AddPointsAsync(int visitorId, int points)
+    {
+        await _inner.AddPointsAsync(visitorId, points);
+        await _cache.RemoveAsync($"visitor:{visitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitorId}");
+    }
+
+    public async Task<bool> DeductPointsAsync(int visitorId, int points)
+    {
+        var result = await _inner.DeductPointsAsync(visitorId, points);
+        if (result)
+        {
+            await _cache.RemoveAsync($"visitor:{visitorId}");
+            await _cache.RemoveAsync($"visitor:user:{visitorId}");
+        }
+        return result;
+    }
+>>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 }
