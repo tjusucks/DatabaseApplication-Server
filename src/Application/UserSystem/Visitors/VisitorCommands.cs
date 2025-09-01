@@ -3,6 +3,8 @@ using MediatR;
 
 namespace DbApp.Application.UserSystem.Visitors;
 
+// === 队友的基础访客管理功能 ===
+
 /// <summary>
 /// Command to create a new visitor with complete user information.
 /// </summary>
@@ -26,6 +28,37 @@ public record CreateVisitorCommand(
     int Height,
     string PasswordHash
 ) : IRequest<int>;
+
+// === 您的会员和积分管理功能 ===
+
+/// <summary>
+/// Command to register a new visitor based on existing user.
+/// </summary>
+/// <param name="UserId">The user ID to create visitor for.</param>
+/// <param name="Height">The visitor's height in centimeters.</param>
+public record RegisterVisitorCommand(int UserId, int Height) : IRequest<int>;
+
+/// <summary>
+/// Command to upgrade a visitor to member status.
+/// </summary>
+/// <param name="VisitorId">The visitor ID to upgrade.</param>
+public record UpgradeToMemberCommand(int VisitorId) : IRequest<Unit>;
+
+/// <summary>
+/// Command to add points to a visitor's account.
+/// </summary>
+/// <param name="VisitorId">The visitor ID.</param>
+/// <param name="Points">The points to add.</param>
+/// <param name="Reason">The reason for adding points.</param>
+public record AddPointsCommand(int VisitorId, int Points, string Reason) : IRequest<Unit>;
+
+/// <summary>
+/// Command to deduct points from a visitor's account.
+/// </summary>
+/// <param name="VisitorId">The visitor ID.</param>
+/// <param name="Points">The points to deduct.</param>
+/// <param name="Reason">The reason for deducting points.</param>
+public record DeductPointsCommand(int VisitorId, int Points, string Reason) : IRequest<bool>;
 
 /// <summary>
 /// Command to update visitor information.
@@ -60,6 +93,19 @@ public record UpdateVisitorBlacklistStatusCommand(
     int VisitorId,
     bool IsBlacklisted
 ) : IRequest<Unit>;
+
+/// <summary>
+/// Command to blacklist a visitor.
+/// </summary>
+/// <param name="VisitorId">The visitor ID to blacklist.</param>
+/// <param name="Reason">The reason for blacklisting.</param>
+public record BlacklistVisitorCommand(int VisitorId, string Reason) : IRequest<Unit>;
+
+/// <summary>
+/// Command to remove a visitor from blacklist.
+/// </summary>
+/// <param name="VisitorId">The visitor ID to remove from blacklist.</param>
+public record UnblacklistVisitorCommand(int VisitorId) : IRequest<Unit>;
 
 /// <summary>
 /// Command to delete a visitor.

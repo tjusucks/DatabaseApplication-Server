@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 namespace DbApp.Infrastructure.Repositories.UserSystem;
 
 /// <summary>
-/// Cached repository implementation for Visitor entity.
+/// Cached decorator for Visitor repository operations.
 /// Provides caching layer over the base VisitorRepository.
 /// </summary>
 public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache cache) : IVisitorRepository
@@ -53,7 +53,6 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         await _inner.DeleteAsync(visitor);
         await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
     }
-
     public async Task<Visitor?> GetByUserIdAsync(int userId)
     {
         string key = $"visitor:user:{userId}";
@@ -72,13 +71,12 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         return entity;
     }
 
+    // === 队友的搜索和筛选功能 ===
     public Task<List<Visitor>> SearchByNameAsync(string name) => _inner.SearchByNameAsync(name);
 
     public Task<List<Visitor>> SearchByPhoneNumberAsync(string phoneNumber) => _inner.SearchByPhoneNumberAsync(phoneNumber);
 
     public Task<List<Visitor>> GetByBlacklistStatusAsync(bool isBlacklisted) => _inner.GetByBlacklistStatusAsync(isBlacklisted);
-
-    public Task<List<Visitor>> GetByVisitorTypeAsync(VisitorType visitorType) => _inner.GetByVisitorTypeAsync(visitorType);
 
     public Task<List<Visitor>> GetByRegistrationDateRangeAsync(DateTime startDate, DateTime endDate) =>
         _inner.GetByRegistrationDateRangeAsync(startDate, endDate);
@@ -91,4 +89,30 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         DateTime? startDate = null,
         DateTime? endDate = null) =>
         _inner.SearchAsync(name, phoneNumber, isBlacklisted, visitorType, startDate, endDate);
+
+    // === 您的会员和积分功能 ===
+    public Task<List<Visitor>> GetByTypeAsync(VisitorType visitorType) => _inner.GetByTypeAsync(visitorType);
+
+    public Task<List<Visitor>> GetByMemberLevelAsync(string memberLevel) => _inner.GetByMemberLevelAsync(memberLevel);
+
+    public Task<List<Visitor>> GetByPointsRangeAsync(int minPoints, int maxPoints) =>
+        _inner.GetByPointsRangeAsync(minPoints, maxPoints);
+
+    public async Task AddPointsAsync(int visitorId, int points)
+    {
+        await _inner.AddPointsAsync(visitorId, points);
+        await _cache.RemoveAsync($"visitor:{visitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitorId}");
+    }
+
+    public async Task<bool> DeductPointsAsync(int visitorId, int points)
+    {
+        var result = await _inner.DeductPointsAsync(visitorId, points);
+        if (result)
+        {
+            await _cache.RemoveAsync($"visitor:{visitorId}");
+            await _cache.RemoveAsync($"visitor:user:{visitorId}");
+        }
+        return result;
+    }
 }

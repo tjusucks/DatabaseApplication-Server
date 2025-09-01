@@ -1,3 +1,4 @@
+using DbApp.Domain.Constants;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
@@ -8,7 +9,8 @@ namespace DbApp.Application.UserSystem.Visitors;
 /// <summary>
 /// Handler for getting all visitors.
 /// </summary>
-public class GetAllVisitorsQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetAllVisitorsQuery, List<Visitor>>
+public class GetAllVisitorsQueryHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<GetAllVisitorsQuery, List<Visitor>>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
@@ -21,7 +23,8 @@ public class GetAllVisitorsQueryHandler(IVisitorRepository visitorRepository) : 
 /// <summary>
 /// Handler for getting a visitor by ID.
 /// </summary>
-public class GetVisitorByIdQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetVisitorByIdQuery, Visitor?>
+public class GetVisitorByIdQueryHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<GetVisitorByIdQuery, Visitor?>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
@@ -34,7 +37,8 @@ public class GetVisitorByIdQueryHandler(IVisitorRepository visitorRepository) : 
 /// <summary>
 /// Handler for getting a visitor by user ID.
 /// </summary>
-public class GetVisitorByUserIdQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetVisitorByUserIdQuery, Visitor?>
+public class GetVisitorByUserIdQueryHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<GetVisitorByUserIdQuery, Visitor?>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
@@ -43,6 +47,8 @@ public class GetVisitorByUserIdQueryHandler(IVisitorRepository visitorRepository
         return await _visitorRepository.GetByUserIdAsync(request.UserId);
     }
 }
+
+// === 队友的搜索和筛选功能 ===
 
 /// <summary>
 /// Handler for searching visitors by name.
@@ -86,13 +92,14 @@ public class GetVisitorsByBlacklistStatusQueryHandler(IVisitorRepository visitor
 /// <summary>
 /// Handler for getting visitors by visitor type.
 /// </summary>
-public class GetVisitorsByTypeQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<GetVisitorsByTypeQuery, List<Visitor>>
+public class GetVisitorsByTypeQueryHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<GetVisitorsByTypeQuery, List<Visitor>>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
     public async Task<List<Visitor>> Handle(GetVisitorsByTypeQuery request, CancellationToken cancellationToken)
     {
-        return await _visitorRepository.GetByVisitorTypeAsync(request.VisitorType);
+        return await _visitorRepository.GetByTypeAsync(request.VisitorType);
     }
 }
 
@@ -106,6 +113,22 @@ public class GetVisitorsByRegistrationDateRangeQueryHandler(IVisitorRepository v
     public async Task<List<Visitor>> Handle(GetVisitorsByRegistrationDateRangeQuery request, CancellationToken cancellationToken)
     {
         return await _visitorRepository.GetByRegistrationDateRangeAsync(request.StartDate, request.EndDate);
+    }
+}
+
+// === 您的会员和积分查询功能 ===
+
+/// <summary>
+/// Handler for getting visitors by member level.
+/// </summary>
+public class GetVisitorsByMemberLevelQueryHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<GetVisitorsByMemberLevelQuery, List<Visitor>>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+
+    public async Task<List<Visitor>> Handle(GetVisitorsByMemberLevelQuery request, CancellationToken cancellationToken)
+    {
+        return await _visitorRepository.GetByMemberLevelAsync(request.MemberLevel);
     }
 }
 
@@ -125,6 +148,20 @@ public class SearchVisitorsQueryHandler(IVisitorRepository visitorRepository) : 
             request.VisitorType,
             request.StartDate,
             request.EndDate);
+    }
+}
+
+/// <summary>
+/// Handler for getting visitors by points range.
+/// </summary>
+public class GetVisitorsByPointsRangeQueryHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<GetVisitorsByPointsRangeQuery, List<Visitor>>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+
+    public async Task<List<Visitor>> Handle(GetVisitorsByPointsRangeQuery request, CancellationToken cancellationToken)
+    {
+        return await _visitorRepository.GetByPointsRangeAsync(request.MinPoints, request.MaxPoints);
     }
 }
 
@@ -195,5 +232,41 @@ public class GetVisitorHistoryQueryHandler(
             lastVisitDate,
             recentEntryRecords
         );
+    }
+}
+
+/// <summary>
+/// Handler for getting membership statistics.
+/// </summary>
+public class GetMembershipStatisticsQueryHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<GetMembershipStatisticsQuery, MembershipStatistics>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+
+    public async Task<MembershipStatistics> Handle(GetMembershipStatisticsQuery request, CancellationToken cancellationToken)
+    {
+        var allVisitors = await _visitorRepository.GetAllAsync();
+        var members = allVisitors.Where(v => v.VisitorType == VisitorType.Member).ToList();
+
+        var bronzeMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Bronze);
+        var silverMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Silver);
+        var goldMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Gold);
+        var platinumMembers = members.Count(m => m.MemberLevel == MembershipConstants.LevelNames.Platinum);
+
+        var totalPoints = members.Sum(m => m.Points);
+        var averagePoints = members.Count > 0 ? (double)totalPoints / members.Count : 0;
+
+        return new MembershipStatistics
+        {
+            TotalVisitors = allVisitors.Count,
+            TotalMembers = members.Count,
+            BronzeMembers = bronzeMembers,
+            SilverMembers = silverMembers,
+            GoldMembers = goldMembers,
+            PlatinumMembers = platinumMembers,
+            MembershipRate = allVisitors.Count > 0 ? (decimal)members.Count / allVisitors.Count * 100 : 0,
+            TotalPointsIssued = totalPoints,
+            AveragePointsPerMember = averagePoints
+        };
     }
 }

@@ -9,18 +9,25 @@ namespace DbApp.Domain.Interfaces.UserSystem;
 public interface IVisitorRepository
 {
     /// <summary>
-    /// Creates a new visitor.
+    /// Creates a new visitor record.
     /// </summary>
-    /// <param name="visitor">The visitor to create.</param>
-    /// <returns>The ID of the created visitor.</returns>
+    /// <param name="visitor">The visitor entity to create.</param>
+    /// <returns>The created visitor ID.</returns>
     Task<int> CreateAsync(Visitor visitor);
 
     /// <summary>
-    /// Gets a visitor by ID.
+    /// Gets a visitor by their ID.
     /// </summary>
     /// <param name="visitorId">The visitor ID.</param>
-    /// <returns>The visitor if found, null otherwise.</returns>
+    /// <returns>The visitor entity or null if not found.</returns>
     Task<Visitor?> GetByIdAsync(int visitorId);
+
+    /// <summary>
+    /// Gets a visitor by their user ID.
+    /// </summary>
+    /// <param name="userId">The user ID.</param>
+    /// <returns>The visitor entity or null if not found.</returns>
+    Task<Visitor?> GetByUserIdAsync(int userId);
 
     /// <summary>
     /// Gets all visitors.
@@ -28,24 +35,21 @@ public interface IVisitorRepository
     /// <returns>List of all visitors.</returns>
     Task<List<Visitor>> GetAllAsync();
 
+    // === 基础CRUD操作 ===
+
     /// <summary>
-    /// Updates a visitor.
+    /// Updates a visitor record.
     /// </summary>
-    /// <param name="visitor">The visitor to update.</param>
+    /// <param name="visitor">The visitor entity to update.</param>
     Task UpdateAsync(Visitor visitor);
 
     /// <summary>
-    /// Deletes a visitor.
+    /// Deletes a visitor record.
     /// </summary>
-    /// <param name="visitor">The visitor to delete.</param>
+    /// <param name="visitor">The visitor entity to delete.</param>
     Task DeleteAsync(Visitor visitor);
 
-    /// <summary>
-    /// Gets a visitor by user ID.
-    /// </summary>
-    /// <param name="userId">The user ID.</param>
-    /// <returns>The visitor if found, null otherwise.</returns>
-    Task<Visitor?> GetByUserIdAsync(int userId);
+    // === 队友的搜索和筛选功能 ===
 
     /// <summary>
     /// Searches visitors by name (username or display name).
@@ -73,7 +77,7 @@ public interface IVisitorRepository
     /// </summary>
     /// <param name="visitorType">The visitor type to filter by.</param>
     /// <returns>List of visitors of the specified type.</returns>
-    Task<List<Visitor>> GetByVisitorTypeAsync(VisitorType visitorType);
+    Task<List<Visitor>> GetByTypeAsync(VisitorType visitorType);
 
     /// <summary>
     /// Gets visitors registered within a date range.
@@ -100,4 +104,36 @@ public interface IVisitorRepository
         VisitorType? visitorType = null,
         DateTime? startDate = null,
         DateTime? endDate = null);
+
+    // === 您的会员和积分功能 ===
+
+    /// <summary>
+    /// Gets visitors by member level.
+    /// </summary>
+    /// <param name="memberLevel">The member level to filter by.</param>
+    /// <returns>List of visitors with the specified member level.</returns>
+    Task<List<Visitor>> GetByMemberLevelAsync(string memberLevel);
+
+    /// <summary>
+    /// Gets visitors with points in a specific range.
+    /// </summary>
+    /// <param name="minPoints">Minimum points.</param>
+    /// <param name="maxPoints">Maximum points.</param>
+    /// <returns>List of visitors with points in the specified range.</returns>
+    Task<List<Visitor>> GetByPointsRangeAsync(int minPoints, int maxPoints);
+
+    /// <summary>
+    /// Adds points to a visitor's account.
+    /// </summary>
+    /// <param name="visitorId">The visitor ID.</param>
+    /// <param name="points">The points to add.</param>
+    Task AddPointsAsync(int visitorId, int points);
+
+    /// <summary>
+    /// Deducts points from a visitor's account.
+    /// </summary>
+    /// <param name="visitorId">The visitor ID.</param>
+    /// <param name="points">The points to deduct.</param>
+    /// <returns>True if successful, false if insufficient points.</returns>
+    Task<bool> DeductPointsAsync(int visitorId, int points);
 }
