@@ -115,4 +115,22 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         }
         return result;
     }
+
+    public async Task UpdateVisitorInfoAsync(
+        int visitorId,
+        string? displayName = null,
+        string? phoneNumber = null,
+        DateTime? birthDate = null,
+        Gender? gender = null,
+        VisitorType? visitorType = null,
+        int? height = null,
+        int? points = null,
+        string? memberLevel = null)
+    {
+        await _inner.UpdateVisitorInfoAsync(visitorId, displayName, phoneNumber, birthDate, gender, visitorType, height, points, memberLevel);
+
+        // Clear cache for this visitor
+        await _cache.RemoveAsync($"visitor:{visitorId}");
+        await _cache.RemoveAsync($"visitor:user:{visitorId}");
+    }
 }

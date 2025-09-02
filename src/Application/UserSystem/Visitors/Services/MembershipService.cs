@@ -26,19 +26,31 @@ public static class MembershipService
     }
 
     /// <summary>
-    /// Gets the benefits multiplier for a member level.
+    /// Gets the discount multiplier for a member level.
     /// </summary>
     /// <param name="memberLevel">The member level.</param>
-    /// <returns>The benefits multiplier.</returns>
-    public static decimal GetBenefitsMultiplier(string? memberLevel)
+    /// <returns>The discount multiplier (e.g., 0.7 for 30% discount).</returns>
+    public static decimal GetDiscountMultiplier(string? memberLevel)
     {
         return memberLevel switch
         {
-            MembershipConstants.LevelNames.Platinum => MembershipConstants.BenefitsMultipliers.Platinum,
-            MembershipConstants.LevelNames.Gold => MembershipConstants.BenefitsMultipliers.Gold,
-            MembershipConstants.LevelNames.Silver => MembershipConstants.BenefitsMultipliers.Silver,
-            _ => MembershipConstants.BenefitsMultipliers.Bronze
+            MembershipConstants.LevelNames.Platinum => MembershipConstants.DiscountMultipliers.Platinum,
+            MembershipConstants.LevelNames.Gold => MembershipConstants.DiscountMultipliers.Gold,
+            MembershipConstants.LevelNames.Silver => MembershipConstants.DiscountMultipliers.Silver,
+            _ => MembershipConstants.DiscountMultipliers.Bronze
         };
+    }
+
+    /// <summary>
+    /// Calculates the final price after applying member discount.
+    /// </summary>
+    /// <param name="originalPrice">The original price.</param>
+    /// <param name="memberLevel">The member level.</param>
+    /// <returns>The final price after discount.</returns>
+    public static decimal CalculateDiscountedPrice(decimal originalPrice, string? memberLevel)
+    {
+        var discountMultiplier = GetDiscountMultiplier(memberLevel);
+        return originalPrice * discountMultiplier;
     }
 
     /// <summary>

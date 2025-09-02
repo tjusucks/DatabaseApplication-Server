@@ -317,7 +317,7 @@ public class MembershipController(IMediator mediator) : ControllerBase
     {
         try
         {
-            await _mediator.Send(new UpdateVisitorCommand(id, dto.Height));
+            await _mediator.Send(new UpdateVisitorCommand(id, null, null, null, null, null, dto.Height, null, null));
             return Ok(new { Message = "Visitor information updated successfully" });
         }
         catch (InvalidOperationException ex)
@@ -360,7 +360,7 @@ public class MembershipController(IMediator mediator) : ControllerBase
     {
         try
         {
-            await _mediator.Send(new RemoveFromBlacklistCommand(id));
+            await _mediator.Send(new UnblacklistVisitorCommand(id));
             return Ok(new { Message = "Visitor successfully removed from blacklist" });
         }
         catch (InvalidOperationException ex)
