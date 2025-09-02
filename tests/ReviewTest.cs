@@ -46,6 +46,26 @@ public class EmployeeReviewTest
             Evaluator = evaluator
         };
 
+        // 创建DTO对象用于模拟mediator的返回值
+        var expectedReviewDto = new EmployeeReviewDto
+        {
+            ReviewId = 1,
+            EmployeeId = employee.EmployeeId,
+            Period = "2025Q1",
+            Score = 95.5m,
+            EvaluationLevel = "Excellent",
+            EvaluatorId = evaluator.EmployeeId,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Employee = new EmployeeSimpleDto
+            {
+                EmployeeId = employee.EmployeeId,
+                StaffNumber = "EMP001",
+                Position = "Developer",
+                DepartmentName = "IT"
+            }
+        };
+
         var mockEmployeeReviewRepository = new Mock<IEmployeeReviewRepository>();
 
         // Setup for Create
@@ -95,13 +115,13 @@ public class EmployeeReviewTest
         mediatorMock.Setup(m => m.Send(It.IsAny<CreateEmployeeReviewCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(expectedReview.ReviewId);
 
-        // Setup mediator for GetEmployeeReviewByIdQuery
+        // Setup mediator for GetEmployeeReviewByIdQuery - 修复类型不匹配问题
         mediatorMock.Setup(m => m.Send(It.IsAny<GetEmployeeReviewByIdQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedReview);
+            .ReturnsAsync(expectedReviewDto);
 
-        // Setup mediator for GetEmployeeReviewsByEmployeeQuery
+        // Setup mediator for GetEmployeeReviewsByEmployeeQuery - 修复类型不匹配问题
         mediatorMock.Setup(m => m.Send(It.IsAny<GetEmployeeReviewsByEmployeeQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<EmployeeReview> { expectedReview });
+            .ReturnsAsync(new List<EmployeeReviewDto> { expectedReviewDto });
 
         Console.WriteLine("1. Testing Create EmployeeReview Command");
         var createCommand = new CreateEmployeeReviewCommand(
