@@ -40,13 +40,13 @@ public static class MembershipConstants
     }
 
     /// <summary>
-    /// Membership benefits multipliers.
+    /// Membership discount multipliers (final price = original price * multiplier).
     /// </summary>
-    public static class BenefitsMultipliers
+    public static class DiscountMultipliers
     {
-        public const decimal Bronze = 1.0m;
-        public const decimal Silver = 1.1m;
-        public const decimal Gold = 1.2m;
-        public const decimal Platinum = 1.3m;
+        public const decimal Bronze = 1.0m;    // 无折扣 (100%)
+        public const decimal Silver = 0.9m;    // 9折 (90%)
+        public const decimal Gold = 0.8m;      // 8折 (80%)
+        public const decimal Platinum = 0.7m;  // 7折 (70%)
     }
 }

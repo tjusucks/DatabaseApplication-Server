@@ -173,5 +173,31 @@ public interface IVisitorRepository
     /// <param name="points">The points to deduct.</param>
     /// <returns>True if successful, false if insufficient points.</returns>
     Task<bool> DeductPointsAsync(int visitorId, int points);
+<<<<<<< HEAD
 >>>>>>> 1bba8b9 (feat: implement membership registration and points system)
+=======
+
+    /// <summary>
+    /// Updates visitor information avoiding EF Core tracking conflicts.
+    /// </summary>
+    /// <param name="visitorId">The visitor ID.</param>
+    /// <param name="displayName">Optional display name update.</param>
+    /// <param name="phoneNumber">Optional phone number update.</param>
+    /// <param name="birthDate">Optional birth date update.</param>
+    /// <param name="gender">Optional gender update.</param>
+    /// <param name="visitorType">Optional visitor type update.</param>
+    /// <param name="height">Optional height update.</param>
+    /// <param name="points">Optional points update.</param>
+    /// <param name="memberLevel">Optional member level update.</param>
+    Task UpdateVisitorInfoAsync(
+        int visitorId,
+        string? displayName = null,
+        string? phoneNumber = null,
+        DateTime? birthDate = null,
+        Gender? gender = null,
+        VisitorType? visitorType = null,
+        int? height = null,
+        int? points = null,
+        string? memberLevel = null);
+>>>>>>> 2c00408 (feat: implement five core visitor management features)
 }

@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
+using DbApp.Application.UserSystem.Visitors.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.UserSystem;
@@ -192,8 +193,62 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         if (visitor != null)
         {
             visitor.Points += points;
+
+            // Update member level based on new points
+            MembershipService.UpdateMemberLevel(visitor);
+
             await UpdateAsync(visitor);
         }
+    }
+
+    public async Task UpdateVisitorInfoAsync(
+        int visitorId,
+        string? displayName = null,
+        string? phoneNumber = null,
+        DateTime? birthDate = null,
+        Gender? gender = null,
+        VisitorType? visitorType = null,
+        int? height = null,
+        int? points = null,
+        string? memberLevel = null)
+    {
+        // Clear change tracker to avoid conflicts
+        _dbContext.ChangeTracker.Clear();
+
+        // Get entities fresh from database
+        var visitor = await _dbContext.Visitors
+            .Include(v => v.User)
+            .FirstOrDefaultAsync(v => v.VisitorId == visitorId);
+
+        if (visitor == null)
+            throw new InvalidOperationException($"Visitor with ID {visitorId} not found");
+
+        // Update user information
+        if (displayName != null)
+            visitor.User.DisplayName = displayName;
+        if (phoneNumber != null)
+            visitor.User.PhoneNumber = phoneNumber;
+        if (birthDate.HasValue)
+            visitor.User.BirthDate = birthDate;
+        if (gender.HasValue)
+            visitor.User.Gender = gender;
+
+        visitor.User.UpdatedAt = DateTime.UtcNow;
+
+        // Update visitor information
+        if (visitorType.HasValue)
+            visitor.VisitorType = visitorType.Value;
+        if (height.HasValue)
+            visitor.Height = height.Value;
+        if (points.HasValue)
+            visitor.Points = points.Value;
+        if (memberLevel != null)
+            visitor.MemberLevel = memberLevel;
+
+        visitor.UpdatedAt = DateTime.UtcNow;
+
+        // Save changes
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<bool> DeductPointsAsync(int visitorId, int points)

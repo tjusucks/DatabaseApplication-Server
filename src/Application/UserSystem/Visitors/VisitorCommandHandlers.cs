@@ -9,6 +9,7 @@ namespace DbApp.Application.UserSystem.Visitors;
 
 /// <summary>
 /// Handler for creating a new visitor with complete user information.
+/// Creates User and Visitor entities in sequence with proper error handling.
 /// </summary>
 public class CreateVisitorCommandHandler(
     IVisitorRepository visitorRepository,
@@ -19,26 +20,41 @@ public class CreateVisitorCommandHandler(
 
     public async Task<int> Handle(CreateVisitorCommand request, CancellationToken cancellationToken)
     {
-        // First create the user
-        var user = new User
+        try
         {
-            Username = request.Username,
-            Email = request.Email,
-            DisplayName = request.DisplayName,
-            PhoneNumber = request.PhoneNumber,
-            BirthDate = request.BirthDate,
-            Gender = request.Gender,
-            PasswordHash = request.PasswordHash,
-            RegisterTime = DateTime.UtcNow,
-            CreatedAt = DateTime.UtcNow,
-            RoleId = 1 // Default role for visitors
-        };
+            // First create the user
+            var user = new User
+            {
+                Username = request.Username,
+                Email = request.Email,
+                DisplayName = request.DisplayName,
+                PhoneNumber = request.PhoneNumber,
+                BirthDate = request.BirthDate,
+                Gender = request.Gender,
+                PasswordHash = request.PasswordHash,
+                RegisterTime = DateTime.UtcNow,
+                CreatedAt = DateTime.UtcNow,
+                RoleId = 1 // Default role for visitors
+            };
 
-        var userId = await _userRepository.CreateAsync(user);
+            var userId = await _userRepository.CreateAsync(user);
 
-        // Then create the visitor
-        var visitor = new Visitor
+            // Then create the visitor
+            var visitor = new Visitor
+            {
+                VisitorId = userId, // Visitor ID is the same as User ID
+                VisitorType = request.VisitorType,
+                Height = request.Height,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _visitorRepository.CreateAsync(visitor);
+
+            return userId;
+        }
+        catch (Exception ex)
         {
+<<<<<<< HEAD
             VisitorId = userId, // Visitor ID is the same as User ID
             VisitorType = request.VisitorType,
             Height = request.Height,
@@ -48,6 +64,23 @@ public class CreateVisitorCommandHandler(
         await _visitorRepository.CreateAsync(visitor);
         return userId;
 =======
+=======
+            // Log the error and rethrow with context
+            throw new InvalidOperationException($"Failed to create visitor: {ex.Message}", ex);
+        }
+    }
+}
+
+/// <summary>
+/// Handler for registering a new visitor based on existing user.
+/// </summary>
+public class RegisterVisitorCommandHandler(IVisitorRepository visitorRepository, IUserRepository userRepository)
+    : IRequestHandler<RegisterVisitorCommand, int>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+    private readonly IUserRepository _userRepository = userRepository;
+
+>>>>>>> 2c00408 (feat: implement five core visitor management features)
     public async Task<int> Handle(RegisterVisitorCommand request, CancellationToken cancellationToken)
     {
         // Verify user exists
@@ -110,7 +143,8 @@ public class AddPointsCommandHandler(IVisitorRepository visitorRepository)
 
     public async Task<Unit> Handle(AddPointsCommand request, CancellationToken cancellationToken)
     {
-        var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId)
+        // Verify visitor exists
+        _ = await _visitorRepository.GetByIdAsync(request.VisitorId)
             ?? throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found");
 
         if (request.Points <= 0)
@@ -118,12 +152,8 @@ public class AddPointsCommandHandler(IVisitorRepository visitorRepository)
             throw new ArgumentException("Points to add must be positive", nameof(request));
         }
 
-        visitor.Points += request.Points;
-        
-        // Update member level if necessary
-        MembershipService.UpdateMemberLevel(visitor);
-        
-        await _visitorRepository.UpdateAsync(visitor);
+        // Use repository method to avoid entity tracking conflicts
+        await _visitorRepository.AddPointsAsync(request.VisitorId, request.Points);
 
         return Unit.Value;
     }
@@ -166,13 +196,14 @@ public class DeductPointsCommandHandler(IVisitorRepository visitorRepository)
 
 /// <summary>
 /// Handler for updating visitor information.
+/// Uses repository method to avoid EF Core tracking conflicts.
 /// </summary>
 <<<<<<< HEAD
 public class UpdateVisitorCommandHandler(
-    IVisitorRepository visitorRepository,
-    IUserRepository userRepository) : IRequestHandler<UpdateVisitorCommand, Unit>
+    IVisitorRepository visitorRepository) : IRequestHandler<UpdateVisitorCommand, Unit>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
+<<<<<<< HEAD
     private readonly IUserRepository _userRepository = userRepository;
 =======
 public class UpdateVisitorCommandHandler(IVisitorRepository visitorRepository)
@@ -221,6 +252,22 @@ public class UpdateVisitorCommandHandler(IVisitorRepository visitorRepository)
         {
             throw new ArgumentException("Height must be between 50 and 300 cm", nameof(request));
         }
+=======
+
+    public async Task<Unit> Handle(UpdateVisitorCommand request, CancellationToken cancellationToken)
+    {
+        // Use repository method to avoid EF Core entity tracking conflicts
+        await _visitorRepository.UpdateVisitorInfoAsync(
+            request.VisitorId,
+            request.DisplayName,
+            request.PhoneNumber,
+            request.BirthDate,
+            request.Gender,
+            request.VisitorType,
+            request.Height,
+            request.Points,
+            request.MemberLevel);
+>>>>>>> 2c00408 (feat: implement five core visitor management features)
 
         visitor.Height = request.Height;
         visitor.UpdatedAt = DateTime.UtcNow;
