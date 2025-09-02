@@ -1,0 +1,103 @@
+name: Lint and Test Dotnet Projects
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "*.sln"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "*.sln"
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint Dotnet Projects
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          cache: true
+          cache-dependency-path: |
+            src/**/packages.lock.json
+            tests/packages.lock.json
+
+      - name: Restore dependencies
+        run: dotnet restore --locked-mode --verbosity normal
+
+      - name: Check code formatting
+        run: dotnet format --verify-no-changes --verbosity normal
+
+      - name: Build the projects
+        run: dotnet build --no-restore --warnaserror --verbosity diagnostic
+
+  test:
+    runs-on: ubuntu-latest
+    name: Test Dotnet Projects
+    needs: lint
+    services:
+      oracle:
+        image: container-registry.oracle.com/database/free:latest
+        ports:
+          - 1521:1521
+          - 5500:5500
+        env:
+          ORACLE_PWD: ${{ secrets.ORACLE_PWD }}
+        options: >-
+          --health-cmd="bash -c '
+            echo \"SELECT 1 FROM DUAL;\" |
+            sqlplus -s sys/${ORACLE_PWD}@//localhost:1521/FREEPDB1 as sysdba
+          '"
+          --health-interval=10s
+          --health-retries=10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup test user
+        env:
+          TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+          TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+          SYS_PASSWORD: ${{ secrets.ORACLE_PWD }}
+        run: |
+          docker exec -i oracle sqlplus sys/"$SYS_PASSWORD"@localhost:1521/FREEPDB1 as sysdba <<EOF
+            CREATE USER $TEST_USERNAME IDENTIFIED BY $TEST_PASSWORD;
+            GRANT CONNECT, RESOURCE TO $TEST_USERNAME;
+            GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO $TEST_USERNAME;
+            GRANT DROP ANY TABLE, ALTER ANY TABLE TO $TEST_USERNAME;
+            ALTER USER $TEST_USERNAME QUOTA UNLIMITED ON users;
+            SELECT username FROM dba_users WHERE username = UPPER('$TEST_USERNAME');
+          EOF
+          echo "Database user '$TEST_USERNAME' has been successfully configured."
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          cache: true
+          cache-dependency-path: |
+            src/**/packages.lock.json
+            tests/packages.lock.json
+
+      - name: Restore dependencies
+        run: dotnet restore --locked-mode --verbosity normal
+
+      - name: Run tests
+        env:
+          TestOracleConnection: >-
+            Data Source=localhost:1521/FREEPDB1;
+            User Id=${{ secrets.TEST_USERNAME }};
+            Password=${{ secrets.TEST_PASSWORD }};
+        run: dotnet test --no-restore --no-build --verbosity normal
