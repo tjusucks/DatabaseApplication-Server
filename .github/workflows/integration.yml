@@ -80,7 +80,7 @@ jobs:
             GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO "$TEST_USERNAME";
             GRANT DROP ANY TABLE, ALTER ANY TABLE TO "$TEST_USERNAME";
             ALTER USER "$TEST_USERNAME" QUOTA UNLIMITED ON users;
-            SELECT username FROM dba_users WHERE username = UPPER('$TEST_USERNAME');
+            SELECT username FROM dba_users WHERE username = "$TEST_USERNAME";
           EOF
           echo "Database user '$TEST_USERNAME' has been successfully configured."
       - name: Setup .NET
@@ -96,7 +96,7 @@ jobs:
         run: dotnet restore --locked-mode --verbosity normal
  
       - name: Build the projects
-        run: dotnet build --no-restore --warnaserror --verbosity diagnostic
+        run: dotnet build --no-restore --warnaserror --verbosity normal
 
       - name: Run tests
         env:

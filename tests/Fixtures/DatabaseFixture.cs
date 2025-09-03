@@ -15,7 +15,7 @@ public class DatabaseFixture : IAsyncLifetime
     public DatabaseFixture()
     {
         var oracleConnectionString = Env.GetString("TestOracleConnection") ??
-            "Data Source=localhost:1521/FREEPDB1;User ID=testuser;Password=testpassword;";
+            "Data Source=localhost:1521/FREEPDB1;User ID=TESTUSER;Password=TESTPASSWORD;";
 
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseOracle(oracleConnectionString)
@@ -40,7 +40,7 @@ public class DatabaseFixture : IAsyncLifetime
         {
             ConnectionString = DbContext.Database.GetConnectionString()
         };
-        string schema = builder["User ID"]?.ToString()?.ToUpper() ?? "TESTUSER";
+        string schema = builder["User ID"].ToString() ?? "TESTUSER";
 
         var respawnerOptions = new RespawnerOptions
         {
