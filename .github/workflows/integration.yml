@@ -65,6 +65,21 @@ jobs:
           --health-interval=10s
           --health-retries=10
 
+      valkey:
+        image: valkey/valkey:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --name valkey
+          --hostname valkey
+          --health-cmd="bash -c '
+            echo \"PING\" |
+            valkey-cli -h localhost -p 6379 |
+            grep -q \"PONG\"
+          '"
+          --health-interval=10s
+          --health-retries=10
+
     steps:
       - uses: actions/checkout@v4
 
@@ -105,4 +120,6 @@ jobs:
             Data Source=localhost:1521/FREEPDB1;
             User Id=${{ secrets.TEST_USERNAME }};
             Password=${{ secrets.TEST_PASSWORD }};
+          TestRedisConnection: >-
+            localhost:6379,defaultDatabase=${{ secrets.TEST_REDIS_DATABASE }}
         run: dotnet test --no-restore --no-build --verbosity normal
