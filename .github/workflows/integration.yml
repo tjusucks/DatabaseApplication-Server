@@ -74,6 +74,7 @@ jobs:
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
           ORACLE_PWD: ${{ secrets.ORACLE_PWD }}
         run: |
+          sleep 10
           docker exec -i oracle sqlplus sys/"$ORACLE_PWD"@//localhost:1521/FREEPDB1 as sysdba <<EOF
             CREATE USER "$TEST_USERNAME" IDENTIFIED BY "$TEST_PASSWORD";
             GRANT CONNECT, RESOURCE TO "$TEST_USERNAME";
