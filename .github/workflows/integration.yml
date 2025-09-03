@@ -74,17 +74,15 @@ jobs:
           TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
           ORACLE_PWD: ${{ secrets.ORACLE_PWD }}
         run: |
-          bash -c '
-            docker exec -i oracle sqlplus sys/"$ORACLE_PWD"@//localhost:1521/FREEPDB1 as sysdba <<EOF
-              CREATE USER $TEST_USERNAME IDENTIFIED BY $TEST_PASSWORD;
-              GRANT CONNECT, RESOURCE TO $TEST_USERNAME;
-              GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO $TEST_USERNAME;
-              GRANT DROP ANY TABLE, ALTER ANY TABLE TO $TEST_USERNAME;
-              ALTER USER $TEST_USERNAME QUOTA UNLIMITED ON users;
-              SELECT username FROM dba_users WHERE username = UPPER('$TEST_USERNAME');
-            EOF
-            echo "Database user '$TEST_USERNAME' has been successfully configured."
-          '
+          docker exec -i oracle sqlplus sys/"$ORACLE_PWD"@//localhost:1521/FREEPDB1 as sysdba <<EOF
+            CREATE USER $TEST_USERNAME IDENTIFIED BY $TEST_PASSWORD;
+            GRANT CONNECT, RESOURCE TO $TEST_USERNAME;
+            GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO $TEST_USERNAME;
+            GRANT DROP ANY TABLE, ALTER ANY TABLE TO $TEST_USERNAME;
+            ALTER USER $TEST_USERNAME QUOTA UNLIMITED ON users;
+            SELECT username FROM dba_users WHERE username = UPPER('$TEST_USERNAME');
+          EOF
+          echo "Database user '$TEST_USERNAME' has been successfully configured."
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -96,6 +94,9 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore --locked-mode --verbosity normal
+ 
+      - name: Build the projects
+        run: dotnet build --no-restore --warnaserror --verbosity diagnostic
 
       - name: Run tests
         env:
