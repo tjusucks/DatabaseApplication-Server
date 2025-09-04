@@ -2,6 +2,17 @@
   "version": 1,
   "dependencies": {
     "net9.0": {
+      "AutoMapper": {
+        "type": "Direct",
+        "requested": "[15.0.1, )",
+        "resolved": "15.0.1",
+        "contentHash": "kNo7iIAi4p4XxoEbfif2WUQtc6RTx+UteiRYPqCOKj+4q4+YaWono06qTxoHBy+0N1HdganA//k5p/VmWw2AMA==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "8.0.0",
+          "Microsoft.Extensions.Options": "8.0.0",
+          "Microsoft.IdentityModel.JsonWebTokens": "8.0.1"
+        }
+      },
       "MediatR": {
         "type": "Direct",
         "requested": "[13.0.0, )",

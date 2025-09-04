@@ -27,6 +27,18 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.2"
         }
       },
+      "MediatR": {
+        "type": "Direct",
+        "requested": "[13.0.0, )",
+        "resolved": "13.0.0",
+        "contentHash": "gR5vSoIINsXs86we38qdIfG62f6ngxT2sSaePsakJGHJIgLUDA7b41lujGXGWxX0hWyk8suajr2VKcAYSVMtdw==",
+        "dependencies": {
+          "MediatR.Contracts": "[2.0.1, 3.0.0)",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
+          "Microsoft.Extensions.Logging": "8.0.0",
+          "Microsoft.IdentityModel.JsonWebTokens": "8.0.1"
+        }
+      },
       "Microsoft.AspNetCore.OpenApi": {
         "type": "Direct",
         "requested": "[9.0.7, )",
@@ -101,21 +113,20 @@
         "resolved": "10.15.0.120848",
         "contentHash": "1hM3HVRl5jdC/ZBDu+G7CCYLXRGe/QaP01Zy+c9ETPhY7lWD8g8HiefY6sGaH0T3CJ4wAy0/waGgQTh0TYy0oQ=="
       },
+      "AutoMapper": {
+        "type": "Transitive",
+        "resolved": "15.0.1",
+        "contentHash": "kNo7iIAi4p4XxoEbfif2WUQtc6RTx+UteiRYPqCOKj+4q4+YaWono06qTxoHBy+0N1HdganA//k5p/VmWw2AMA==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "8.0.0",
+          "Microsoft.Extensions.Options": "8.0.0",
+          "Microsoft.IdentityModel.JsonWebTokens": "8.0.1"
+        }
+      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",
         "contentHash": "lQKvtaTDOXnoVJ20ibTuSIOf2i0uO0MPbDhd1jm238I+U/2ZnRENj0cktKZhtchBMtCUSRQ5v4xBCUbKNmyVMw=="
-      },
-      "MediatR": {
-        "type": "Transitive",
-        "resolved": "13.0.0",
-        "contentHash": "gR5vSoIINsXs86we38qdIfG62f6ngxT2sSaePsakJGHJIgLUDA7b41lujGXGWxX0hWyk8suajr2VKcAYSVMtdw==",
-        "dependencies": {
-          "MediatR.Contracts": "[2.0.1, 3.0.0)",
-          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0",
-          "Microsoft.Extensions.Logging": "8.0.0",
-          "Microsoft.IdentityModel.JsonWebTokens": "8.0.1"
-        }
       },
       "MediatR.Contracts": {
         "type": "Transitive",
@@ -1441,6 +1452,7 @@
       "application": {
         "type": "Project",
         "dependencies": {
+          "AutoMapper": "[15.0.1, )",
           "Domain": "[1.0.0, )",
           "mediatr": "[13.0.0, )"
         }
