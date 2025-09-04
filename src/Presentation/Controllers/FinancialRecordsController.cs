@@ -29,12 +29,12 @@ public class FinancialRecordsController(IMediator mediator) : ControllerBase
     {
         var query = new GetFinancialRecordByIdQuery(recordId);
         var result = await _mediator.Send(query);
-        
+
         if (result == null)
         {
             return NotFound($"Financial record with ID {recordId} not found.");
         }
-        
+
         return Ok(result);
     }
 
@@ -101,7 +101,7 @@ public class FinancialRecordsController(IMediator mediator) : ControllerBase
             descending,
             page,
             pageSize);
-        
+
         var result = await _mediator.Send(query);
         return Ok(result);
     }
@@ -126,14 +126,14 @@ public class FinancialRecordsController(IMediator mediator) : ControllerBase
         {
             return BadRequest("Record ID in URL does not match command.");
         }
-        
+
         var result = await _mediator.Send(command);
-        
+
         if (result == null)
         {
             return NotFound($"Financial record with ID {recordId} not found.");
         }
-        
+
         return Ok(result);
     }
 
@@ -145,12 +145,12 @@ public class FinancialRecordsController(IMediator mediator) : ControllerBase
     {
         var command = new DeleteFinancialRecordCommand(recordId);
         var result = await _mediator.Send(command);
-        
+
         if (!result)
         {
             return NotFound($"Financial record with ID {recordId} not found.");
         }
-        
+
         return NoContent();
     }
 }

@@ -1,9 +1,9 @@
+using System.Globalization;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.UserSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using DbApp.Domain.Statistics.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
-using System.Globalization;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
 
@@ -298,8 +298,8 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
                     LowestSalary = g.Min(r => r.Salary),
                     EmployeeCount = g.Select(r => r.EmployeeId).Distinct().Count(),
                     RecordCount = g.Count(),
-                    FirstPayment = g.Min(r => r.PayDate),
-                    LastPayment = g.Max(r => r.PayDate)
+                    FirstPayment = g.Any() ? g.Min(r => r.PayDate) : null,
+                    LastPayment = g.Any() ? g.Max(r => r.PayDate) : null
                 }),
             "position" => records.Where(r => r.Employee.Position != null)
                 .GroupBy(r => new { Key = r.Employee.Position, Name = r.Employee.Position })
@@ -313,11 +313,11 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
                     LowestSalary = g.Min(r => r.Salary),
                     EmployeeCount = g.Select(r => r.EmployeeId).Distinct().Count(),
                     RecordCount = g.Count(),
-                    FirstPayment = g.Min(r => r.PayDate),
-                    LastPayment = g.Max(r => r.PayDate)
+                    FirstPayment = g.Any() ? g.Min(r => r.PayDate) : null,
+                    LastPayment = g.Any() ? g.Max(r => r.PayDate) : null
                 }),
             "stafftype" => records.Where(r => r.Employee.StaffType != null)
-                .GroupBy(r => new { Key = r.Employee.StaffType.ToString(), Name = r.Employee.StaffType.ToString() })
+                .GroupBy(r => new { Key = r.Employee.StaffType.ToString() ?? "Unknown", Name = r.Employee.StaffType.ToString() ?? "Unknown" })
                 .Select(g => new GroupedSalaryStats
                 {
                     GroupKey = g.Key.Key,
@@ -328,8 +328,8 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
                     LowestSalary = g.Min(r => r.Salary),
                     EmployeeCount = g.Select(r => r.EmployeeId).Distinct().Count(),
                     RecordCount = g.Count(),
-                    FirstPayment = g.Min(r => r.PayDate),
-                    LastPayment = g.Max(r => r.PayDate)
+                    FirstPayment = g.Any() ? g.Min(r => r.PayDate) : null,
+                    LastPayment = g.Any() ? g.Max(r => r.PayDate) : null
                 }),
             "month" => records.GroupBy(r => new { Key = r.PayDate.ToString("yyyy-MM"), Name = r.PayDate.ToString("yyyy年MM月") })
                 .Select(g => new GroupedSalaryStats
@@ -342,8 +342,8 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
                     LowestSalary = g.Min(r => r.Salary),
                     EmployeeCount = g.Select(r => r.EmployeeId).Distinct().Count(),
                     RecordCount = g.Count(),
-                    FirstPayment = g.Min(r => r.PayDate),
-                    LastPayment = g.Max(r => r.PayDate)
+                    FirstPayment = g.Any() ? g.Min(r => r.PayDate) : null,
+                    LastPayment = g.Any() ? g.Max(r => r.PayDate) : null
                 }),
             "year" => records.GroupBy(r => new { Key = r.PayDate.Year.ToString(), Name = r.PayDate.Year.ToString() + "年" })
                 .Select(g => new GroupedSalaryStats
@@ -356,8 +356,8 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
                     LowestSalary = g.Min(r => r.Salary),
                     EmployeeCount = g.Select(r => r.EmployeeId).Distinct().Count(),
                     RecordCount = g.Count(),
-                    FirstPayment = g.Min(r => r.PayDate),
-                    LastPayment = g.Max(r => r.PayDate)
+                    FirstPayment = g.Any() ? g.Min(r => r.PayDate) : null,
+                    LastPayment = g.Any() ? g.Max(r => r.PayDate) : null
                 }),
             _ => records.Where(r => r.Employee.DepartmentName != null)
                 .GroupBy(r => new { Key = r.Employee.DepartmentName, Name = r.Employee.DepartmentName })
@@ -371,8 +371,8 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
                     LowestSalary = g.Min(r => r.Salary),
                     EmployeeCount = g.Select(r => r.EmployeeId).Distinct().Count(),
                     RecordCount = g.Count(),
-                    FirstPayment = g.Min(r => r.PayDate),
-                    LastPayment = g.Max(r => r.PayDate)
+                    FirstPayment = g.Any() ? g.Min(r => r.PayDate) : null,
+                    LastPayment = g.Any() ? g.Max(r => r.PayDate) : null
                 })
         };
 
@@ -381,10 +381,10 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
         // Apply sorting
         result = sortBy?.ToLower() switch
         {
-            "averagesalary" => descending ? result.OrderByDescending(g => g.AverageSalary).ToList() : result.OrderBy(g => g.AverageSalary).ToList(),
-            "employeecount" => descending ? result.OrderByDescending(g => g.EmployeeCount).ToList() : result.OrderBy(g => g.EmployeeCount).ToList(),
-            "groupname" => descending ? result.OrderByDescending(g => g.GroupName).ToList() : result.OrderBy(g => g.GroupName).ToList(),
-            _ => descending ? result.OrderByDescending(g => g.TotalSalaryPaid).ToList() : result.OrderBy(g => g.TotalSalaryPaid).ToList()
+            "averagesalary" => descending ? [.. result.OrderByDescending(g => g.AverageSalary)] : [.. result.OrderBy(g => g.AverageSalary)],
+            "employeecount" => descending ? [.. result.OrderByDescending(g => g.EmployeeCount)] : [.. result.OrderBy(g => g.EmployeeCount)],
+            "groupname" => descending ? [.. result.OrderByDescending(g => g.GroupName)] : [.. result.OrderBy(g => g.GroupName)],
+            _ => descending ? [.. result.OrderByDescending(g => g.TotalSalaryPaid)] : [.. result.OrderBy(g => g.TotalSalaryPaid)]
         };
 
         return result;
@@ -464,7 +464,7 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
 
         var records = await query.ToListAsync();
 
-        if (!records.Any())
+        if (records.Count == 0)
             return null;
 
         var latestRecord = records.OrderByDescending(r => r.PayDate).First();
@@ -530,9 +530,9 @@ public class SalaryRecordRepository(ApplicationDbContext context) : ISalaryRecor
         // Apply sorting
         groupedByMonth = sortBy?.ToLower() switch
         {
-            "totalsalarypaid" => descending ? groupedByMonth.OrderByDescending(g => g.TotalSalaryPaid).ToList() : groupedByMonth.OrderBy(g => g.TotalSalaryPaid).ToList(),
-            "employeespaid" => descending ? groupedByMonth.OrderByDescending(g => g.EmployeesPaid).ToList() : groupedByMonth.OrderBy(g => g.EmployeesPaid).ToList(),
-            _ => descending ? groupedByMonth.OrderByDescending(g => g.Year).ThenByDescending(g => g.Month).ToList() : groupedByMonth.OrderBy(g => g.Year).ThenBy(g => g.Month).ToList()
+            "totalsalarypaid" => descending ? [.. groupedByMonth.OrderByDescending(g => g.TotalSalaryPaid)] : [.. groupedByMonth.OrderBy(g => g.TotalSalaryPaid)],
+            "employeespaid" => descending ? [.. groupedByMonth.OrderByDescending(g => g.EmployeesPaid)] : [.. groupedByMonth.OrderBy(g => g.EmployeesPaid)],
+            _ => descending ? [.. groupedByMonth.OrderByDescending(g => g.Year).ThenByDescending(g => g.Month)] : [.. groupedByMonth.OrderBy(g => g.Year).ThenBy(g => g.Month)]
         };
 
         return groupedByMonth;
