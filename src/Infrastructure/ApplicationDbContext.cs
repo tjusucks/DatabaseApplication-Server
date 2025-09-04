@@ -49,8 +49,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         // Apply all configurations.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
 
-        // Note: Role seeding moved to application startup for better flexibility
-        // DataSeeding.SeedData(modelBuilder);
+        // Seed essential data using EF Core data seeding
+        DataSeeding.SeedData(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }

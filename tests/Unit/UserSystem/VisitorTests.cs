@@ -12,13 +12,11 @@ namespace DbApp.Tests.Unit.UserSystem;
 public class VisitorTests
 {
     private readonly Mock<IVisitorRepository> _mockVisitorRepository;
-    private readonly Mock<IUserRepository> _mockUserRepository;
     private readonly Mock<IEntryRecordRepository> _mockEntryRecordRepository;
 
     public VisitorTests()
     {
         _mockVisitorRepository = new Mock<IVisitorRepository>();
-        _mockUserRepository = new Mock<IUserRepository>();
         _mockEntryRecordRepository = new Mock<IEntryRecordRepository>();
     }
 
@@ -38,19 +36,19 @@ public class VisitorTests
             PasswordHash: "hashedpassword"
         );
 
-        _mockUserRepository.Setup(r => r.CreateAsync(It.IsAny<User>()))
-            .ReturnsAsync(1);
         _mockVisitorRepository.Setup(r => r.CreateAsync(It.IsAny<Visitor>()))
+            .Callback<Visitor>(v => v.VisitorId = 1)  // Set the VisitorId after creation
             .ReturnsAsync(1);
 
-        var handler = new CreateVisitorCommandHandler(_mockVisitorRepository.Object, _mockUserRepository.Object);
+        var handler = new CreateVisitorCommandHandler(_mockVisitorRepository.Object);
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.Equal(1, result);
-        _mockUserRepository.Verify(r => r.CreateAsync(It.IsAny<User>()), Times.Once);
+        // Single transaction: only VisitorRepository.CreateAsync is called
+        // User creation is handled via navigation property
         _mockVisitorRepository.Verify(r => r.CreateAsync(It.IsAny<Visitor>()), Times.Once);
     }
 

@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
-using DbApp.Infrastructure.Data;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -72,8 +71,8 @@ var app = builder.Build();
 
 
 
-// Initialize database with essential data
-await DatabaseInitializer.InitializeAsync(app.Services);
+// Database initialization handled by EF Core data seeding in migrations
+// Smart initialization removed in favor of standard EF Core approach
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -111,4 +110,9 @@ app.MapControllers();
 // Start the application.
 await app.RunAsync();
 
-
+// Make Program class accessible for testing
+public partial class Program
+{
+    // Protected constructor to satisfy SonarQube rule S1118
+    protected Program() { }
+}
