@@ -16,6 +16,7 @@ public class TicketTypeDto
     public ApplicableCrowd ApplicableCrowd { get; set; }
     public bool IsAvailable { get; set; } = true;
     public int RemainingQuantity { get; set; } = int.MaxValue;
+    public bool IsActive => IsAvailable;
 }
 
 /// <summary>
@@ -28,6 +29,16 @@ public class ReservationItemRequestDto
 }
 
 /// <summary>
+/// 价格计算请求DTO
+/// </summary>
+public class CalculatePriceRequestDto
+{
+    public int VisitorId { get; set; }
+    public List<ReservationItemRequestDto> Items { get; set; } = [];
+    public string? PromotionCode { get; set; }
+}
+
+/// <summary>
 /// 价格计算结果DTO
 /// </summary>
 public class ReservationPriceCalculationDto
@@ -35,8 +46,8 @@ public class ReservationPriceCalculationDto
     public decimal SubtotalAmount { get; set; }
     public decimal DiscountAmount { get; set; }
     public decimal TotalAmount { get; set; }
-    public List<ReservationItemPriceDto> ItemBreakdown { get; set; } = [];
-    public string? PromotionName { get; set; }
+    public List<ReservationItemPriceDto> Items { get; set; } = [];
+    public PromotionDto? AppliedPromotion { get; set; }
 }
 
 /// <summary>
@@ -50,4 +61,17 @@ public class ReservationItemPriceDto
     public decimal UnitPrice { get; set; }
     public decimal DiscountAmount { get; set; }
     public decimal TotalAmount { get; set; }
+}
+
+/// <summary>
+/// 促销DTO
+/// </summary>
+public class PromotionDto
+{
+    public int PromotionId { get; set; }
+    public string PromotionName { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public PromotionType PromotionType { get; set; }
+    public string? PromoCode { get; set; }
+    public bool IsActive { get; set; }
 }

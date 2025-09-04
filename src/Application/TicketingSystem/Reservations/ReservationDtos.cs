@@ -1,4 +1,5 @@
 using DbApp.Domain.Enums.TicketingSystem;
+using DbApp.Domain.Enums.ResourceSystem;
 
 namespace DbApp.Application.TicketingSystem.Reservations;
 
@@ -84,4 +85,62 @@ public class ReservationDto
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public List<ReservationItemDto> Items { get; set; } = [];
+}
+
+/// <summary>
+/// 创建预订请求DTO
+/// </summary>
+public class CreateReservationRequestDto
+{
+    public int VisitorId { get; set; }
+    public List<ReservationItemRequestDto> Items { get; set; } = [];
+    public string? PromotionCode { get; set; }
+    public int? PromotionId { get; set; }
+    public DateTime? VisitDate { get; set; }
+    public string? SpecialRequests { get; set; }
+    public string ContactPhone { get; set; } = string.Empty;
+    public string ContactEmail { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// 支付处理请求DTO
+/// </summary>
+public class ProcessPaymentRequestDto
+{
+    public int ReservationId { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
+    public string PaymentReference { get; set; } = string.Empty;
+    public string? PaymentNotes { get; set; }
+}
+
+/// <summary>
+/// 支付结果DTO
+/// </summary>
+public class PaymentResultDto
+{
+    public bool IsSuccess { get; set; }
+    public string? PaymentId { get; set; }
+    public string? ErrorMessage { get; set; }
+    public DateTime? ProcessedAt { get; set; }
+}
+
+/// <summary>
+/// 取消预订请求DTO
+/// </summary>
+public class CancelReservationRequestDto
+{
+    public string CancellationReason { get; set; } = string.Empty;
+    public bool RequestRefund { get; set; } = true;
+}
+
+/// <summary>
+/// 取消结果DTO
+/// </summary>
+public class CancellationResultDto
+{
+    public bool IsSuccess { get; set; }
+    public decimal RefundAmount { get; set; }
+    public string? RefundReference { get; set; }
+    public string? ErrorMessage { get; set; }
+    public DateTime? ProcessedAt { get; set; }
 }
