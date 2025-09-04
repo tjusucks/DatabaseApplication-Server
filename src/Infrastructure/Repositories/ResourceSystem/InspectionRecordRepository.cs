@@ -1,13 +1,20 @@
 using DbApp.Domain.Entities.ResourceSystem;
+using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
 
+/// <summary>  
+/// Repository implementation for inspection record operations with unified search capabilities.  
+/// </summary>  
 public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspectionRecordRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
+    /// <summary>  
+    /// Get inspection record by ID with related entities.  
+    /// </summary>  
     public async Task<InspectionRecord?> GetByIdAsync(int inspectionId)
     {
         return await _dbContext.InspectionRecords
@@ -16,6 +23,9 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
             .FirstOrDefaultAsync(r => r.InspectionId == inspectionId);
     }
 
+    /// <summary>  
+    /// Add a new inspection record.  
+    /// </summary>  
     public async Task<InspectionRecord> AddAsync(InspectionRecord record)
     {
         _dbContext.InspectionRecords.Add(record);
@@ -23,30 +33,46 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
         return record;
     }
 
+    /// <summary>  
+    /// Update an existing inspection record.  
+    /// </summary>  
     public async Task UpdateAsync(InspectionRecord record)
     {
         _dbContext.InspectionRecords.Update(record);
         await _dbContext.SaveChangesAsync();
     }
 
+    /// <summary>  
+    /// Delete an inspection record.  
+    /// </summary>  
     public async Task DeleteAsync(InspectionRecord record)
     {
         _dbContext.InspectionRecords.Remove(record);
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<InspectionRecord>> SearchAsync(string? searchTerm, int page, int pageSize)
+    /// <summary>  
+    /// Unified search method with comprehensive filtering options.  
+    /// </summary>  
+    public async Task<IEnumerable<InspectionRecord>> SearchAsync(
+        string? searchTerm,
+        int? rideId,
+        int? teamId,
+        CheckType? checkType,
+        bool? isPassed,
+        DateTime? checkDateFrom,
+        DateTime? checkDateTo,
+        int page,
+        int pageSize)
     {
         var query = _dbContext.InspectionRecords
             .Include(r => r.Ride)
             .Include(r => r.Team)
             .AsQueryable();
 
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            query = query.Where(r => r.Ride.RideName.Contains(searchTerm) ||
-                                   r.Team.TeamName.Contains(searchTerm));
-        }
+        // Apply all filtering conditions  
+        query = ApplyFilters(query, searchTerm, rideId, teamId, checkType,
+            isPassed, checkDateFrom, checkDateTo);
 
         return await query
             .Skip((page - 1) * pageSize)
@@ -54,40 +80,29 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
             .ToListAsync();
     }
 
-    public async Task<int> CountAsync(string? searchTerm)
+    /// <summary>  
+    /// Unified count method with comprehensive filtering options.  
+    /// </summary>  
+    public async Task<int> CountAsync(
+        string? searchTerm,
+        int? rideId,
+        int? teamId,
+        CheckType? checkType,
+        bool? isPassed,
+        DateTime? checkDateFrom,
+        DateTime? checkDateTo)
     {
-        var query = _dbContext.InspectionRecords
-            .Include(r => r.Ride)
-            .Include(r => r.Team)
-            .AsQueryable();
+        var query = _dbContext.InspectionRecords.AsQueryable();
 
-        if (!string.IsNullOrEmpty(searchTerm))
-        {
-            query = query.Where(r => r.Ride.RideName.Contains(searchTerm) ||
-                                   r.Team.TeamName.Contains(searchTerm));
-        }
+        query = ApplyFilters(query, searchTerm, rideId, teamId, checkType,
+            isPassed, checkDateFrom, checkDateTo);
 
         return await query.CountAsync();
     }
 
-    public async Task<IEnumerable<InspectionRecord>> SearchByRideAsync(int rideId, int page, int pageSize)
-    {
-        return await _dbContext.InspectionRecords
-            .Where(r => r.RideId == rideId)
-            .Include(r => r.Ride)
-            .Include(r => r.Team)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
-    }
-
-    public async Task<int> CountByRideAsync(int rideId)
-    {
-        return await _dbContext.InspectionRecords
-            .Where(r => r.RideId == rideId)
-            .CountAsync();
-    }
-
+    /// <summary>  
+    /// Get inspection record statistics for a date range.  
+    /// </summary>  
     public async Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate)
     {
         var query = _dbContext.InspectionRecords.AsQueryable();
@@ -109,7 +124,63 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
             TotalInspections = records.Count,
             PassedInspections = records.Count(r => r.IsPassed),
             FailedInspections = records.Count(r => !r.IsPassed),
-            PassRate = records.Any() ? (double)records.Count(r => r.IsPassed) / records.Count * 100 : 0
+            PassRate = records.Any() ? (double)records.Count(r => r.IsPassed) / records.Count * 100 : 0,
+            CheckTypeBreakdown = records.GroupBy(r => r.CheckType)
+                .ToDictionary(g => g.Key.ToString(), g => g.Count())
         };
+    }
+
+    /// <summary>  
+    /// Private helper method to apply all filtering conditions.  
+    /// </summary>  
+    private static IQueryable<InspectionRecord> ApplyFilters(
+        IQueryable<InspectionRecord> query,
+        string? searchTerm,
+        int? rideId,
+        int? teamId,
+        CheckType? checkType,
+        bool? isPassed,
+        DateTime? checkDateFrom,
+        DateTime? checkDateTo)
+    {
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(r => r.Ride.RideName.Contains(searchTerm) ||
+                                   r.Team.TeamName.Contains(searchTerm) ||
+                                   (r.IssuesFound != null && r.IssuesFound.Contains(searchTerm)) ||
+                                   (r.Recommendations != null && r.Recommendations.Contains(searchTerm)));
+        }
+
+        if (rideId.HasValue)
+        {
+            query = query.Where(r => r.RideId == rideId.Value);
+        }
+
+        if (teamId.HasValue)
+        {
+            query = query.Where(r => r.TeamId == teamId.Value);
+        }
+
+        if (checkType.HasValue)
+        {
+            query = query.Where(r => r.CheckType == checkType.Value);
+        }
+
+        if (isPassed.HasValue)
+        {
+            query = query.Where(r => r.IsPassed == isPassed.Value);
+        }
+
+        if (checkDateFrom.HasValue)
+        {
+            query = query.Where(r => r.CheckDate >= checkDateFrom.Value);
+        }
+
+        if (checkDateTo.HasValue)
+        {
+            query = query.Where(r => r.CheckDate <= checkDateTo.Value);
+        }
+
+        return query;
     }
 }

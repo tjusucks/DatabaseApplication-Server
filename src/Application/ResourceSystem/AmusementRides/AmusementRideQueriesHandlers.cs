@@ -12,7 +12,6 @@ public class AmusementRideQueryHandler(
     IMapper mapper) :
     IRequestHandler<GetAmusementRideByIdQuery, AmusementRideSummaryDto?>,
     IRequestHandler<SearchAmusementRidesQuery, AmusementRideResult>,
-    IRequestHandler<SearchAmusementRidesByStatusQuery, AmusementRideResult>,
     IRequestHandler<GetAmusementRideStatsQuery, AmusementRideStatsDto>,
     IRequestHandler<CreateAmusementRideCommand, int>,
     IRequestHandler<UpdateAmusementRideCommand>,
@@ -33,7 +32,7 @@ public class AmusementRideQueryHandler(
     }
 
     /// <summary>  
-    /// Handle searching amusement rides by filtering options.  
+    /// Handle searching amusement rides with comprehensive filtering options.  
     /// </summary>  
     public async Task<AmusementRideResult> Handle(
         SearchAmusementRidesQuery request,
@@ -41,34 +40,30 @@ public class AmusementRideQueryHandler(
     {
         var rides = await _amusementRideRepository.SearchAsync(
             request.SearchTerm,
-            request.Page,
-            request.PageSize);
-
-        var totalCount = await _amusementRideRepository.CountAsync(request.SearchTerm);
-        var rideDtos = _mapper.Map<List<AmusementRideSummaryDto>>(rides);
-
-        return new AmusementRideResult
-        {
-            AmusementRides = rideDtos,
-            TotalCount = totalCount,
-            Page = request.Page,
-            PageSize = request.PageSize
-        };
-    }
-
-    /// <summary>  
-    /// Handle searching amusement rides by status with filtering options.  
-    /// </summary>  
-    public async Task<AmusementRideResult> Handle(
-        SearchAmusementRidesByStatusQuery request,
-        CancellationToken cancellationToken)
-    {
-        var rides = await _amusementRideRepository.SearchByStatusAsync(
             request.Status,
+            request.Location,
+            request.ManagerId,
+            request.MinCapacity,
+            request.MaxCapacity,
+            request.MinHeightLimit,
+            request.MaxHeightLimit,
+            request.OpenDateFrom,
+            request.OpenDateTo,
             request.Page,
             request.PageSize);
 
-        var totalCount = await _amusementRideRepository.CountByStatusAsync(request.Status);
+        var totalCount = await _amusementRideRepository.CountAsync(
+            request.SearchTerm,
+            request.Status,
+            request.Location,
+            request.ManagerId,
+            request.MinCapacity,
+            request.MaxCapacity,
+            request.MinHeightLimit,
+            request.MaxHeightLimit,
+            request.OpenDateFrom,
+            request.OpenDateTo);
+
         var rideDtos = _mapper.Map<List<AmusementRideSummaryDto>>(rides);
 
         return new AmusementRideResult
