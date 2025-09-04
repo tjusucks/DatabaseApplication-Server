@@ -244,7 +244,7 @@ public class VisitorCommandHandlerTests
     {
         // Arrange
         var visitor = new Visitor { VisitorId = 1, Height = 170 };
-        var command = new UpdateVisitorCommand(1, 175);
+        var command = new UpdateVisitorCommand(1, null, null, null, null, null, 175, null, null);
         
         _mockVisitorRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(visitor);
@@ -265,7 +265,7 @@ public class VisitorCommandHandlerTests
     {
         // Arrange
         var visitor = new Visitor { VisitorId = 1, Height = 170 };
-        var command = new UpdateVisitorCommand(1, 400); // Invalid height
+        var command = new UpdateVisitorCommand(1, null, null, null, null, null, 400, null, null); // Invalid height
         
         _mockVisitorRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(visitor);
@@ -305,12 +305,12 @@ public class VisitorCommandHandlerTests
     {
         // Arrange
         var visitor = new Visitor { VisitorId = 1, IsBlacklisted = true };
-        var command = new RemoveFromBlacklistCommand(1);
-        
+        var command = new UnblacklistVisitorCommand(1);
+
         _mockVisitorRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(visitor);
 
-        var handler = new RemoveFromBlacklistCommandHandler(_mockVisitorRepository.Object);
+        var handler = new UnblacklistVisitorCommandHandler(_mockVisitorRepository.Object);
 
         // Act
         await handler.Handle(command, CancellationToken.None);
