@@ -29,10 +29,10 @@ public class SalaryRecordCommandHandler(
         };
 
         var createdRecord = await _salaryRecordRepository.AddAsync(salaryRecord);
-        
+
         // Retrieve the full record with navigation properties
         var fullRecord = await _salaryRecordRepository.GetByIdAsync(createdRecord.SalaryRecordId);
-        
+
         return _mapper.Map<SalaryRecordDetailDto>(fullRecord);
     }
 
@@ -51,10 +51,10 @@ public class SalaryRecordCommandHandler(
         existingRecord.UpdatedAt = DateTime.UtcNow;
 
         var updatedRecord = await _salaryRecordRepository.UpdateAsync(existingRecord);
-        
+
         // Retrieve the full record with navigation properties
         var fullRecord = await _salaryRecordRepository.GetByIdAsync(updatedRecord.SalaryRecordId);
-        
+
         return _mapper.Map<SalaryRecordDetailDto>(fullRecord);
     }
 
@@ -76,7 +76,7 @@ public class SalaryRecordCommandHandler(
         }).ToList();
 
         var createdRecords = await _salaryRecordRepository.AddBatchAsync(salaryRecords);
-        
+
         // Retrieve the full records with navigation properties
         var fullRecords = new List<SalaryRecord>();
         foreach (var record in createdRecords)
@@ -87,7 +87,7 @@ public class SalaryRecordCommandHandler(
                 fullRecords.Add(fullRecord);
             }
         }
-        
+
         return _mapper.Map<List<SalaryRecordDetailDto>>(fullRecords);
     }
 }

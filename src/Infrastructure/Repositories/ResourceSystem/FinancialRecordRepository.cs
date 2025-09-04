@@ -300,12 +300,12 @@ public class FinancialRecordRepository(ApplicationDbContext context) : IFinancia
                     TotalExpense = g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TotalRefund = g.Where(r => r.TransactionType == TransactionType.Refund).Sum(r => r.Amount),
                     TotalTransfer = g.Where(r => r.TransactionType == TransactionType.Transfer).Sum(r => r.Amount),
-                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) - 
+                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) -
                                g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TransactionCount = g.Count(),
                     AverageAmount = g.Average(r => r.Amount),
-                    FirstTransaction = g.Min(r => r.TransactionDate),
-                    LastTransaction = g.Max(r => r.TransactionDate)
+                    FirstTransaction = g.Any() ? g.Min(r => r.TransactionDate) : null,
+                    LastTransaction = g.Any() ? g.Max(r => r.TransactionDate) : null
                 }),
             "paymentmethod" => records.GroupBy(r => new { Key = r.PaymentMethod?.ToString() ?? "Unknown", Name = r.PaymentMethod?.ToString() ?? "Unknown" })
                 .Select(g => new GroupedFinancialStats
@@ -316,12 +316,12 @@ public class FinancialRecordRepository(ApplicationDbContext context) : IFinancia
                     TotalExpense = g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TotalRefund = g.Where(r => r.TransactionType == TransactionType.Refund).Sum(r => r.Amount),
                     TotalTransfer = g.Where(r => r.TransactionType == TransactionType.Transfer).Sum(r => r.Amount),
-                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) - 
+                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) -
                                g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TransactionCount = g.Count(),
                     AverageAmount = g.Average(r => r.Amount),
-                    FirstTransaction = g.Min(r => r.TransactionDate),
-                    LastTransaction = g.Max(r => r.TransactionDate)
+                    FirstTransaction = g.Any() ? g.Min(r => r.TransactionDate) : null,
+                    LastTransaction = g.Any() ? g.Max(r => r.TransactionDate) : null
                 }),
             "date" => records.GroupBy(r => new { Key = r.TransactionDate.ToString("yyyy-MM-dd"), Name = r.TransactionDate.ToString("yyyy-MM-dd") })
                 .Select(g => new GroupedFinancialStats
@@ -332,12 +332,12 @@ public class FinancialRecordRepository(ApplicationDbContext context) : IFinancia
                     TotalExpense = g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TotalRefund = g.Where(r => r.TransactionType == TransactionType.Refund).Sum(r => r.Amount),
                     TotalTransfer = g.Where(r => r.TransactionType == TransactionType.Transfer).Sum(r => r.Amount),
-                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) - 
+                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) -
                                g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TransactionCount = g.Count(),
                     AverageAmount = g.Average(r => r.Amount),
-                    FirstTransaction = g.Min(r => r.TransactionDate),
-                    LastTransaction = g.Max(r => r.TransactionDate)
+                    FirstTransaction = g.Any() ? g.Min(r => r.TransactionDate) : null,
+                    LastTransaction = g.Any() ? g.Max(r => r.TransactionDate) : null
                 }),
             "month" => records.GroupBy(r => new { Key = r.TransactionDate.ToString("yyyy-MM"), Name = r.TransactionDate.ToString("yyyy年MM月") })
                 .Select(g => new GroupedFinancialStats
@@ -348,15 +348,15 @@ public class FinancialRecordRepository(ApplicationDbContext context) : IFinancia
                     TotalExpense = g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TotalRefund = g.Where(r => r.TransactionType == TransactionType.Refund).Sum(r => r.Amount),
                     TotalTransfer = g.Where(r => r.TransactionType == TransactionType.Transfer).Sum(r => r.Amount),
-                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) - 
+                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) -
                                g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TransactionCount = g.Count(),
                     AverageAmount = g.Average(r => r.Amount),
-                    FirstTransaction = g.Min(r => r.TransactionDate),
-                    LastTransaction = g.Max(r => r.TransactionDate)
+                    FirstTransaction = g.Any() ? g.Min(r => r.TransactionDate) : null,
+                    LastTransaction = g.Any() ? g.Max(r => r.TransactionDate) : null
                 }),
             "responsibleemployee" => records.Where(r => r.ResponsibleEmployee != null)
-                .GroupBy(r => new { Key = r.ResponsibleEmployeeId.ToString(), Name = r.ResponsibleEmployee!.User.DisplayName })
+                .GroupBy(r => new { Key = r.ResponsibleEmployeeId.ToString() ?? "Unknown", Name = r.ResponsibleEmployee!.User.DisplayName ?? "Unknown" })
                 .Select(g => new GroupedFinancialStats
                 {
                     GroupKey = g.Key.Key,
@@ -365,12 +365,12 @@ public class FinancialRecordRepository(ApplicationDbContext context) : IFinancia
                     TotalExpense = g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TotalRefund = g.Where(r => r.TransactionType == TransactionType.Refund).Sum(r => r.Amount),
                     TotalTransfer = g.Where(r => r.TransactionType == TransactionType.Transfer).Sum(r => r.Amount),
-                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) - 
+                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) -
                                g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TransactionCount = g.Count(),
                     AverageAmount = g.Average(r => r.Amount),
-                    FirstTransaction = g.Min(r => r.TransactionDate),
-                    LastTransaction = g.Max(r => r.TransactionDate)
+                    FirstTransaction = g.Any() ? g.Min(r => r.TransactionDate) : null,
+                    LastTransaction = g.Any() ? g.Max(r => r.TransactionDate) : null
                 }),
             _ => records.GroupBy(r => new { Key = r.TransactionType.ToString(), Name = r.TransactionType.ToString() })
                 .Select(g => new GroupedFinancialStats
@@ -381,12 +381,12 @@ public class FinancialRecordRepository(ApplicationDbContext context) : IFinancia
                     TotalExpense = g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TotalRefund = g.Where(r => r.TransactionType == TransactionType.Refund).Sum(r => r.Amount),
                     TotalTransfer = g.Where(r => r.TransactionType == TransactionType.Transfer).Sum(r => r.Amount),
-                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) - 
+                    NetProfit = g.Where(r => r.TransactionType == TransactionType.Income).Sum(r => r.Amount) -
                                g.Where(r => r.TransactionType == TransactionType.Expense).Sum(r => r.Amount),
                     TransactionCount = g.Count(),
                     AverageAmount = g.Average(r => r.Amount),
-                    FirstTransaction = g.Min(r => r.TransactionDate),
-                    LastTransaction = g.Max(r => r.TransactionDate)
+                    FirstTransaction = g.Any() ? g.Min(r => r.TransactionDate) : null,
+                    LastTransaction = g.Any() ? g.Max(r => r.TransactionDate) : null
                 })
         };
 
@@ -395,11 +395,11 @@ public class FinancialRecordRepository(ApplicationDbContext context) : IFinancia
         // Apply sorting
         result = sortBy?.ToLower() switch
         {
-            "totalincome" => descending ? result.OrderByDescending(g => g.TotalIncome).ToList() : result.OrderBy(g => g.TotalIncome).ToList(),
-            "totalexpense" => descending ? result.OrderByDescending(g => g.TotalExpense).ToList() : result.OrderBy(g => g.TotalExpense).ToList(),
-            "transactioncount" => descending ? result.OrderByDescending(g => g.TransactionCount).ToList() : result.OrderBy(g => g.TransactionCount).ToList(),
-            "groupname" => descending ? result.OrderByDescending(g => g.GroupName).ToList() : result.OrderBy(g => g.GroupName).ToList(),
-            _ => descending ? result.OrderByDescending(g => g.NetProfit).ToList() : result.OrderBy(g => g.NetProfit).ToList()
+            "totalincome" => descending ? [.. result.OrderByDescending(g => g.TotalIncome)] : [.. result.OrderBy(g => g.TotalIncome)],
+            "totalexpense" => descending ? [.. result.OrderByDescending(g => g.TotalExpense)] : [.. result.OrderBy(g => g.TotalExpense)],
+            "transactioncount" => descending ? [.. result.OrderByDescending(g => g.TransactionCount)] : [.. result.OrderBy(g => g.TransactionCount)],
+            "groupname" => descending ? [.. result.OrderByDescending(g => g.GroupName)] : [.. result.OrderBy(g => g.GroupName)],
+            _ => descending ? [.. result.OrderByDescending(g => g.NetProfit)] : [.. result.OrderBy(g => g.NetProfit)]
         };
 
         return result;

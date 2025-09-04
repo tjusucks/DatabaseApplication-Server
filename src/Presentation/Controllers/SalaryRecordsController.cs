@@ -29,12 +29,12 @@ public class SalaryRecordsController(IMediator mediator) : ControllerBase
     {
         var query = new GetSalaryRecordByIdQuery(salaryRecordId);
         var result = await _mediator.Send(query);
-        
+
         if (result == null)
         {
             return NotFound($"Salary record with ID {salaryRecordId} not found.");
         }
-        
+
         return Ok(result);
     }
 
@@ -68,7 +68,7 @@ public class SalaryRecordsController(IMediator mediator) : ControllerBase
         {
             return BadRequest("Employee ID in URL does not match query parameter.");
         }
-        
+
         var result = await _mediator.Send(query);
         return Ok(result);
     }
@@ -84,12 +84,12 @@ public class SalaryRecordsController(IMediator mediator) : ControllerBase
     {
         var query = new GetEmployeeSalarySummaryQuery(employeeId, startDate, endDate);
         var result = await _mediator.Send(query);
-        
+
         if (result == null)
         {
             return NotFound($"Employee with ID {employeeId} not found or has no salary records.");
         }
-        
+
         return Ok(result);
     }
 
@@ -143,14 +143,14 @@ public class SalaryRecordsController(IMediator mediator) : ControllerBase
         {
             return BadRequest("Salary record ID in URL does not match command.");
         }
-        
+
         var result = await _mediator.Send(command);
-        
+
         if (result == null)
         {
             return NotFound($"Salary record with ID {salaryRecordId} not found.");
         }
-        
+
         return Ok(result);
     }
 
@@ -162,12 +162,12 @@ public class SalaryRecordsController(IMediator mediator) : ControllerBase
     {
         var command = new DeleteSalaryRecordCommand(salaryRecordId);
         var result = await _mediator.Send(command);
-        
+
         if (!result)
         {
             return NotFound($"Salary record with ID {salaryRecordId} not found.");
         }
-        
+
         return NoContent();
     }
 }

@@ -30,10 +30,10 @@ public class FinancialRecordCommandHandler(
         };
 
         var createdRecord = await _financialRecordRepository.AddAsync(financialRecord);
-        
+
         // Retrieve the full record with navigation properties
         var fullRecord = await _financialRecordRepository.GetByIdAsync(createdRecord.RecordId);
-        
+
         return _mapper.Map<FinancialRecordDetailDto>(fullRecord);
     }
 
@@ -54,10 +54,10 @@ public class FinancialRecordCommandHandler(
         existingRecord.UpdatedAt = DateTime.UtcNow;
 
         var updatedRecord = await _financialRecordRepository.UpdateAsync(existingRecord);
-        
+
         // Retrieve the full record with navigation properties
         var fullRecord = await _financialRecordRepository.GetByIdAsync(updatedRecord.RecordId);
-        
+
         return _mapper.Map<FinancialRecordDetailDto>(fullRecord);
     }
 
