@@ -1,4 +1,3 @@
-using DbApp.Domain.Entities.UserSystem;
 using DbApp.Application.UserSystem.Visitors.Services;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
@@ -54,17 +53,6 @@ public class CreateVisitorCommandHandler(
         }
         catch (Exception ex)
         {
-<<<<<<< HEAD
-            VisitorId = userId, // Visitor ID is the same as User ID
-            VisitorType = request.VisitorType,
-            Height = request.Height,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        await _visitorRepository.CreateAsync(visitor);
-        return userId;
-=======
-=======
             // Log the error and rethrow with context
             throw new InvalidOperationException($"Failed to create visitor: {ex.Message}", ex);
         }
@@ -80,7 +68,6 @@ public class RegisterVisitorCommandHandler(IVisitorRepository visitorRepository,
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
     private readonly IUserRepository _userRepository = userRepository;
 
->>>>>>> 2c00408 (feat: implement five core visitor management features)
     public async Task<int> Handle(RegisterVisitorCommand request, CancellationToken cancellationToken)
     {
         // Verify user exists
@@ -111,7 +98,7 @@ public class RegisterVisitorCommandHandler(IVisitorRepository visitorRepository,
 /// <summary>
 /// Handler for upgrading a visitor to member status.
 /// </summary>
-public class UpgradeToMemberCommandHandler(IVisitorRepository visitorRepository) 
+public class UpgradeToMemberCommandHandler(IVisitorRepository visitorRepository)
     : IRequestHandler<UpgradeToMemberCommand, Unit>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
@@ -136,7 +123,7 @@ public class UpgradeToMemberCommandHandler(IVisitorRepository visitorRepository)
 /// <summary>
 /// Handler for adding points to a visitor's account.
 /// </summary>
-public class AddPointsCommandHandler(IVisitorRepository visitorRepository) 
+public class AddPointsCommandHandler(IVisitorRepository visitorRepository)
     : IRequestHandler<AddPointsCommand, Unit>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
@@ -162,7 +149,7 @@ public class AddPointsCommandHandler(IVisitorRepository visitorRepository)
 /// <summary>
 /// Handler for deducting points from a visitor's account.
 /// </summary>
-public class DeductPointsCommandHandler(IVisitorRepository visitorRepository) 
+public class DeductPointsCommandHandler(IVisitorRepository visitorRepository)
     : IRequestHandler<DeductPointsCommand, bool>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
@@ -183,14 +170,13 @@ public class DeductPointsCommandHandler(IVisitorRepository visitorRepository)
         }
 
         visitor.Points -= request.Points;
-        
+
         // Update member level if necessary
         MembershipService.UpdateMemberLevel(visitor);
-        
+
         await _visitorRepository.UpdateAsync(visitor);
 
         return true;
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
 }
 
@@ -198,61 +184,10 @@ public class DeductPointsCommandHandler(IVisitorRepository visitorRepository)
 /// Handler for updating visitor information.
 /// Uses repository method to avoid EF Core tracking conflicts.
 /// </summary>
-<<<<<<< HEAD
 public class UpdateVisitorCommandHandler(
     IVisitorRepository visitorRepository) : IRequestHandler<UpdateVisitorCommand, Unit>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
-<<<<<<< HEAD
-    private readonly IUserRepository _userRepository = userRepository;
-=======
-public class UpdateVisitorCommandHandler(IVisitorRepository visitorRepository)
-    : IRequestHandler<UpdateVisitorCommand, Unit>
-{
-    private readonly IVisitorRepository _visitorRepository = visitorRepository;
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
-
-    public async Task<Unit> Handle(UpdateVisitorCommand request, CancellationToken cancellationToken)
-    {
-        var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId)
-            ?? throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found");
-
-<<<<<<< HEAD
-        var user = await _userRepository.GetByIdAsync(request.VisitorId)
-            ?? throw new InvalidOperationException($"User with ID {request.VisitorId} not found");
-
-        // Update user information
-        if (request.DisplayName != null)
-            user.DisplayName = request.DisplayName;
-        if (request.PhoneNumber != null)
-            user.PhoneNumber = request.PhoneNumber;
-        if (request.BirthDate.HasValue)
-            user.BirthDate = request.BirthDate;
-        if (request.Gender.HasValue)
-            user.Gender = request.Gender;
-
-        user.UpdatedAt = DateTime.UtcNow;
-
-        // Update visitor information
-        if (request.VisitorType.HasValue)
-            visitor.VisitorType = request.VisitorType.Value;
-        if (request.Height.HasValue)
-            visitor.Height = request.Height.Value;
-        if (request.Points.HasValue)
-            visitor.Points = request.Points.Value;
-        if (request.MemberLevel != null)
-            visitor.MemberLevel = request.MemberLevel;
-
-        visitor.UpdatedAt = DateTime.UtcNow;
-
-        await _userRepository.UpdateAsync(user);
-        await _visitorRepository.UpdateAsync(visitor);
-=======
-        if (request.Height < 50 || request.Height > 300)
-        {
-            throw new ArgumentException("Height must be between 50 and 300 cm", nameof(request));
-        }
-=======
 
     public async Task<Unit> Handle(UpdateVisitorCommand request, CancellationToken cancellationToken)
     {
@@ -267,20 +202,12 @@ public class UpdateVisitorCommandHandler(IVisitorRepository visitorRepository)
             request.Height,
             request.Points,
             request.MemberLevel);
->>>>>>> 2c00408 (feat: implement five core visitor management features)
 
-        visitor.Height = request.Height;
-        visitor.UpdatedAt = DateTime.UtcNow;
-
-        await _visitorRepository.UpdateAsync(visitor);
-
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
         return Unit.Value;
     }
 }
 
 /// <summary>
-<<<<<<< HEAD
 /// Handler for updating visitor blacklist status.
 /// </summary>
 public class UpdateVisitorBlacklistStatusCommandHandler(IVisitorRepository visitorRepository) : IRequestHandler<UpdateVisitorBlacklistStatusCommand, Unit>
@@ -288,7 +215,20 @@ public class UpdateVisitorBlacklistStatusCommandHandler(IVisitorRepository visit
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
     public async Task<Unit> Handle(UpdateVisitorBlacklistStatusCommand request, CancellationToken cancellationToken)
-=======
+    {
+        var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId)
+            ?? throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found");
+
+        visitor.IsBlacklisted = request.IsBlacklisted;
+        visitor.UpdatedAt = DateTime.UtcNow;
+
+        await _visitorRepository.UpdateAsync(visitor);
+
+        return Unit.Value;
+    }
+}
+
+/// <summary>
 /// Handler for blacklisting a visitor.
 /// </summary>
 public class BlacklistVisitorCommandHandler(IVisitorRepository visitorRepository)
@@ -297,17 +237,10 @@ public class BlacklistVisitorCommandHandler(IVisitorRepository visitorRepository
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
     public async Task<Unit> Handle(BlacklistVisitorCommand request, CancellationToken cancellationToken)
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     {
         var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId)
             ?? throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found");
 
-<<<<<<< HEAD
-        visitor.IsBlacklisted = request.IsBlacklisted;
-        visitor.UpdatedAt = DateTime.UtcNow;
-
-        await _visitorRepository.UpdateAsync(visitor);
-=======
         visitor.IsBlacklisted = true;
         visitor.UpdatedAt = DateTime.UtcNow;
 
@@ -320,12 +253,12 @@ public class BlacklistVisitorCommandHandler(IVisitorRepository visitorRepository
 /// <summary>
 /// Handler for removing a visitor from blacklist.
 /// </summary>
-public class RemoveFromBlacklistCommandHandler(IVisitorRepository visitorRepository)
-    : IRequestHandler<RemoveFromBlacklistCommand, Unit>
+public class UnblacklistVisitorCommandHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<UnblacklistVisitorCommand, Unit>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
-    public async Task<Unit> Handle(RemoveFromBlacklistCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UnblacklistVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId)
             ?? throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found");
@@ -335,7 +268,6 @@ public class RemoveFromBlacklistCommandHandler(IVisitorRepository visitorReposit
 
         await _visitorRepository.UpdateAsync(visitor);
 
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
         return Unit.Value;
     }
 }
@@ -343,35 +275,24 @@ public class RemoveFromBlacklistCommandHandler(IVisitorRepository visitorReposit
 /// <summary>
 /// Handler for deleting a visitor.
 /// </summary>
-<<<<<<< HEAD
 public class DeleteVisitorCommandHandler(
     IVisitorRepository visitorRepository,
     IUserRepository userRepository) : IRequestHandler<DeleteVisitorCommand, Unit>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
     private readonly IUserRepository _userRepository = userRepository;
-=======
-public class DeleteVisitorCommandHandler(IVisitorRepository visitorRepository)
-    : IRequestHandler<DeleteVisitorCommand, Unit>
-{
-    private readonly IVisitorRepository _visitorRepository = visitorRepository;
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 
     public async Task<Unit> Handle(DeleteVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId)
             ?? throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found");
 
-<<<<<<< HEAD
         var user = await _userRepository.GetByIdAsync(request.VisitorId)
             ?? throw new InvalidOperationException($"User with ID {request.VisitorId} not found");
 
         await _visitorRepository.DeleteAsync(visitor);
         await _userRepository.DeleteAsync(user);
-=======
-        await _visitorRepository.DeleteAsync(visitor);
 
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
         return Unit.Value;
     }
 }

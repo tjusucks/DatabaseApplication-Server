@@ -28,7 +28,7 @@ public class MembershipController(IMediator mediator) : ControllerBase
         {
             var command = new RegisterVisitorCommand(dto.UserId, dto.Height);
             var visitorId = await _mediator.Send(command);
-            
+
             return CreatedAtAction(nameof(GetVisitor), new { id = visitorId }, new { VisitorId = visitorId });
         }
         catch (InvalidOperationException ex)

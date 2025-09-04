@@ -43,28 +43,28 @@ public class VisitorRepositoryTests : IDisposable
 
         var visitors = new[]
         {
-            new Visitor 
-            { 
-                VisitorId = 1, 
-                VisitorType = VisitorType.Regular, 
-                Points = 500, 
+            new Visitor
+            {
+                VisitorId = 1,
+                VisitorType = VisitorType.Regular,
+                Points = 500,
                 Height = 170,
                 MemberLevel = "Bronze"
             },
-            new Visitor 
-            { 
-                VisitorId = 2, 
-                VisitorType = VisitorType.Member, 
-                Points = 1500, 
+            new Visitor
+            {
+                VisitorId = 2,
+                VisitorType = VisitorType.Member,
+                Points = 1500,
                 Height = 165,
                 MemberLevel = "Silver",
                 MemberSince = DateTime.UtcNow.AddDays(-30)
             },
-            new Visitor 
-            { 
-                VisitorId = 3, 
-                VisitorType = VisitorType.Member, 
-                Points = 6000, 
+            new Visitor
+            {
+                VisitorId = 3,
+                VisitorType = VisitorType.Member,
+                Points = 6000,
                 Height = 180,
                 MemberLevel = "Gold",
                 MemberSince = DateTime.UtcNow.AddDays(-60)
@@ -158,7 +158,7 @@ public class VisitorRepositoryTests : IDisposable
         // Assert
         Assert.Equal(2, members.Count);
         Assert.All(members, v => Assert.Equal(VisitorType.Member, v.VisitorType));
-        
+
         Assert.Single(regulars);
         Assert.All(regulars, v => Assert.Equal(VisitorType.Regular, v.VisitorType));
     }
@@ -173,7 +173,7 @@ public class VisitorRepositoryTests : IDisposable
         // Assert
         Assert.Single(silverMembers);
         Assert.Equal("Silver", silverMembers[0].MemberLevel);
-        
+
         Assert.Single(goldMembers);
         Assert.Equal("Gold", goldMembers[0].MemberLevel);
     }

@@ -5,8 +5,9 @@ using MediatR;
 
 namespace DbApp.Application.UserSystem.Visitors;
 
+// === 队友的访客历史和信息DTOs ===
+
 /// <summary>
-<<<<<<< HEAD
 /// DTO for visitor history information including user details and entry records.
 /// </summary>
 /// <param name="VisitorId">The visitor ID.</param>
@@ -92,9 +93,9 @@ public record VisitorBasicInfoDto(
     int Points
 );
 
+// === 基础查询功能 ===
+
 /// <summary>
-=======
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// Query to get all visitors.
 /// </summary>
 public record GetAllVisitorsQuery : IRequest<List<Visitor>>;
@@ -106,17 +107,12 @@ public record GetAllVisitorsQuery : IRequest<List<Visitor>>;
 public record GetVisitorByIdQuery(int VisitorId) : IRequest<Visitor?>;
 
 /// <summary>
-<<<<<<< HEAD
-/// Query to get visitor by user ID.
-=======
 /// Query to get a visitor by user ID.
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// </summary>
 /// <param name="UserId">The user ID.</param>
 public record GetVisitorByUserIdQuery(int UserId) : IRequest<Visitor?>;
 
 /// <summary>
-<<<<<<< HEAD
 /// Query to search visitors by name (display name or username).
 /// </summary>
 /// <param name="Name">The name to search for (partial match).</param>
@@ -136,15 +132,11 @@ public record GetVisitorsByBlacklistStatusQuery(bool IsBlacklisted) : IRequest<L
 
 /// <summary>
 /// Query to get visitors by visitor type.
-=======
-/// Query to get visitors by type.
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// </summary>
 /// <param name="VisitorType">The visitor type to filter by.</param>
 public record GetVisitorsByTypeQuery(VisitorType VisitorType) : IRequest<List<Visitor>>;
 
 /// <summary>
-<<<<<<< HEAD
 /// Query to get visitors registered within a date range.
 /// </summary>
 /// <param name="StartDate">Start date for registration.</param>
@@ -183,11 +175,6 @@ public record SearchVisitorsQuery(
     int? MinPoints = null,
     int? MaxPoints = null,
     DateTime? StartDate = null,
-<<<<<<< HEAD
-    DateTime? EndDate = null
-) : IRequest<List<Visitor>>;
-=======
-=======
     DateTime? EndDate = null,
     int Page = 1,
     int PageSize = 20
@@ -230,7 +217,6 @@ public class SearchFilters
 // === 您的会员和积分查询功能 ===
 
 /// <summary>
->>>>>>> 43d958d (refactor: implement enterprise-grade improvements)
 /// Query to get visitors by member level.
 /// </summary>
 /// <param name="MemberLevel">The member level to filter by.</param>
@@ -263,4 +249,3 @@ public class MembershipStatistics
     public int TotalPointsIssued { get; set; }
     public double AveragePointsPerMember { get; set; }
 }
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)

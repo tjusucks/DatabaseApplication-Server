@@ -1,13 +1,11 @@
-<<<<<<< HEAD
 using DbApp.Domain.Enums.UserSystem;
-=======
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 using MediatR;
 
 namespace DbApp.Application.UserSystem.Visitors;
 
+// === 队友的基础访客管理功能 ===
+
 /// <summary>
-<<<<<<< HEAD
 /// Command to create a new visitor with complete user information.
 /// </summary>
 /// <param name="Username">Unique username for the visitor.</param>
@@ -30,8 +28,11 @@ public record CreateVisitorCommand(
     int Height,
     string PasswordHash
 ) : IRequest<int>;
-=======
-/// Command to register a new visitor.
+
+// === 您的会员和积分管理功能 ===
+
+/// <summary>
+/// Command to register a new visitor based on existing user.
 /// </summary>
 /// <param name="UserId">The user ID to create visitor for.</param>
 /// <param name="Height">The visitor's height in centimeters.</param>
@@ -58,12 +59,10 @@ public record AddPointsCommand(int VisitorId, int Points, string Reason) : IRequ
 /// <param name="Points">The points to deduct.</param>
 /// <param name="Reason">The reason for deducting points.</param>
 public record DeductPointsCommand(int VisitorId, int Points, string Reason) : IRequest<bool>;
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 
 /// <summary>
 /// Command to update visitor information.
 /// </summary>
-<<<<<<< HEAD
 /// <param name="VisitorId">The visitor ID to update.</param>
 /// <param name="DisplayName">Updated display name.</param>
 /// <param name="PhoneNumber">Updated phone number.</param>
@@ -94,10 +93,6 @@ public record UpdateVisitorBlacklistStatusCommand(
     int VisitorId,
     bool IsBlacklisted
 ) : IRequest<Unit>;
-=======
-/// <param name="VisitorId">The visitor ID.</param>
-/// <param name="Height">The new height.</param>
-public record UpdateVisitorCommand(int VisitorId, int Height) : IRequest<Unit>;
 
 /// <summary>
 /// Command to blacklist a visitor.
@@ -110,8 +105,7 @@ public record BlacklistVisitorCommand(int VisitorId, string Reason) : IRequest<U
 /// Command to remove a visitor from blacklist.
 /// </summary>
 /// <param name="VisitorId">The visitor ID to remove from blacklist.</param>
-public record RemoveFromBlacklistCommand(int VisitorId) : IRequest<Unit>;
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
+public record UnblacklistVisitorCommand(int VisitorId) : IRequest<Unit>;
 
 /// <summary>
 /// Command to delete a visitor.

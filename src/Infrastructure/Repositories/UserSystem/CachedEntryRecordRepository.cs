@@ -75,7 +75,7 @@ public class CachedEntryRecordRepository(IEntryRecordRepository inner, IDistribu
         return entities;
     }
 
-    public Task<List<EntryRecord>> GetByDateRangeAsync(DateTime startDate, DateTime endDate) => 
+    public Task<List<EntryRecord>> GetByDateRangeAsync(DateTime startDate, DateTime endDate) =>
         _inner.GetByDateRangeAsync(startDate, endDate);
 
     public async Task<int> GetCurrentVisitorCountAsync()
@@ -93,7 +93,7 @@ public class CachedEntryRecordRepository(IEntryRecordRepository inner, IDistribu
         return count;
     }
 
-    public Task<(int TotalEntries, int TotalExits, int CurrentCount)> GetDailyStatisticsAsync(DateTime date) => 
+    public Task<(int TotalEntries, int TotalExits, int CurrentCount)> GetDailyStatisticsAsync(DateTime date) =>
         _inner.GetDailyStatisticsAsync(date);
 
     public async Task UpdateAsync(EntryRecord entryRecord)
@@ -116,7 +116,7 @@ public class CachedEntryRecordRepository(IEntryRecordRepository inner, IDistribu
         await _cache.RemoveAsync("current_visitor_count");
     }
 
-    public Task<List<EntryRecord>> GetByEntryGateAsync(string entryGate) => 
+    public Task<List<EntryRecord>> GetByEntryGateAsync(string entryGate) =>
         _inner.GetByEntryGateAsync(entryGate);
 
     public async Task<EntryRecord?> GetActiveEntryForVisitorAsync(int visitorId)

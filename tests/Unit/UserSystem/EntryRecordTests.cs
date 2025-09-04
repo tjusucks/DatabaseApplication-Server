@@ -48,9 +48,9 @@ public class EntryRecordTests
 
         // Assert
         Assert.Equal(1, result);
-        _mockEntryRecordRepository.Verify(x => x.CreateAsync(It.Is<EntryRecord>(er => 
-            er.VisitorId == visitorId && 
-            er.EntryGate == entryGate && 
+        _mockEntryRecordRepository.Verify(x => x.CreateAsync(It.Is<EntryRecord>(er =>
+            er.VisitorId == visitorId &&
+            er.EntryGate == entryGate &&
             er.ExitTime == null)), Times.Once);
     }
 

@@ -5,11 +5,11 @@ using DbApp.Application.UserSystem.Visitors.DTOs;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using DbApp.Infrastructure;
+using DbApp.Presentation;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace Tests.UserSystem.Visitors;
 
@@ -50,11 +50,11 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
         });
 
         _client = _factory.CreateClient();
-        
+
         // Get the test database context
         var scope = _factory.Services.CreateScope();
         _context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        
+
         SeedTestData();
     }
 
@@ -73,19 +73,19 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         var visitors = new[]
         {
-            new Visitor 
-            { 
-                VisitorId = 1, 
-                VisitorType = VisitorType.Regular, 
-                Points = 500, 
+            new Visitor
+            {
+                VisitorId = 1,
+                VisitorType = VisitorType.Regular,
+                Points = 500,
                 Height = 170,
                 MemberLevel = "Bronze"
             },
-            new Visitor 
-            { 
-                VisitorId = 2, 
-                VisitorType = VisitorType.Member, 
-                Points = 1500, 
+            new Visitor
+            {
+                VisitorId = 2,
+                VisitorType = VisitorType.Member,
+                Points = 1500,
                 Height = 165,
                 MemberLevel = "Silver",
                 MemberSince = DateTime.UtcNow.AddDays(-30)
@@ -110,7 +110,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        
+
         var visitor = await _context.Visitors.FindAsync(3);
         Assert.NotNull(visitor);
         Assert.Equal(175, visitor.Height);
@@ -142,7 +142,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var visitor = await response.Content.ReadFromJsonAsync<VisitorResponseDto>();
         Assert.NotNull(visitor);
         Assert.Equal(1, visitor.VisitorId);
@@ -168,7 +168,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var visitors = await response.Content.ReadFromJsonAsync<List<VisitorResponseDto>>();
         Assert.NotNull(visitors);
         Assert.Equal(2, visitors.Count);
@@ -182,7 +182,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var visitors = await response.Content.ReadFromJsonAsync<List<VisitorResponseDto>>();
         Assert.NotNull(visitors);
         Assert.Single(visitors);
@@ -197,7 +197,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var visitor = await _context.Visitors.FindAsync(1);
         Assert.NotNull(visitor);
         Assert.Equal(VisitorType.Member, visitor.VisitorType);
@@ -220,7 +220,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<PointsOperationResultDto>();
         Assert.NotNull(result);
         Assert.True(result.Success);
@@ -245,7 +245,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<PointsOperationResultDto>();
         Assert.NotNull(result);
         Assert.True(result.Success);
@@ -268,7 +268,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<PointsOperationResultDto>();
         Assert.NotNull(result);
         Assert.False(result.Success);
@@ -289,7 +289,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var visitor = await _context.Visitors.FindAsync(1);
         Assert.NotNull(visitor);
         Assert.Equal(180, visitor.Height);
@@ -309,7 +309,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var visitor = await _context.Visitors.FindAsync(1);
         Assert.NotNull(visitor);
         Assert.True(visitor.IsBlacklisted);
@@ -323,7 +323,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var stats = await response.Content.ReadFromJsonAsync<MembershipStatistics>();
         Assert.NotNull(stats);
         Assert.Equal(2, stats.TotalVisitors);

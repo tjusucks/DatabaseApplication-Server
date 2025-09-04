@@ -86,8 +86,8 @@ public class EntryRecordRepository(ApplicationDbContext dbContext) : IEntryRecor
             .CountAsync(er => er.EntryTime >= startOfDay && er.EntryTime < endOfDay);
 
         var totalExits = await _dbContext.EntryRecords
-            .CountAsync(er => er.ExitTime.HasValue && 
-                             er.ExitTime >= startOfDay && 
+            .CountAsync(er => er.ExitTime.HasValue &&
+                             er.ExitTime >= startOfDay &&
                              er.ExitTime < endOfDay);
 
         var currentCount = await GetCurrentVisitorCountAsync();

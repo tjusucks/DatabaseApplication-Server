@@ -1,17 +1,13 @@
+using DbApp.Application.UserSystem.Visitors.Services;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
-using DbApp.Application.UserSystem.Visitors.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.UserSystem;
 
 /// <summary>
-<<<<<<< HEAD
-/// Repository implementation for Visitor entity.
-=======
 /// Repository implementation for Visitor entity operations.
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
 /// </summary>
 public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorRepository
 {
@@ -31,16 +27,12 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
             .FirstOrDefaultAsync(v => v.VisitorId == visitorId);
     }
 
-<<<<<<< HEAD
-=======
     public async Task<Visitor?> GetByUserIdAsync(int userId)
     {
         return await _dbContext.Visitors
             .Include(v => v.User)
             .FirstOrDefaultAsync(v => v.VisitorId == userId);
     }
-
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     public async Task<List<Visitor>> GetAllAsync()
     {
         return await _dbContext.Visitors
@@ -48,8 +40,6 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
             .ToListAsync();
     }
 
-<<<<<<< HEAD
-=======
     public async Task<List<Visitor>> GetByTypeAsync(VisitorType visitorType)
     {
         return await _dbContext.Visitors
@@ -73,8 +63,6 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
             .Where(v => v.Points >= minPoints && v.Points <= maxPoints)
             .ToListAsync();
     }
-
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     public async Task UpdateAsync(Visitor visitor)
     {
         visitor.UpdatedAt = DateTime.UtcNow;
@@ -86,14 +74,6 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
     {
         _dbContext.Visitors.Remove(visitor);
         await _dbContext.SaveChangesAsync();
-    }
-
-<<<<<<< HEAD
-    public async Task<Visitor?> GetByUserIdAsync(int userId)
-    {
-        return await _dbContext.Visitors
-            .Include(v => v.User)
-            .FirstOrDefaultAsync(v => v.VisitorId == userId);
     }
 
     public async Task<List<Visitor>> SearchByNameAsync(string name)
@@ -119,15 +99,6 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         return await _dbContext.Visitors
             .Include(v => v.User)
             .Where(v => v.IsBlacklisted == isBlacklisted)
-            .OrderBy(v => v.User.DisplayName)
-            .ToListAsync();
-    }
-
-    public async Task<List<Visitor>> GetByVisitorTypeAsync(VisitorType visitorType)
-    {
-        return await _dbContext.Visitors
-            .Include(v => v.User)
-            .Where(v => v.VisitorType == visitorType)
             .OrderBy(v => v.User.DisplayName)
             .ToListAsync();
     }
@@ -186,7 +157,8 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         return await query
             .OrderBy(v => v.User.DisplayName)
             .ToListAsync();
-=======
+    }
+
     public async Task AddPointsAsync(int visitorId, int points)
     {
         var visitor = await GetByIdAsync(visitorId);
@@ -261,7 +233,6 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
             return true;
         }
         return false;
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
 
     public async Task<int> GetSearchCountAsync(

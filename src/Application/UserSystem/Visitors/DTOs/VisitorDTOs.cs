@@ -114,7 +114,7 @@ public class VisitorResponseDto
     public int Height { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    
+
     // User information
     public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;

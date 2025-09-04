@@ -7,12 +7,8 @@ using Microsoft.Extensions.Caching.Distributed;
 namespace DbApp.Infrastructure.Repositories.UserSystem;
 
 /// <summary>
-<<<<<<< HEAD
-/// Cached repository implementation for Visitor entity.
-/// Provides caching layer over the base VisitorRepository.
-=======
 /// Cached decorator for Visitor repository operations.
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
+/// Provides caching layer over the base VisitorRepository.
 /// </summary>
 public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache cache) : IVisitorRepository
 {
@@ -44,7 +40,6 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         return entity;
     }
 
-<<<<<<< HEAD
     public Task<List<Visitor>> GetAllAsync() => _inner.GetAllAsync();
 
     public async Task UpdateAsync(Visitor visitor)
@@ -58,9 +53,6 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         await _inner.DeleteAsync(visitor);
         await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
     }
-
-=======
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     public async Task<Visitor?> GetByUserIdAsync(int userId)
     {
         string key = $"visitor:user:{userId}";
@@ -79,14 +71,12 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         return entity;
     }
 
-<<<<<<< HEAD
+    // === 队友的搜索和筛选功能 ===
     public Task<List<Visitor>> SearchByNameAsync(string name) => _inner.SearchByNameAsync(name);
 
     public Task<List<Visitor>> SearchByPhoneNumberAsync(string phoneNumber) => _inner.SearchByPhoneNumberAsync(phoneNumber);
 
     public Task<List<Visitor>> GetByBlacklistStatusAsync(bool isBlacklisted) => _inner.GetByBlacklistStatusAsync(isBlacklisted);
-
-    public Task<List<Visitor>> GetByVisitorTypeAsync(VisitorType visitorType) => _inner.GetByVisitorTypeAsync(visitorType);
 
     public Task<List<Visitor>> GetByRegistrationDateRangeAsync(DateTime startDate, DateTime endDate) =>
         _inner.GetByRegistrationDateRangeAsync(startDate, endDate);
@@ -99,29 +89,14 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         DateTime? startDate = null,
         DateTime? endDate = null) =>
         _inner.SearchAsync(name, phoneNumber, isBlacklisted, visitorType, startDate, endDate);
-=======
-    public Task<List<Visitor>> GetAllAsync() => _inner.GetAllAsync();
 
+    // === 您的会员和积分功能 ===
     public Task<List<Visitor>> GetByTypeAsync(VisitorType visitorType) => _inner.GetByTypeAsync(visitorType);
 
     public Task<List<Visitor>> GetByMemberLevelAsync(string memberLevel) => _inner.GetByMemberLevelAsync(memberLevel);
 
-    public Task<List<Visitor>> GetByPointsRangeAsync(int minPoints, int maxPoints) => 
+    public Task<List<Visitor>> GetByPointsRangeAsync(int minPoints, int maxPoints) =>
         _inner.GetByPointsRangeAsync(minPoints, maxPoints);
-
-    public async Task UpdateAsync(Visitor visitor)
-    {
-        await _inner.UpdateAsync(visitor);
-        await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
-        await _cache.RemoveAsync($"visitor:user:{visitor.VisitorId}");
-    }
-
-    public async Task DeleteAsync(Visitor visitor)
-    {
-        await _inner.DeleteAsync(visitor);
-        await _cache.RemoveAsync($"visitor:{visitor.VisitorId}");
-        await _cache.RemoveAsync($"visitor:user:{visitor.VisitorId}");
-    }
 
     public async Task AddPointsAsync(int visitorId, int points)
     {
@@ -140,9 +115,6 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         }
         return result;
     }
-<<<<<<< HEAD
->>>>>>> 1bba8b9 (feat: implement membership registration and points system)
-=======
 
     public async Task UpdateVisitorInfoAsync(
         int visitorId,
@@ -161,9 +133,6 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         await _cache.RemoveAsync($"visitor:{visitorId}");
         await _cache.RemoveAsync($"visitor:user:{visitorId}");
     }
-<<<<<<< HEAD
->>>>>>> 2c00408 (feat: implement five core visitor management features)
-=======
 
     public Task<int> GetSearchCountAsync(
         string? keyword = null,
@@ -196,5 +165,4 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         return _inner.SearchWithPaginationAsync(keyword, visitorType, memberLevel,
             isBlacklisted, minPoints, maxPoints, startDate, endDate, page, pageSize);
     }
->>>>>>> 43d958d (refactor: implement enterprise-grade improvements)
 }
