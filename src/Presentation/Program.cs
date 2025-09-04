@@ -124,7 +124,5 @@ public class Program
 
         // Start the application.
         await app.RunAsync();
-        // ...existing code...
-        // 文件末尾添加换行符以满足格式化要求。
     }
-}
+} 
