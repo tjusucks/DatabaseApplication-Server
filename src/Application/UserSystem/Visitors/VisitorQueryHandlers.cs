@@ -1,3 +1,4 @@
+using DbApp.Application.UserSystem.Visitors.DTOs;
 using DbApp.Domain.Constants;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
@@ -133,21 +134,69 @@ public class GetVisitorsByMemberLevelQueryHandler(IVisitorRepository visitorRepo
 }
 
 /// <summary>
-/// Handler for searching visitors with multiple criteria.
+/// Handler for unified RESTful visitor search with pagination.
 /// </summary>
-public class SearchVisitorsQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<SearchVisitorsQuery, List<Visitor>>
+public class SearchVisitorsQueryHandler(IVisitorRepository visitorRepository) : IRequestHandler<SearchVisitorsQuery, SearchVisitorsResult>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
 
-    public async Task<List<Visitor>> Handle(SearchVisitorsQuery request, CancellationToken cancellationToken)
+    public async Task<SearchVisitorsResult> Handle(SearchVisitorsQuery request, CancellationToken cancellationToken)
     {
-        return await _visitorRepository.SearchAsync(
-            request.Name,
-            request.PhoneNumber,
-            request.IsBlacklisted,
+        // Get total count for pagination
+        var totalCount = await _visitorRepository.GetSearchCountAsync(
+            request.Keyword,
             request.VisitorType,
+            request.MemberLevel,
+            request.IsBlacklisted,
+            request.MinPoints,
+            request.MaxPoints,
             request.StartDate,
             request.EndDate);
+
+        // Get paginated results
+        var visitors = await _visitorRepository.SearchWithPaginationAsync(
+            request.Keyword,
+            request.VisitorType,
+            request.MemberLevel,
+            request.IsBlacklisted,
+            request.MinPoints,
+            request.MaxPoints,
+            request.StartDate,
+            request.EndDate,
+            request.Page,
+            request.PageSize);
+
+        // Convert to DTOs
+        var visitorDtos = visitors.Select(v => new VisitorResponseDto
+        {
+            VisitorId = v.VisitorId,
+            VisitorType = v.VisitorType,
+            Points = v.Points,
+            MemberLevel = v.MemberLevel,
+            IsBlacklisted = v.IsBlacklisted,
+            Height = v.Height,
+            CreatedAt = v.CreatedAt,
+            UpdatedAt = v.UpdatedAt
+        }).ToList();
+
+        return new SearchVisitorsResult
+        {
+            Visitors = visitorDtos,
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize,
+            AppliedFilters = new SearchFilters
+            {
+                Keyword = request.Keyword,
+                VisitorType = request.VisitorType,
+                MemberLevel = request.MemberLevel,
+                IsBlacklisted = request.IsBlacklisted,
+                MinPoints = request.MinPoints,
+                MaxPoints = request.MaxPoints,
+                StartDate = request.StartDate,
+                EndDate = request.EndDate
+            }
+        };
     }
 }
 

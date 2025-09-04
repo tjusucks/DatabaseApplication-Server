@@ -159,4 +159,32 @@ public interface IVisitorRepository
         int? height = null,
         int? points = null,
         string? memberLevel = null);
+
+    /// <summary>
+    /// Gets the count of visitors matching search criteria.
+    /// </summary>
+    Task<int> GetSearchCountAsync(
+        string? keyword = null,
+        VisitorType? visitorType = null,
+        string? memberLevel = null,
+        bool? isBlacklisted = null,
+        int? minPoints = null,
+        int? maxPoints = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null);
+
+    /// <summary>
+    /// Searches visitors with pagination support.
+    /// </summary>
+    Task<List<Visitor>> SearchWithPaginationAsync(
+        string? keyword = null,
+        VisitorType? visitorType = null,
+        string? memberLevel = null,
+        bool? isBlacklisted = null,
+        int? minPoints = null,
+        int? maxPoints = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        int page = 1,
+        int pageSize = 20);
 }

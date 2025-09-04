@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
+using DbApp.Infrastructure.Data;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -69,6 +70,11 @@ foreach (var interfaceType in repositoryInterfaces)
 
 var app = builder.Build();
 
+
+
+// Initialize database with essential data
+await DatabaseInitializer.InitializeAsync(app.Services);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -77,11 +83,6 @@ if (app.Environment.IsDevelopment())
 
     // Enable Scalar UI for interactive API documentation.
     app.MapScalarApiReference();
-
-    // Trigger auto migration for database schema updates.
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    await dbContext.Database.MigrateAsync();
 }
 
 // Force HTTPS redirection for security.
@@ -109,3 +110,5 @@ app.MapControllers();
 
 // Start the application.
 await app.RunAsync();
+
+
