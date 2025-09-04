@@ -4,12 +4,14 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.InspectionRecords;
 
+/// <summary>  
+/// Combined handler for all inspection record search and statistics queries.  
+/// </summary>  
 public class InspectionRecordQueryHandler(
     IInspectionRecordRepository inspectionRecordRepository,
     IMapper mapper) :
     IRequestHandler<GetInspectionRecordByIdQuery, InspectionRecordSummaryDto?>,
     IRequestHandler<SearchInspectionRecordsQuery, InspectionRecordResult>,
-    IRequestHandler<SearchInspectionRecordsByRideQuery, InspectionRecordResult>,
     IRequestHandler<GetInspectionRecordStatsQuery, InspectionRecordStatsDto>,
     IRequestHandler<CreateInspectionRecordCommand, int>,
     IRequestHandler<UpdateInspectionRecordCommand>,
@@ -18,17 +20,44 @@ public class InspectionRecordQueryHandler(
     private readonly IInspectionRecordRepository _inspectionRecordRepository = inspectionRecordRepository;
     private readonly IMapper _mapper = mapper;
 
-    // 查询处理方法  
-    public async Task<InspectionRecordSummaryDto?> Handle(GetInspectionRecordByIdQuery request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle getting inspection record by ID.  
+    /// </summary>  
+    public async Task<InspectionRecordSummaryDto?> Handle(
+        GetInspectionRecordByIdQuery request,
+        CancellationToken cancellationToken)
     {
         var record = await _inspectionRecordRepository.GetByIdAsync(request.InspectionId);
         return record == null ? null : _mapper.Map<InspectionRecordSummaryDto>(record);
     }
 
-    public async Task<InspectionRecordResult> Handle(SearchInspectionRecordsQuery request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle searching inspection records with comprehensive filtering options.  
+    /// </summary>  
+    public async Task<InspectionRecordResult> Handle(
+        SearchInspectionRecordsQuery request,
+        CancellationToken cancellationToken)
     {
-        var records = await _inspectionRecordRepository.SearchAsync(request.SearchTerm, request.Page, request.PageSize);
-        var totalCount = await _inspectionRecordRepository.CountAsync(request.SearchTerm);
+        var records = await _inspectionRecordRepository.SearchAsync(
+            request.SearchTerm,
+            request.RideId,
+            request.TeamId,
+            request.CheckType,
+            request.IsPassed,
+            request.CheckDateFrom,
+            request.CheckDateTo,
+            request.Page,
+            request.PageSize);
+
+        var totalCount = await _inspectionRecordRepository.CountAsync(
+            request.SearchTerm,
+            request.RideId,
+            request.TeamId,
+            request.CheckType,
+            request.IsPassed,
+            request.CheckDateFrom,
+            request.CheckDateTo);
+
         var recordDtos = _mapper.Map<List<InspectionRecordSummaryDto>>(records);
 
         return new InspectionRecordResult
@@ -40,29 +69,23 @@ public class InspectionRecordQueryHandler(
         };
     }
 
-    public async Task<InspectionRecordResult> Handle(SearchInspectionRecordsByRideQuery request, CancellationToken cancellationToken)
-    {
-        var records = await _inspectionRecordRepository.SearchByRideAsync(request.RideId, request.Page, request.PageSize);
-        var totalCount = await _inspectionRecordRepository.CountByRideAsync(request.RideId);
-        var recordDtos = _mapper.Map<List<InspectionRecordSummaryDto>>(records);
-
-        return new InspectionRecordResult
-        {
-            InspectionRecords = recordDtos,
-            TotalCount = totalCount,
-            Page = request.Page,
-            PageSize = request.PageSize
-        };
-    }
-
-    public async Task<InspectionRecordStatsDto> Handle(GetInspectionRecordStatsQuery request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle getting inspection record statistics.  
+    /// </summary>  
+    public async Task<InspectionRecordStatsDto> Handle(
+        GetInspectionRecordStatsQuery request,
+        CancellationToken cancellationToken)
     {
         var stats = await _inspectionRecordRepository.GetStatsAsync(request.StartDate, request.EndDate);
         return _mapper.Map<InspectionRecordStatsDto>(stats);
     }
 
-    // CRUD命令处理方法  
-    public async Task<int> Handle(CreateInspectionRecordCommand request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle creating a new inspection record.  
+    /// </summary>  
+    public async Task<int> Handle(
+        CreateInspectionRecordCommand request,
+        CancellationToken cancellationToken)
     {
         var record = new Domain.Entities.ResourceSystem.InspectionRecord
         {
@@ -81,7 +104,12 @@ public class InspectionRecordQueryHandler(
         return record.InspectionId;
     }
 
-    public async Task Handle(UpdateInspectionRecordCommand request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle updating an existing inspection record.  
+    /// </summary>  
+    public async Task Handle(
+        UpdateInspectionRecordCommand request,
+        CancellationToken cancellationToken)
     {
         var record = await _inspectionRecordRepository.GetByIdAsync(request.InspectionId);
 
@@ -102,7 +130,12 @@ public class InspectionRecordQueryHandler(
         await _inspectionRecordRepository.UpdateAsync(record);
     }
 
-    public async Task<bool> Handle(DeleteInspectionRecordCommand request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle deleting an inspection record.  
+    /// </summary>  
+    public async Task<bool> Handle(
+        DeleteInspectionRecordCommand request,
+        CancellationToken cancellationToken)
     {
         var record = await _inspectionRecordRepository.GetByIdAsync(request.InspectionId);
 

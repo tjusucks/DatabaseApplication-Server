@@ -4,13 +4,14 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.MaintenanceRecords;
 
+/// <summary>  
+/// Combined handler for all maintenance record search and statistics queries.  
+/// </summary>  
 public class MaintenanceRecordQueryHandler(
     IMaintenanceRecordRepository maintenanceRecordRepository,
     IMapper mapper) :
     IRequestHandler<GetMaintenanceRecordByIdQuery, MaintenanceRecordSummaryDto?>,
     IRequestHandler<SearchMaintenanceRecordsQuery, MaintenanceRecordResult>,
-    IRequestHandler<SearchMaintenanceRecordsByRideQuery, MaintenanceRecordResult>,
-    IRequestHandler<SearchMaintenanceRecordsByStatusQuery, MaintenanceRecordResult>,
     IRequestHandler<GetMaintenanceRecordStatsQuery, MaintenanceRecordStatsDto>,
     IRequestHandler<CreateMaintenanceRecordCommand, int>,
     IRequestHandler<UpdateMaintenanceRecordCommand>,
@@ -19,17 +20,56 @@ public class MaintenanceRecordQueryHandler(
     private readonly IMaintenanceRecordRepository _maintenanceRecordRepository = maintenanceRecordRepository;
     private readonly IMapper _mapper = mapper;
 
-    // 查询处理方法  
-    public async Task<MaintenanceRecordSummaryDto?> Handle(GetMaintenanceRecordByIdQuery request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle getting maintenance record by ID.  
+    /// </summary>  
+    public async Task<MaintenanceRecordSummaryDto?> Handle(
+        GetMaintenanceRecordByIdQuery request,
+        CancellationToken cancellationToken)
     {
         var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId);
         return record == null ? null : _mapper.Map<MaintenanceRecordSummaryDto>(record);
     }
 
-    public async Task<MaintenanceRecordResult> Handle(SearchMaintenanceRecordsQuery request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle searching maintenance records with comprehensive filtering options.  
+    /// </summary>  
+    public async Task<MaintenanceRecordResult> Handle(
+        SearchMaintenanceRecordsQuery request,
+        CancellationToken cancellationToken)
     {
-        var records = await _maintenanceRecordRepository.SearchAsync(request.SearchTerm, request.Page, request.PageSize);
-        var totalCount = await _maintenanceRecordRepository.CountAsync(request.SearchTerm);
+        var records = await _maintenanceRecordRepository.SearchAsync(
+            request.SearchTerm,
+            request.RideId,
+            request.TeamId,
+            request.ManagerId,
+            request.MaintenanceType,
+            request.IsCompleted,
+            request.IsAccepted,
+            request.StartTimeFrom,
+            request.StartTimeTo,
+            request.EndTimeFrom,
+            request.EndTimeTo,
+            request.MinCost,
+            request.MaxCost,
+            request.Page,
+            request.PageSize);
+
+        var totalCount = await _maintenanceRecordRepository.CountAsync(
+            request.SearchTerm,
+            request.RideId,
+            request.TeamId,
+            request.ManagerId,
+            request.MaintenanceType,
+            request.IsCompleted,
+            request.IsAccepted,
+            request.StartTimeFrom,
+            request.StartTimeTo,
+            request.EndTimeFrom,
+            request.EndTimeTo,
+            request.MinCost,
+            request.MaxCost);
+
         var recordDtos = _mapper.Map<List<MaintenanceRecordSummaryDto>>(records);
 
         return new MaintenanceRecordResult
@@ -41,44 +81,23 @@ public class MaintenanceRecordQueryHandler(
         };
     }
 
-    public async Task<MaintenanceRecordResult> Handle(SearchMaintenanceRecordsByRideQuery request, CancellationToken cancellationToken)
-    {
-        var records = await _maintenanceRecordRepository.SearchByRideAsync(request.RideId, request.Page, request.PageSize);
-        var totalCount = await _maintenanceRecordRepository.CountByRideAsync(request.RideId);
-        var recordDtos = _mapper.Map<List<MaintenanceRecordSummaryDto>>(records);
-
-        return new MaintenanceRecordResult
-        {
-            MaintenanceRecords = recordDtos,
-            TotalCount = totalCount,
-            Page = request.Page,
-            PageSize = request.PageSize
-        };
-    }
-
-    public async Task<MaintenanceRecordResult> Handle(SearchMaintenanceRecordsByStatusQuery request, CancellationToken cancellationToken)
-    {
-        var records = await _maintenanceRecordRepository.SearchByStatusAsync(request.IsCompleted, request.IsAccepted, request.Page, request.PageSize);
-        var totalCount = await _maintenanceRecordRepository.CountByStatusAsync(request.IsCompleted, request.IsAccepted);
-        var recordDtos = _mapper.Map<List<MaintenanceRecordSummaryDto>>(records);
-
-        return new MaintenanceRecordResult
-        {
-            MaintenanceRecords = recordDtos,
-            TotalCount = totalCount,
-            Page = request.Page,
-            PageSize = request.PageSize
-        };
-    }
-
-    public async Task<MaintenanceRecordStatsDto> Handle(GetMaintenanceRecordStatsQuery request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle getting maintenance record statistics.  
+    /// </summary>  
+    public async Task<MaintenanceRecordStatsDto> Handle(
+        GetMaintenanceRecordStatsQuery request,
+        CancellationToken cancellationToken)
     {
         var stats = await _maintenanceRecordRepository.GetStatsAsync(request.StartDate, request.EndDate);
         return _mapper.Map<MaintenanceRecordStatsDto>(stats);
     }
 
-    // CRUD命令处理方法  
-    public async Task<int> Handle(CreateMaintenanceRecordCommand request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle creating a new maintenance record.  
+    /// </summary>  
+    public async Task<int> Handle(
+        CreateMaintenanceRecordCommand request,
+        CancellationToken cancellationToken)
     {
         var record = new Domain.Entities.ResourceSystem.MaintenanceRecord
         {
@@ -103,7 +122,12 @@ public class MaintenanceRecordQueryHandler(
         return record.MaintenanceId;
     }
 
-    public async Task Handle(UpdateMaintenanceRecordCommand request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle updating an existing maintenance record.  
+    /// </summary>  
+    public async Task Handle(
+        UpdateMaintenanceRecordCommand request,
+        CancellationToken cancellationToken)
     {
         var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId);
 
@@ -130,7 +154,12 @@ public class MaintenanceRecordQueryHandler(
         await _maintenanceRecordRepository.UpdateAsync(record);
     }
 
-    public async Task<bool> Handle(DeleteMaintenanceRecordCommand request, CancellationToken cancellationToken)
+    /// <summary>  
+    /// Handle deleting a maintenance record.  
+    /// </summary>  
+    public async Task<bool> Handle(
+        DeleteMaintenanceRecordCommand request,
+        CancellationToken cancellationToken)
     {
         var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId);
 

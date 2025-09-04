@@ -8,28 +8,20 @@ namespace DbApp.Application.ResourceSystem.RideTrafficStats;
 public record GetRideTrafficStatByIdQuery(int RideId, DateTime RecordTime) : IRequest<RideTrafficStatSummaryDto?>;
 
 /// <summary>  
-/// Query to search ride traffic stats with filtering options.  
+/// Unified query to search ride traffic stats with comprehensive filtering options.  
 /// </summary>  
 public record SearchRideTrafficStatsQuery(
-    string? SearchTerm,
-    int Page = 1,
-    int PageSize = 10
-) : IRequest<RideTrafficStatResult>;
-
-/// <summary>  
-/// Query to search ride traffic stats by ride.  
-/// </summary>  
-public record SearchRideTrafficStatsByRideQuery(
-    int RideId,
-    int Page = 1,
-    int PageSize = 10
-) : IRequest<RideTrafficStatResult>;
-
-/// <summary>  
-/// Query to search ride traffic stats by crowded status.  
-/// </summary>  
-public record SearchRideTrafficStatsByCrowdedQuery(
-    bool IsCrowded,
+    string? SearchTerm = null,
+    int? RideId = null,
+    bool? IsCrowded = null,
+    int? MinVisitorCount = null,
+    int? MaxVisitorCount = null,
+    int? MinQueueLength = null,
+    int? MaxQueueLength = null,
+    int? MinWaitingTime = null,
+    int? MaxWaitingTime = null,
+    DateTime? RecordTimeFrom = null,
+    DateTime? RecordTimeTo = null,
     int Page = 1,
     int PageSize = 10
 ) : IRequest<RideTrafficStatResult>;
@@ -39,7 +31,8 @@ public record SearchRideTrafficStatsByCrowdedQuery(
 /// </summary>  
 public record GetRideTrafficStatsQuery(
     DateTime? StartDate = null,
-    DateTime? EndDate = null
+    DateTime? EndDate = null,
+    int? RideId = null
 ) : IRequest<RideTrafficStatsDto>;
 
 /// <summary>  

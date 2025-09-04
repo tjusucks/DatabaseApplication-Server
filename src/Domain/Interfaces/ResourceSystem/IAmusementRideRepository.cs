@@ -11,10 +11,34 @@ public interface IAmusementRideRepository
     Task UpdateAsync(AmusementRide ride);
     Task DeleteAsync(AmusementRide ride);
 
-    // 搜索方法  
-    Task<IEnumerable<AmusementRide>> SearchAsync(string? searchTerm, int page, int pageSize);
-    Task<int> CountAsync(string? searchTerm);
-    Task<IEnumerable<AmusementRide>> SearchByStatusAsync(RideStatus status, int page, int pageSize);
-    Task<int> CountByStatusAsync(RideStatus status);
+    // 统一搜索方法  
+    Task<IEnumerable<AmusementRide>> SearchAsync(
+        string? searchTerm,
+        RideStatus? status,
+        string? location,
+        int? managerId,
+        int? minCapacity,
+        int? maxCapacity,
+        int? minHeightLimit,
+        int? maxHeightLimit,
+        DateTime? openDateFrom,
+        DateTime? openDateTo,
+        int page,
+        int pageSize);
+
+    // 统一计数方法  
+    Task<int> CountAsync(
+        string? searchTerm,
+        RideStatus? status,
+        string? location,
+        int? managerId,
+        int? minCapacity,
+        int? maxCapacity,
+        int? minHeightLimit,
+        int? maxHeightLimit,
+        DateTime? openDateFrom,
+        DateTime? openDateTo);
+
+    // 统计方法  
     Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate);
 }

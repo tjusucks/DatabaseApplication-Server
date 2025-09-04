@@ -9,19 +9,19 @@ namespace DbApp.Application.ResourceSystem.AmusementRides;
 public record GetAmusementRideByIdQuery(int RideId) : IRequest<AmusementRideSummaryDto?>;
 
 /// <summary>  
-/// Query to search amusement rides with filtering options.  
+/// Unified query to search amusement rides with comprehensive filtering options.  
 /// </summary>  
 public record SearchAmusementRidesQuery(
-    string? SearchTerm,
-    int Page = 1,
-    int PageSize = 10
-) : IRequest<AmusementRideResult>;
-
-/// <summary>  
-/// Query to search amusement rides by status.  
-/// </summary>  
-public record SearchAmusementRidesByStatusQuery(
-    RideStatus Status,
+    string? SearchTerm = null,
+    RideStatus? Status = null,
+    string? Location = null,
+    int? ManagerId = null,
+    int? MinCapacity = null,
+    int? MaxCapacity = null,
+    int? MinHeightLimit = null,
+    int? MaxHeightLimit = null,
+    DateTime? OpenDateFrom = null,
+    DateTime? OpenDateTo = null,
     int Page = 1,
     int PageSize = 10
 ) : IRequest<AmusementRideResult>;
