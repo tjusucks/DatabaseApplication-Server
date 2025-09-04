@@ -3,13 +3,38 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.InspectionRecords;
 
-// 查询类  
+/// <summary>  
+/// Query to get inspection record by ID.  
+/// </summary>  
 public record GetInspectionRecordByIdQuery(int InspectionId) : IRequest<InspectionRecordSummaryDto?>;
-public record SearchInspectionRecordsQuery(string? SearchTerm, int Page = 1, int PageSize = 10) : IRequest<InspectionRecordResult>;
-public record SearchInspectionRecordsByRideQuery(int RideId, int Page = 1, int PageSize = 10) : IRequest<InspectionRecordResult>;
-public record GetInspectionRecordStatsQuery(DateTime? StartDate = null, DateTime? EndDate = null) : IRequest<InspectionRecordStatsDto>;
 
-// 命令类 - 新增CRUD操作  
+/// <summary>  
+/// Unified query to search inspection records with comprehensive filtering options.  
+/// </summary>  
+public record SearchInspectionRecordsQuery(
+    string? SearchTerm = null,
+    int? RideId = null,
+    int? TeamId = null,
+    CheckType? CheckType = null,
+    bool? IsPassed = null,
+    DateTime? CheckDateFrom = null,
+    DateTime? CheckDateTo = null,
+    int Page = 1,
+    int PageSize = 10
+) : IRequest<InspectionRecordResult>;
+
+/// <summary>  
+/// Query to get inspection record statistics.  
+/// </summary>  
+public record GetInspectionRecordStatsQuery(
+    DateTime? StartDate = null,
+    DateTime? EndDate = null,
+    int? RideId = null
+) : IRequest<InspectionRecordStatsDto>;
+
+/// <summary>  
+/// Command to create a new inspection record.  
+/// </summary>  
 public record CreateInspectionRecordCommand(
     int RideId,
     int TeamId,
@@ -20,6 +45,9 @@ public record CreateInspectionRecordCommand(
     string? Recommendations
 ) : IRequest<int>;
 
+/// <summary>  
+/// Command to update an existing inspection record.  
+/// </summary>  
 public record UpdateInspectionRecordCommand(
     int InspectionId,
     int RideId,
@@ -31,4 +59,7 @@ public record UpdateInspectionRecordCommand(
     string? Recommendations
 ) : IRequest;
 
+/// <summary>  
+/// Command to delete an inspection record.  
+/// </summary>  
 public record DeleteInspectionRecordCommand(int InspectionId) : IRequest<bool>;
