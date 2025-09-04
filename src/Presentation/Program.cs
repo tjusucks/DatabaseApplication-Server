@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
+using DbApp.Infrastructure.Data;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -121,3 +122,51 @@ public class Program
         await app.RunAsync();
     }
 }
+<<<<<<< HEAD
+=======
+
+var app = builder.Build();
+
+
+
+// Initialize database with essential data
+await DatabaseInitializer.InitializeAsync(app.Services);
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    // Enable OpenAPI endpoint for API documentation.
+    app.MapOpenApi();
+
+    // Enable Scalar UI for interactive API documentation.
+    app.MapScalarApiReference();
+}
+
+// Force HTTPS redirection for security.
+app.UseHttpsRedirection();
+
+// Add a root endpoint for the welcome page.
+app.MapGet("/", async context =>
+{
+    context.Response.ContentType = "text/html; charset=utf-8";
+    await context.Response.WriteAsync(@"
+        <html>
+            <head><title>Amusement Park Management System</title></head>
+            <body>
+                <h1>Welcome to the Amusement Park Management System API</h1>
+                <ul>
+                    <li><a href=""/scalar/v1"">Visit API Documentation (Scalar UI)</a></li>
+                </ul>
+            </body>
+        </html>
+    ");
+});
+
+// Map controller routes for API endpoints.
+app.MapControllers();
+
+// Start the application.
+await app.RunAsync();
+
+
+>>>>>>> 43d958d (refactor: implement enterprise-grade improvements)

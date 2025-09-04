@@ -161,5 +161,40 @@ public class CachedVisitorRepository(IVisitorRepository inner, IDistributedCache
         await _cache.RemoveAsync($"visitor:{visitorId}");
         await _cache.RemoveAsync($"visitor:user:{visitorId}");
     }
+<<<<<<< HEAD
 >>>>>>> 2c00408 (feat: implement five core visitor management features)
+=======
+
+    public Task<int> GetSearchCountAsync(
+        string? keyword = null,
+        VisitorType? visitorType = null,
+        string? memberLevel = null,
+        bool? isBlacklisted = null,
+        int? minPoints = null,
+        int? maxPoints = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null)
+    {
+        // Search count is not cached as it changes frequently
+        return _inner.GetSearchCountAsync(keyword, visitorType, memberLevel,
+            isBlacklisted, minPoints, maxPoints, startDate, endDate);
+    }
+
+    public Task<List<Visitor>> SearchWithPaginationAsync(
+        string? keyword = null,
+        VisitorType? visitorType = null,
+        string? memberLevel = null,
+        bool? isBlacklisted = null,
+        int? minPoints = null,
+        int? maxPoints = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        int page = 1,
+        int pageSize = 20)
+    {
+        // Search results are not cached due to complexity and frequent changes
+        return _inner.SearchWithPaginationAsync(keyword, visitorType, memberLevel,
+            isBlacklisted, minPoints, maxPoints, startDate, endDate, page, pageSize);
+    }
+>>>>>>> 43d958d (refactor: implement enterprise-grade improvements)
 }

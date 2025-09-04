@@ -263,4 +263,109 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         return false;
 >>>>>>> 1bba8b9 (feat: implement membership registration and points system)
     }
+
+    public async Task<int> GetSearchCountAsync(
+        string? keyword = null,
+        VisitorType? visitorType = null,
+        string? memberLevel = null,
+        bool? isBlacklisted = null,
+        int? minPoints = null,
+        int? maxPoints = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null)
+    {
+        var query = _dbContext.Visitors.Include(v => v.User).AsQueryable();
+
+        // Apply filters
+        query = ApplySearchFilters(query, keyword, visitorType, memberLevel,
+            isBlacklisted, minPoints, maxPoints, startDate, endDate);
+
+        return await query.CountAsync();
+    }
+
+    public async Task<List<Visitor>> SearchWithPaginationAsync(
+        string? keyword = null,
+        VisitorType? visitorType = null,
+        string? memberLevel = null,
+        bool? isBlacklisted = null,
+        int? minPoints = null,
+        int? maxPoints = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        int page = 1,
+        int pageSize = 20)
+    {
+        var query = _dbContext.Visitors.Include(v => v.User).AsQueryable();
+
+        // Apply filters
+        query = ApplySearchFilters(query, keyword, visitorType, memberLevel,
+            isBlacklisted, minPoints, maxPoints, startDate, endDate);
+
+        // Apply pagination
+        var skip = (page - 1) * pageSize;
+        return await query.Skip(skip).Take(pageSize).ToListAsync();
+    }
+
+    private static IQueryable<Visitor> ApplySearchFilters(
+        IQueryable<Visitor> query,
+        string? keyword = null,
+        VisitorType? visitorType = null,
+        string? memberLevel = null,
+        bool? isBlacklisted = null,
+        int? minPoints = null,
+        int? maxPoints = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null)
+    {
+        // Keyword search (name, email, phone)
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            query = query.Where(v =>
+                v.User.DisplayName.Contains(keyword) ||
+                v.User.Email.Contains(keyword) ||
+                (v.User.PhoneNumber != null && v.User.PhoneNumber.Contains(keyword)));
+        }
+
+        // Filter by visitor type
+        if (visitorType.HasValue)
+        {
+            query = query.Where(v => v.VisitorType == visitorType.Value);
+        }
+
+        // Filter by member level
+        if (!string.IsNullOrWhiteSpace(memberLevel))
+        {
+            query = query.Where(v => v.MemberLevel == memberLevel);
+        }
+
+        // Filter by blacklist status
+        if (isBlacklisted.HasValue)
+        {
+            query = query.Where(v => v.IsBlacklisted == isBlacklisted.Value);
+        }
+
+        // Filter by points range
+        if (minPoints.HasValue)
+        {
+            query = query.Where(v => v.Points >= minPoints.Value);
+        }
+
+        if (maxPoints.HasValue)
+        {
+            query = query.Where(v => v.Points <= maxPoints.Value);
+        }
+
+        // Filter by registration date range
+        if (startDate.HasValue)
+        {
+            query = query.Where(v => v.CreatedAt >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            query = query.Where(v => v.CreatedAt <= endDate.Value);
+        }
+
+        return query.OrderByDescending(v => v.CreatedAt);
+    }
 }

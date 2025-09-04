@@ -170,32 +170,66 @@ public class VisitorsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Search visitors with multiple criteria.
+    /// RESTful unified search API for visitors.
+    /// Supports keyword search, filtering, and pagination.
+    /// Based on resource (visitors) rather than search parameters.
+    /// Examples:
+    /// - GET /api/visitors/search?keyword=john
+    /// - GET /api/visitors/search?visitorType=Member&memberLevel=Gold
+    /// - GET /api/visitors/search?keyword=john&isBlacklisted=false&page=2&pageSize=10
     /// </summary>
-    /// <param name="name">Optional name filter.</param>
-    /// <param name="phoneNumber">Optional phone number filter.</param>
-    /// <param name="isBlacklisted">Optional blacklist status filter.</param>
-    /// <param name="visitorType">Optional visitor type filter.</param>
-    /// <param name="startDate">Optional start date for registration.</param>
-    /// <param name="endDate">Optional end date for registration.</param>
-    /// <returns>List of visitors matching the criteria.</returns>
+    /// <param name="keyword">General keyword search (name, email, phone).</param>
+    /// <param name="visitorType">Filter by visitor type.</param>
+    /// <param name="memberLevel">Filter by member level.</param>
+    /// <param name="isBlacklisted">Filter by blacklist status.</param>
+    /// <param name="minPoints">Minimum points filter.</param>
+    /// <param name="maxPoints">Maximum points filter.</param>
+    /// <param name="startDate">Registration start date filter.</param>
+    /// <param name="endDate">Registration end date filter.</param>
+    /// <param name="page">Page number (1-based).</param>
+    /// <param name="pageSize">Page size (max 100).</param>
+    /// <returns>Paginated search results with metadata.</returns>
     [HttpGet("search")]
     public async Task<IActionResult> Search(
-        [FromQuery] string? name = null,
-        [FromQuery] string? phoneNumber = null,
-        [FromQuery] bool? isBlacklisted = null,
+        [FromQuery] string? keyword = null,
         [FromQuery] VisitorType? visitorType = null,
+        [FromQuery] string? memberLevel = null,
+        [FromQuery] bool? isBlacklisted = null,
+        [FromQuery] int? minPoints = null,
+        [FromQuery] int? maxPoints = null,
         [FromQuery] DateTime? startDate = null,
-        [FromQuery] DateTime? endDate = null)
+        [FromQuery] DateTime? endDate = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20)
     {
+        // Validate pagination parameters
+        if (page < 1)
+        {
+            return BadRequest(new { Error = "Page must be greater than 0" });
+        }
+
+        if (pageSize < 1 || pageSize > 100)
+        {
+            return BadRequest(new { Error = "Page size must be between 1 and 100" });
+        }
+
+        // Validate date range
         if (startDate.HasValue && endDate.HasValue && startDate > endDate)
         {
             return BadRequest(new { Error = "Start date must be before or equal to end date" });
         }
 
-        var visitors = await _mediator.Send(new SearchVisitorsQuery(
-            name, phoneNumber, isBlacklisted, visitorType, startDate, endDate));
-        return Ok(visitors);
+        // Validate points range
+        if (minPoints.HasValue && maxPoints.HasValue && minPoints > maxPoints)
+        {
+            return BadRequest(new { Error = "Minimum points must be less than or equal to maximum points" });
+        }
+
+        var result = await _mediator.Send(new SearchVisitorsQuery(
+            keyword, visitorType, memberLevel, isBlacklisted,
+            minPoints, maxPoints, startDate, endDate, page, pageSize));
+
+        return Ok(result);
     }
 
     /// <summary>

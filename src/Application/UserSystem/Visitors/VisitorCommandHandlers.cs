@@ -9,20 +9,18 @@ namespace DbApp.Application.UserSystem.Visitors;
 
 /// <summary>
 /// Handler for creating a new visitor with complete user information.
-/// Creates User and Visitor entities in sequence with proper error handling.
+/// Uses single transaction to ensure data consistency.
 /// </summary>
 public class CreateVisitorCommandHandler(
-    IVisitorRepository visitorRepository,
-    IUserRepository userRepository) : IRequestHandler<CreateVisitorCommand, int>
+    IVisitorRepository visitorRepository) : IRequestHandler<CreateVisitorCommand, int>
 {
     private readonly IVisitorRepository _visitorRepository = visitorRepository;
-    private readonly IUserRepository _userRepository = userRepository;
 
     public async Task<int> Handle(CreateVisitorCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // First create the user
+            // Create user entity with navigation property
             var user = new User
             {
                 Username = request.Username,
@@ -34,23 +32,25 @@ public class CreateVisitorCommandHandler(
                 PasswordHash = request.PasswordHash,
                 RegisterTime = DateTime.UtcNow,
                 CreatedAt = DateTime.UtcNow,
-                RoleId = 1 // Default role for visitors
+                RoleId = 1 // Default role for visitors (seeded data)
             };
 
-            var userId = await _userRepository.CreateAsync(user);
-
-            // Then create the visitor
+            // Create visitor with user navigation property - single transaction
             var visitor = new Visitor
             {
-                VisitorId = userId, // Visitor ID is the same as User ID
+                User = user, // Navigation property - EF will handle the relationship
                 VisitorType = request.VisitorType,
                 Height = request.Height,
+                Points = 0,
+                MemberLevel = "Bronze",
+                IsBlacklisted = false,
                 CreatedAt = DateTime.UtcNow
             };
 
+            // Single SaveChangesAsync call = single transaction
             await _visitorRepository.CreateAsync(visitor);
 
-            return userId;
+            return visitor.VisitorId;
         }
         catch (Exception ex)
         {

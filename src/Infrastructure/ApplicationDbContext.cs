@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Entities.UserSystem;
+using DbApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 namespace DbApp.Infrastructure;
 
@@ -47,6 +48,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         // Apply all configurations.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        // Note: Role seeding moved to application startup for better flexibility
+        // DataSeeding.SeedData(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }

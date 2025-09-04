@@ -1,3 +1,4 @@
+using DbApp.Application.UserSystem.Visitors.DTOs;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using MediatR;
@@ -160,23 +161,76 @@ public record GetVisitorsByRegistrationDateRangeQuery(
 public record GetVisitorHistoryQuery(int VisitorId) : IRequest<VisitorHistoryDto?>;
 
 /// <summary>
-/// Query to search visitors with multiple criteria.
+/// Unified RESTful search API for visitors.
+/// Supports keyword search and multiple filters with pagination.
+/// Based on resource (visitors) rather than search parameters.
 /// </summary>
-/// <param name="Name">Optional name filter.</param>
-/// <param name="PhoneNumber">Optional phone number filter.</param>
-/// <param name="IsBlacklisted">Optional blacklist status filter.</param>
-/// <param name="VisitorType">Optional visitor type filter.</param>
-/// <param name="StartDate">Optional start date for registration.</param>
-/// <param name="EndDate">Optional end date for registration.</param>
+/// <param name="Keyword">General keyword search (name, email, phone).</param>
+/// <param name="VisitorType">Filter by visitor type.</param>
+/// <param name="MemberLevel">Filter by member level.</param>
+/// <param name="IsBlacklisted">Filter by blacklist status.</param>
+/// <param name="MinPoints">Minimum points filter.</param>
+/// <param name="MaxPoints">Maximum points filter.</param>
+/// <param name="StartDate">Registration start date filter.</param>
+/// <param name="EndDate">Registration end date filter.</param>
+/// <param name="Page">Page number for pagination (1-based).</param>
+/// <param name="PageSize">Page size for pagination (max 100).</param>
 public record SearchVisitorsQuery(
-    string? Name = null,
-    string? PhoneNumber = null,
-    bool? IsBlacklisted = null,
+    string? Keyword = null,
     VisitorType? VisitorType = null,
+    string? MemberLevel = null,
+    bool? IsBlacklisted = null,
+    int? MinPoints = null,
+    int? MaxPoints = null,
     DateTime? StartDate = null,
+<<<<<<< HEAD
     DateTime? EndDate = null
 ) : IRequest<List<Visitor>>;
 =======
+=======
+    DateTime? EndDate = null,
+    int Page = 1,
+    int PageSize = 20
+) : IRequest<SearchVisitorsResult>;
+
+/// <summary>
+/// RESTful search result with pagination metadata.
+/// </summary>
+public class SearchVisitorsResult
+{
+    public List<VisitorResponseDto> Visitors { get; set; } = new();
+    public int TotalCount { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
+    public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+    public bool HasNextPage => Page < TotalPages;
+    public bool HasPreviousPage => Page > 1;
+
+    /// <summary>
+    /// Applied filters for transparency.
+    /// </summary>
+    public SearchFilters AppliedFilters { get; set; } = new();
+}
+
+/// <summary>
+/// Applied search filters for API transparency.
+/// </summary>
+public class SearchFilters
+{
+    public string? Keyword { get; set; }
+    public VisitorType? VisitorType { get; set; }
+    public string? MemberLevel { get; set; }
+    public bool? IsBlacklisted { get; set; }
+    public int? MinPoints { get; set; }
+    public int? MaxPoints { get; set; }
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+}
+
+// === 您的会员和积分查询功能 ===
+
+/// <summary>
+>>>>>>> 43d958d (refactor: implement enterprise-grade improvements)
 /// Query to get visitors by member level.
 /// </summary>
 /// <param name="MemberLevel">The member level to filter by.</param>
