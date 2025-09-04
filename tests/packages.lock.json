@@ -1755,6 +1755,7 @@
           "DotNetEnv": "[3.1.1, )",
           "EFCore.CheckConstraints": "[9.1.0, )",
           "Infrastructure": "[1.0.0, )",
+          "MediatR": "[13.0.0, )",
           "Microsoft.AspNetCore.OpenApi": "[9.0.7, )",
           "Microsoft.Extensions.Caching.StackExchangeRedis": "[9.0.7, )",
           "Oracle.EntityFrameworkCore": "[9.23.90, )",
