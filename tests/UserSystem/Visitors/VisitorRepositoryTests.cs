@@ -14,6 +14,7 @@ public class VisitorRepositoryTests : IDisposable
 {
     private readonly ApplicationDbContext _context;
     private readonly VisitorRepository _repository;
+    private bool _disposed;
 
     public VisitorRepositoryTests()
     {
@@ -265,8 +266,21 @@ public class VisitorRepositoryTests : IDisposable
         Assert.Null(deletedVisitor);
     }
 
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _context?.Dispose();
+            }
+            _disposed = true;
+        }
+    }
+
     public void Dispose()
     {
-        _context.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }

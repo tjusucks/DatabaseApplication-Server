@@ -21,7 +21,7 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
     private readonly WebApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
     private readonly ApplicationDbContext _context;
-
+    private bool _disposed;
     public MembershipControllerTests(WebApplicationFactory<Program> factory)
     {
         _factory = factory.WithWebHostBuilder(builder =>
@@ -331,9 +331,23 @@ public class MembershipControllerTests : IClassFixture<WebApplicationFactory<Pro
         Assert.Equal(50m, stats.MembershipRate); // 1/2 * 100 = 50%
     }
 
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _context?.Dispose();
+                _client?.Dispose();
+                _factory?.Dispose();
+            }
+            _disposed = true;
+        }
+    }
+
     public void Dispose()
     {
-        _context.Dispose();
-        _client.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 }
