@@ -42,6 +42,11 @@ public record SearchReservationQuery(
 ) : IRequest<ReservationSearchResult>;
 
 /// <summary>
+/// Get reservation by ID.
+/// </summary>
+public record GetReservationByIdQuery(int ReservationId) : IRequest<ReservationDto?>;
+
+/// <summary>
 /// Get reservation statistics for a visitor.
 /// </summary>
 public record GetVisitorReservationStatsQuery(

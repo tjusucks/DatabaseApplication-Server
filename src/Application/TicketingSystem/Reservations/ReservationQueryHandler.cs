@@ -13,6 +13,7 @@ public class ReservationQueryHandler(
     IMapper mapper) :
     IRequestHandler<SearchReservationByVisitorQuery, ReservationSearchResult>,
     IRequestHandler<SearchReservationQuery, ReservationSearchResult>,
+    IRequestHandler<GetReservationByIdQuery, ReservationDto?>,
     IRequestHandler<GetVisitorReservationStatsQuery, ReservationStatsDto>
 {
     private readonly IReservationRepository _reservationRepository = reservationRepository;
@@ -64,6 +65,15 @@ public class ReservationQueryHandler(
             Page = request.Page,
             PageSize = request.PageSize
         };
+    }
+
+    /// <summary>
+    /// Handle getting reservation by ID.
+    /// </summary>
+    public async Task<ReservationDto?> Handle(GetReservationByIdQuery request, CancellationToken cancellationToken)
+    {
+        var reservation = await _reservationRepository.GetByIdAsync(request.ReservationId);
+        return reservation != null ? _mapper.Map<ReservationDto>(reservation) : null;
     }
 
     /// <summary>

@@ -30,6 +30,22 @@ public class ReservationMappingProfile : Profile
             .ForMember(dest => dest.TotalTickets, opt =>
                 opt.MapFrom(src => src.ReservationItems != null ? src.ReservationItems.Sum(i => i.Quantity) : 0));
 
+        // Detailed reservation DTO mapping
+        CreateMap<Reservation, ReservationDto>()
+            .ForMember(dest => dest.VisitorName, opt =>
+                opt.MapFrom(src => src.Visitor != null ? src.Visitor.User.Username : string.Empty))
+            .ForMember(dest => dest.VisitorEmail, opt =>
+                opt.MapFrom(src => src.Visitor != null ? src.Visitor.User.Email : null))
+            .ForMember(dest => dest.PromotionName, opt =>
+                opt.MapFrom(src => src.Promotion != null ? src.Promotion.PromotionName : null))
+            .ForMember(dest => dest.Items, opt =>
+                opt.MapFrom(src => src.ReservationItems));
+
+        // Reservation item DTO mapping
+        CreateMap<ReservationItem, ReservationItemDto>()
+            .ForMember(dest => dest.TicketTypeName, opt =>
+                opt.MapFrom(src => src.TicketType != null ? src.TicketType.TypeName : string.Empty));
+
         CreateMap<ReservationStats, ReservationStatsDto>();
     }
 }

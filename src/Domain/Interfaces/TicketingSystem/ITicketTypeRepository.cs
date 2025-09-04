@@ -9,4 +9,7 @@ public interface ITicketTypeRepository
     Task<int> CreateAsync(TicketType ticketType);
     Task UpdateAsync(TicketType ticketType);
     Task DeleteAsync(TicketType ticketType);
+    Task<List<TicketType>> GetActiveTicketTypesAsync();
+    Task<int> GetSoldCountAsync(int ticketTypeId, DateTime visitDate);
+    Task<bool> HasSufficientStockAsync(int ticketTypeId, DateTime visitDate, int requestedQuantity);
 }
