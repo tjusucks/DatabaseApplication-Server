@@ -46,7 +46,6 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                     TotalAmount = subtotal
                 };
 
-                result.ItemBreakdown.Add(itemPrice);
                 result.SubtotalAmount += subtotal;
             }
 
@@ -61,7 +60,6 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                 {
                     // 简化处理：假设是固定折扣
                     result.DiscountAmount = result.SubtotalAmount * 0.1m; // 10%折扣
-                    result.PromotionName = promotion.PromotionName;
                 }
             }
 
