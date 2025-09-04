@@ -57,5 +57,7 @@ nunit-*.xml
 .env*
 !.env.example
 
-# Visual Studio generated files
-*.vs
+# Dotfiles
+.*/
+!.config/
+!.github/
