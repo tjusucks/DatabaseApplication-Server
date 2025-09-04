@@ -6,6 +6,27 @@ namespace DbApp.Domain.Interfaces.TicketingSystem;
 
 public interface IReservationRepository
 {
+    // 基础CRUD操作
+    /// <summary>
+    /// Add a new reservation to the repository.
+    /// </summary>
+    Task<Reservation> AddAsync(Reservation reservation);
+
+    /// <summary>
+    /// Update an existing reservation.
+    /// </summary>
+    Task<Reservation> UpdateAsync(Reservation reservation);
+
+    /// <summary>
+    /// Get reservation by ID.
+    /// </summary>
+    Task<Reservation?> GetByIdAsync(int reservationId);
+
+    /// <summary>
+    /// Delete a reservation by ID.
+    /// </summary>
+    Task<bool> DeleteAsync(int reservationId);
+
     /// <summary>
     /// Search reservations by visitor ID with various filters and pagination.
     /// </summary>

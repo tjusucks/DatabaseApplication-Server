@@ -47,3 +47,41 @@ public class ReservationSearchResult
     public int PageSize { get; set; }
     public int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
 }
+
+/// <summary>
+/// Detailed reservation item DTO.
+/// </summary>
+public class ReservationItemDto
+{
+    public int ItemId { get; set; }
+    public int TicketTypeId { get; set; }
+    public string TicketTypeName { get; set; } = string.Empty;
+    public int Quantity { get; set; }
+    public decimal UnitPrice { get; set; }
+    public decimal DiscountAmount { get; set; }
+    public decimal TotalAmount { get; set; }
+}
+
+/// <summary>
+/// Detailed reservation DTO with all related information.
+/// </summary>
+public class ReservationDto
+{
+    public int ReservationId { get; set; }
+    public int VisitorId { get; set; }
+    public string VisitorName { get; set; } = string.Empty;
+    public string? VisitorEmail { get; set; }
+    public DateTime ReservationTime { get; set; }
+    public DateTime VisitDate { get; set; }
+    public decimal DiscountAmount { get; set; }
+    public decimal TotalAmount { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
+    public ReservationStatus Status { get; set; }
+    public string? PaymentMethod { get; set; }
+    public int? PromotionId { get; set; }
+    public string? PromotionName { get; set; }
+    public string? SpecialRequests { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public List<ReservationItemDto> Items { get; set; } = [];
+}
