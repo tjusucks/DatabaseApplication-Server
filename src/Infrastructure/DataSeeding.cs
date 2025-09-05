@@ -57,34 +57,35 @@ public static class DataSeeding
 
     private static List<Role> GetDefaultRoles()
     {
+        var now = DateTime.UtcNow;
         return
         [
             new()
             {
                 RoleId = 1,
                 RoleName = "Visitor",
-                RoleDescription = "General visitor with limited access.",
-                IsSystemRole = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                RoleDescription = "General visitor, including members.",
+                IsSystemRole = false,
+                CreatedAt = now,
+                UpdatedAt = now
             },
             new()
             {
                 RoleId = 2,
-                RoleName = "Member",
-                RoleDescription = "Member user with membership privileges.",
+                RoleName = "Employee",
+                RoleDescription = "Employee with resource system access.",
                 IsSystemRole = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = now,
+                UpdatedAt = now
             },
             new()
             {
                 RoleId = 3,
-                RoleName = "Employee",
-                RoleDescription = "Employee with internal system access.",
+                RoleName = "Manager",
+                RoleDescription = "Manager with administrative permissions.",
                 IsSystemRole = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = now,
+                UpdatedAt = now
             },
             new()
             {
@@ -92,8 +93,8 @@ public static class DataSeeding
                 RoleName = "Admin",
                 RoleDescription = "System administrator with full permissions.",
                 IsSystemRole = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = now,
+                UpdatedAt = now
             }
         ];
     }

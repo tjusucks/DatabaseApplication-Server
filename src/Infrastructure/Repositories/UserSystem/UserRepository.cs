@@ -27,6 +27,7 @@ public class UserRepository(ApplicationDbContext dbContext) : IUserRepository
 
     public async Task UpdateAsync(User user)
     {
+        user.UpdatedAt = DateTime.UtcNow;
         _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync();
     }
