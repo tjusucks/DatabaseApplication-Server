@@ -1749,36 +1749,6 @@ namespace DbApp.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            RoleId = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsSystemRole = false,
-                            RoleName = "Visitor"
-                        },
-                        new
-                        {
-                            RoleId = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsSystemRole = false,
-                            RoleName = "Member"
-                        },
-                        new
-                        {
-                            RoleId = 3,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsSystemRole = false,
-                            RoleName = "Staff"
-                        },
-                        new
-                        {
-                            RoleId = 4,
-                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            IsSystemRole = false,
-                            RoleName = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("DbApp.Domain.Entities.UserSystem.StaffTeam", b =>

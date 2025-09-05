@@ -1,13 +1,11 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Entities.UserSystem;
-using DbApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 namespace DbApp.Infrastructure;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-
     // DbSet properties for each entity.
     // User System.
     public DbSet<User> Users { get; set; }
@@ -48,9 +46,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         // Apply all configurations.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
-
-        // Seed essential data using EF Core data seeding
-        DataSeeding.SeedData(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
     }

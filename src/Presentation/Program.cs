@@ -47,6 +47,14 @@ public class Program
             options.UseOracle(builder.Configuration.GetConnectionString("OracleConnection"));
             options.UseEnumCheckConstraints();
             options.UseValidationCheckConstraints();
+            options.UseSeeding((context, changed) =>
+            {
+                DataSeeding.SeedData(context);
+            });
+            options.UseAsyncSeeding(async (context, changed, cancellationToken) =>
+            {
+                await DataSeeding.SeedDataAsync(context);
+            });
         });
 
         // Configure Redis caching.
