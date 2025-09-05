@@ -78,9 +78,6 @@ public class ReservationCommandHandler(
             var ticketType = ticketTypes[item.TicketTypeId];
             var unitPrice = ticketType.BasePrice;
             
-            // 这里可以添加价格规则计算逻辑
-            // var appliedPriceRule = await CalculatePriceRule(ticketType, request.VisitDate);
-            
             var itemTotal = unitPrice * item.Quantity;
             totalAmount += itemTotal;
 
@@ -99,8 +96,7 @@ public class ReservationCommandHandler(
         // 5. 应用优惠折扣
         if (promotion != null)
         {
-            // 这里可以添加复杂的优惠计算逻辑
-            // totalDiscount = CalculatePromotionDiscount(promotion, reservation.ReservationItems);
+            // 优惠计算逻辑待实现
         }
 
         reservation.DiscountAmount = totalDiscount;
@@ -182,7 +178,7 @@ public class ReservationCommandHandler(
     /// <summary>
     /// Generate tickets for confirmed reservation.
     /// </summary>
-    private async Task GenerateTicketsAsync(Reservation reservation)
+    private Task GenerateTicketsAsync(Reservation reservation)
     {
         foreach (var item in reservation.ReservationItems)
         {
@@ -202,6 +198,8 @@ public class ReservationCommandHandler(
                 item.Tickets.Add(ticket);
             }
         }
+        
+        return Task.CompletedTask;
     }
 
     /// <summary>

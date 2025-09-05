@@ -16,7 +16,6 @@ public class RefundCommandHandler(
     ITicketRepository ticketRepository,
     IRefundRepository refundRepository,
     ApplicationDbContext dbContext,
-    IMapper mapper,
     ILogger<RefundCommandHandler> logger) :
     IRequestHandler<RequestRefundCommand, RefundResultDto>,
     IRequestHandler<ProcessRefundCommand, RefundResultDto>,
@@ -25,7 +24,6 @@ public class RefundCommandHandler(
     private readonly ITicketRepository _ticketRepository = ticketRepository;
     private readonly IRefundRepository _refundRepository = refundRepository;
     private readonly ApplicationDbContext _dbContext = dbContext;
-    private readonly IMapper _mapper = mapper;
     private readonly ILogger<RefundCommandHandler> _logger = logger;
 
     /// <summary>
