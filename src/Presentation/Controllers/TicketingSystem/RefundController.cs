@@ -130,7 +130,7 @@ public class RefundController(IMediator mediator) : ControllerBase
     /// <param name="ticketId">票ID</param>
     /// <returns>是否可以退票</returns>
     [HttpGet("check/{ticketId}")]
-    public async Task<ActionResult<bool>> CanRefundTicket(int ticketId)
+    public ActionResult<bool> CanRefundTicket(int ticketId)
     {
         // 这里可以添加一个专门的查询来检查退票资格
         // 暂时返回简单的响应

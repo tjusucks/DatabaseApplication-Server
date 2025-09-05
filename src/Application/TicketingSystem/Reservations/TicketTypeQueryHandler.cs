@@ -17,10 +17,10 @@ public class TicketTypeQueryHandler(ApplicationDbContext context) :
     {
         var query = _context.TicketTypes.AsQueryable();
 
-        // TODO: 如果指定了日期，可以根据日期过滤（例如季节性票种）
+        // 如果指定了日期，可以根据日期过滤（例如季节性票种）
         if (request.ForDate.HasValue)
         {
-            // 这里可以添加基于日期的过滤逻辑
+            // 基于日期的过滤逻辑待实现
         }
 
         var ticketTypes = await query

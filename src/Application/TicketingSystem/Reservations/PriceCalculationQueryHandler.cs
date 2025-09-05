@@ -36,7 +36,7 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                 var unitPrice = ticketType.BasePrice;
                 var subtotal = unitPrice * item.Quantity;
 
-                var itemPrice = new ReservationItemPriceDto
+                var itemPriceDto = new ReservationItemPriceDto
                 {
                     TicketTypeId = item.TicketTypeId,
                     TicketTypeName = ticketType.TypeName,
@@ -46,6 +46,7 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                     TotalAmount = subtotal
                 };
 
+                result.Items.Add(itemPriceDto);
                 result.SubtotalAmount += subtotal;
             }
 
@@ -71,7 +72,7 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error calculating reservation price for visitor {VisitorId}", request.VisitorId);
-            throw;
+            throw new InvalidOperationException("Failed to calculate reservation price", ex);
         }
     }
 }

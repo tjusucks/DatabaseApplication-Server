@@ -67,7 +67,7 @@ public class RefundQueryHandler(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error searching refund records");
-            throw;
+            throw new InvalidOperationException("Failed to search refund records", ex);
         }
     }
 
@@ -84,7 +84,7 @@ public class RefundQueryHandler(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting refund by ID {RefundId}", request.RefundId);
-            throw;
+            throw new InvalidOperationException($"Failed to get refund by ID {request.RefundId}", ex);
         }
     }
 
@@ -101,7 +101,7 @@ public class RefundQueryHandler(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting refund by ticket ID {TicketId}", request.TicketId);
-            throw;
+            throw new InvalidOperationException($"Failed to get refund by ticket ID {request.TicketId}", ex);
         }
     }
 
@@ -125,7 +125,7 @@ public class RefundQueryHandler(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error getting refund statistics");
-            throw;
+            throw new InvalidOperationException("Failed to get refund statistics", ex);
         }
     }
 }

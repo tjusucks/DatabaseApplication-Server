@@ -277,11 +277,11 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
             if (ticket.ValidTo < now.AddDays(-7)) // 7天退款期限
                 return false;
         }
-        else if (ticket.Status == TicketStatus.Used && ticket.UsedTime.HasValue)
+        else if (ticket.Status == TicketStatus.Used && ticket.UsedTime.HasValue && 
+                 now.Subtract(ticket.UsedTime.Value).TotalHours > 24)
         {
             // 已使用的票，检查是否在使用后24小时内
-            if (now.Subtract(ticket.UsedTime.Value).TotalHours > 24)
-                return false;
+            return false;
         }
 
         return true;
