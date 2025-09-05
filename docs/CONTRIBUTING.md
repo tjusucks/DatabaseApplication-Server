@@ -35,7 +35,7 @@ sqlplus / as sysdba
 ```
 
 ```sql
-ALTER USER sys IDENTIFIED BY password;
+ALTER USER sys IDENTIFIED BY <YOURPASSWORD>;
 ```
 
 ### Create User for Development
@@ -49,15 +49,15 @@ sqlplus sys/password@localhost:1521/FREEPDB1 as sysdba
 其中 `password` 是你为 SYS 用户设置的密码.
 
 ```sql
-CREATE USER username IDENTIFIED BY password;
+CREATE USER <YOURUSERNAME> IDENTIFIED BY <YOURPASSWORD>;
 
-GRANT CONNECT, RESOURCE TO username;
-GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO username;
-GRANT DROP ANY TABLE, ALTER ANY TABLE TO username;
-ALTER USER username QUOTA UNLIMITED ON users;
+GRANT CONNECT, RESOURCE TO <YOURUSERNAME>;
+GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE TO <YOURUSERNAME>;
+GRANT DROP ANY TABLE, ALTER ANY TABLE TO <YOURUSERNAME>;
+ALTER USER <YOURUSERNAME> QUOTA UNLIMITED ON users;
 ```
 
-其中 `username` 和 `password` 是你为新用户设置的用户名和密码.
+其中 `<YOURUSERNAME>` 和 `<YOURPASSWORD>` 是你为新用户设置的用户名和密码.
 
 ## Configure Connection String
 
@@ -65,12 +65,12 @@ ALTER USER username QUOTA UNLIMITED ON users;
 
 ```json
 "ConnectionStrings": {
-  "OracleConnection": "Data Source=localhost:1521/FREEPDB1;User ID=username;Password=password;",
-  "RedisConnection": "localhost:6379"
+  "OracleConnection": "Data Source=localhost:1521/FREEPDB1;User ID=<YOURUSERNAME>;Password=<YOURPASSWORD>;",
+  "RedisConnection": "localhost:6379,defaultDatabase=0"
 }
 ```
 
-其中 `username` 和 `password` 是你在上一步创建的用户的用户名和密码.
+其中 `<YOURUSERNAME>` 和 `<YOURPASSWORD>` 是你在上一步创建的用户的用户名和密码.
 
 ## Use Environment Variables
 
@@ -89,8 +89,8 @@ cp src/Presentation/.env.example src/Presentation/.env
 编辑 `.env` 文件内容, 例如:
 
 ```bash
-ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=<yourusername>;Password=<yourpassword>;"
-ConnectionStrings__RedisConnection="localhost:6379"
+ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=<YOURUSERNAME>;Password=<YOURPASSWORD>;"
+ConnectionStrings__RedisConnection="localhost:6379,defaultDatabase=0"
 ```
 
 `.env` 文件中的变量会在应用启动时自动加载, 并覆盖 `appsettings.json` 中的同名配置.
@@ -101,14 +101,14 @@ ConnectionStrings__RedisConnection="localhost:6379"
 
 ```bash
 # Linux / macOS
-export ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=yourusername;Password=yourpassword;"
-export ConnectionStrings__RedisConnection="localhost:6379"
+export ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=<YOURUSERNAME>;Password=<YOURPASSWORD>;"
+export ConnectionStrings__RedisConnection="localhost:6379,defaultDatabase=0"
 ```
 
 ```powershell
 # Windows
-$env:ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=yourusername;Password=yourpassword;"
-$env:ConnectionStrings__RedisConnection="localhost:6379"
+$env:ConnectionStrings__OracleConnection="Data Source=localhost:1521/FREEPDB1;User ID=<YOURUSERNAME>;Password=<YOURPASSWORD>;"
+$env:ConnectionStrings__RedisConnection="localhost:6379,defaultDatabase=0"
 ```
 
 ```yaml
