@@ -7,6 +7,7 @@ public static class DataSeeding
 {
     public static void SeedData(DbContext dbContext)
     {
+        dbContext.ChangeTracker.Clear();
         var roles = GetDefaultRoles();
 
         foreach (var role in roles)
@@ -32,6 +33,7 @@ public static class DataSeeding
 
     public static async Task SeedDataAsync(DbContext dbContext)
     {
+        dbContext.ChangeTracker.Clear();
         var roles = GetDefaultRoles();
 
         foreach (var role in roles)

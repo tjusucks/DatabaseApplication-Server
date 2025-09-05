@@ -13,7 +13,7 @@ public class DatabaseFixtureTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task InsertAndReset_ClearsSchema()
     {
         var db = fixture.DbContext;
-        Assert.Equal(0, await db.Roles.CountAsync());
+        Assert.Equal(4, await db.Roles.CountAsync());
         Assert.Equal(0, await db.Users.CountAsync());
 
         // Insert test data.
@@ -48,7 +48,10 @@ public class DatabaseFixtureTests(DatabaseFixture fixture) : IAsyncLifetime
     public async Task SchemaIsEmpty_BeforeEachTest()
     {
         var db = fixture.DbContext;
-        Assert.Equal(0, await db.Roles.CountAsync());
+        Assert.False(await db.Roles.AnyAsync(r => r.RoleId == 1000));
+        Assert.False(await db.Users.AnyAsync(u => u.UserId == 1000));
+
+        Assert.Equal(4, await db.Roles.CountAsync());
         Assert.Equal(0, await db.Users.CountAsync());
     }
 }

@@ -2,6 +2,7 @@ using System.Data.Common;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Respawn;
 
 namespace DbApp.Tests.Fixtures;
@@ -21,14 +22,23 @@ public class DatabaseFixture : IAsyncLifetime
             .UseOracle(oracleConnectionString)
             .UseEnumCheckConstraints()
             .UseValidationCheckConstraints()
+            .UseSeeding((context, changed) =>
+            {
+                DataSeeding.SeedData(context);
+            })
+            .UseAsyncSeeding(async (context, changed, cancellationToken) =>
+            {
+                await DataSeeding.SeedDataAsync(context);
+            })
             .Options;
 
         DbContext = new ApplicationDbContext(options);
     }
 
-    public Task ResetDatabaseAsync()
+    public async Task ResetDatabaseAsync()
     {
-        return _respawner.ResetAsync(_connection);
+        await _respawner.ResetAsync(_connection);
+        await DbContext.Database.EnsureCreatedAsync();
     }
 
     public async Task InitializeAsync()
