@@ -16,6 +16,13 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
         return employee.EmployeeId;
     }
 
+    public async Task<int> CreateUserAsync(User user)
+    {
+        _dbContext.Users.Add(user);
+        await _dbContext.SaveChangesAsync();
+        return user.UserId;
+    }
+
     public async Task<Employee?> GetByIdAsync(int employeeId)
     {
         return await _dbContext.Employees.FindAsync(employeeId);
@@ -34,9 +41,21 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
 
     public async Task DeleteAsync(Employee employee)
     {
+        // 首先查找对应的User实体
+        var user = await _dbContext.Users.FindAsync(employee.EmployeeId);
+
+        // 删除Employee实体
         _dbContext.Employees.Remove(employee);
+
+        // 如果找到对应的User实体，则一并删除
+        if (user != null)
+        {
+            _dbContext.Users.Remove(user);
+        }
+
         await _dbContext.SaveChangesAsync();
     }
+
     public async Task<List<Employee>> SearchAsync(string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))
@@ -50,7 +69,8 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
                 (e.Position != null && e.Position.Contains(keyword)) ||
                 (e.DepartmentName != null && e.DepartmentName.Contains(keyword)) ||
                 (e.Certification != null && e.Certification.Contains(keyword)) ||
-                (e.ResponsibilityArea != null && e.ResponsibilityArea.Contains(keyword)))
+                (e.ResponsibilityArea != null && e.ResponsibilityArea.Contains(keyword)) ||
+                (e.User.DisplayName != null && e.User.DisplayName.Contains(keyword)))
             .ToListAsync();
         return employees;
     }
@@ -67,11 +87,34 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
             .ToListAsync();
         return employees;
     }
+
     public async Task<List<Employee>> GetByStaffTypeAsync(StaffType staffType)
     {
         var employees = await _dbContext.Employees
             .Where(e => e.StaffType == staffType)
             .ToListAsync();
         return employees;
+    }
+
+    public async Task<bool> IsValidRoleAsync(int roleId, string[] validRoleNames)
+    {
+        var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleId == roleId);
+        return role != null && validRoleNames.Contains(role.RoleName);
+    }
+
+    public async Task<int?> GetRoleIdByNameAsync(string roleName)
+    {
+        var role = await _dbContext.Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
+        return role?.RoleId;
+    }
+
+    public async Task DeleteUserAsync(int userId)
+    {
+        var user = await _dbContext.Users.FindAsync(userId);
+        if (user != null)
+        {
+            _dbContext.Users.Remove(user);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
