@@ -49,4 +49,27 @@ namespace DbApp.Application.ResourceSystem.Attendances
         public int LeaveDays { get; set; }
         public decimal OverallAttendanceRate { get; set; }
     }
+    //统一查询模型
+    public record GenericAttendanceQueryRequest(
+        AttendanceQueryType QueryType, // 指定查询类型
+        int? Id = null,
+        int? EmployeeId = null,
+        string? DepartmentId = null,
+        DateTime? StartDate = null,
+        DateTime? EndDate = null,
+        int? Year = null,
+        int? Month = null
+    ) : IRequest<object>;
+    //查询类型枚举
+    public enum AttendanceQueryType
+    {
+        GetById,
+        GetEmployeeAttendance,
+        GetDepartmentAttendance,
+        GetAbnormalRecords,
+        GetEmployeeStats,
+        GetEmployeeMonthlyStats,
+        GetDepartmentStats,
+        CheckFullAttendance
+    }
 }
