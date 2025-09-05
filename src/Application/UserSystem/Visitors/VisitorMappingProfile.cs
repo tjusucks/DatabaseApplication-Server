@@ -1,9 +1,9 @@
 using AutoMapper;
-using DbApp.Domain.Entities.UserSystem;
 using DbApp.Application.UserSystem.Users;
-using DbApp.Domain.Statistics.UserSystem;
-using DbApp.Domain.Specifications.UserSystem;
+using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Specifications.Common;
+using DbApp.Domain.Specifications.UserSystem;
+using DbApp.Domain.Statistics.UserSystem;
 
 namespace DbApp.Application.UserSystem.Visitors;
 

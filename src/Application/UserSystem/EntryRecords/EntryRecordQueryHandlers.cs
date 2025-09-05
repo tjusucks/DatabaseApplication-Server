@@ -1,8 +1,8 @@
 using AutoMapper;
-using MediatR;
 using DbApp.Domain.Interfaces.UserSystem;
 using DbApp.Domain.Specifications.Common;
 using DbApp.Domain.Specifications.UserSystem;
+using MediatR;
 
 namespace DbApp.Application.UserSystem.EntryRecords;
 

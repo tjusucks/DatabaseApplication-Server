@@ -1,6 +1,6 @@
-using DbApp.Domain.Enums.UserSystem;
-using DbApp.Application.UserSystem.Users;
 using DbApp.Application.Common;
+using DbApp.Application.UserSystem.Users;
+using DbApp.Domain.Enums.UserSystem;
 
 namespace DbApp.Application.UserSystem.Visitors;
 
