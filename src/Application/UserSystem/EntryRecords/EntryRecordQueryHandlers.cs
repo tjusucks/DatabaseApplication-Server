@@ -1,129 +1,67 @@
-using DbApp.Domain.Entities.UserSystem;
-using DbApp.Domain.Interfaces.UserSystem;
+using AutoMapper;
 using MediatR;
+using DbApp.Domain.Interfaces.UserSystem;
+using DbApp.Domain.Specifications.Common;
+using DbApp.Domain.Specifications.UserSystem;
 
 namespace DbApp.Application.UserSystem.EntryRecords;
 
 /// <summary>
-/// Handler for getting all entry records.
+/// Centralized handler for all entry record queries.
 /// </summary>
-public class GetAllEntryRecordsQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetAllEntryRecordsQuery, List<EntryRecord>>
+public class EntryRecordQueryHandlers(IEntryRecordRepository entryRecordRepo, IMapper mapper) :
+    IRequestHandler<GetEntryRecordByIdQuery, EntryRecordDto?>,
+    IRequestHandler<GetAllEntryRecordsQuery, List<EntryRecordDto>>,
+    IRequestHandler<SearchEntryRecordsQuery, SearchEntryRecordsResult>,
+    IRequestHandler<GetEntryRecordStatsQuery, EntryRecordStatsDto>,
+    IRequestHandler<GetGroupedEntryRecordStatsQuery, List<GroupedEntryRecordStatsDto>>
 {
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
+    private readonly IEntryRecordRepository _entryRecordRepo = entryRecordRepo;
+    private readonly IMapper _mapper = mapper;
 
-    public async Task<List<EntryRecord>> Handle(GetAllEntryRecordsQuery request, CancellationToken cancellationToken)
+    public async Task<EntryRecordDto?> Handle(GetEntryRecordByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _entryRecordRepository.GetAllAsync();
+        var entryRecord = await _entryRecordRepo.GetByIdAsync(request.EntryRecordId)
+            ?? throw new KeyNotFoundException($"Entry record with ID {request.EntryRecordId} not found.");
+        return _mapper.Map<EntryRecordDto>(entryRecord);
     }
-}
 
-/// <summary>
-/// Handler for getting an entry record by ID.
-/// </summary>
-public class GetEntryRecordByIdQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetEntryRecordByIdQuery, EntryRecord?>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<EntryRecord?> Handle(GetEntryRecordByIdQuery request, CancellationToken cancellationToken)
+    public async Task<List<EntryRecordDto>> Handle(GetAllEntryRecordsQuery request, CancellationToken cancellationToken)
     {
-        return await _entryRecordRepository.GetByIdAsync(request.EntryRecordId);
+        var entryRecords = await _entryRecordRepo.GetAllAsync();
+        return _mapper.Map<List<EntryRecordDto>>(entryRecords);
     }
-}
 
-/// <summary>
-/// Handler for getting entry records by visitor ID.
-/// </summary>
-public class GetEntryRecordsByVisitorIdQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetEntryRecordsByVisitorIdQuery, List<EntryRecord>>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<List<EntryRecord>> Handle(GetEntryRecordsByVisitorIdQuery request, CancellationToken cancellationToken)
+    public async Task<SearchEntryRecordsResult> Handle(SearchEntryRecordsQuery request, CancellationToken cancellationToken)
     {
-        return await _entryRecordRepository.GetByVisitorIdAsync(request.VisitorId);
+        var searchSpec = _mapper.Map<PaginatedSpec<EntryRecordSpec>>(request);
+        var countSpec = searchSpec.InnerSpec;
+
+        var entryRecords = await _entryRecordRepo.SearchAsync(searchSpec);
+        var totalCount = await _entryRecordRepo.CountAsync(countSpec);
+
+        var entryRecordDtos = _mapper.Map<List<EntryRecordDto>>(entryRecords);
+
+        return new SearchEntryRecordsResult
+        {
+            Items = entryRecordDtos,
+            TotalCount = totalCount,
+            Page = searchSpec.Page,
+            PageSize = searchSpec.PageSize,
+        };
     }
-}
 
-/// <summary>
-/// Handler for getting current visitors in the park.
-/// </summary>
-public class GetCurrentVisitorsQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetCurrentVisitorsQuery, List<EntryRecord>>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<List<EntryRecord>> Handle(GetCurrentVisitorsQuery request, CancellationToken cancellationToken)
+    public async Task<EntryRecordStatsDto> Handle(GetEntryRecordStatsQuery request, CancellationToken cancellationToken)
     {
-        return await _entryRecordRepository.GetCurrentVisitorsAsync();
+        var statSpec = _mapper.Map<EntryRecordSpec>(request);
+        var stats = await _entryRecordRepo.GetStatsAsync(statSpec);
+        return _mapper.Map<EntryRecordStatsDto>(stats);
     }
-}
 
-/// <summary>
-/// Handler for getting entry records by date range.
-/// </summary>
-public class GetEntryRecordsByDateRangeQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetEntryRecordsByDateRangeQuery, List<EntryRecord>>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<List<EntryRecord>> Handle(GetEntryRecordsByDateRangeQuery request, CancellationToken cancellationToken)
+    public async Task<List<GroupedEntryRecordStatsDto>> Handle(GetGroupedEntryRecordStatsQuery request, CancellationToken cancellationToken)
     {
-        return await _entryRecordRepository.GetByDateRangeAsync(request.StartDate, request.EndDate);
-    }
-}
-
-/// <summary>
-/// Handler for getting current visitor count.
-/// </summary>
-public class GetCurrentVisitorCountQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetCurrentVisitorCountQuery, int>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<int> Handle(GetCurrentVisitorCountQuery request, CancellationToken cancellationToken)
-    {
-        return await _entryRecordRepository.GetCurrentVisitorCountAsync();
-    }
-}
-
-/// <summary>
-/// Handler for getting daily statistics.
-/// </summary>
-public class GetDailyStatisticsQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetDailyStatisticsQuery, DailyStatisticsDto>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<DailyStatisticsDto> Handle(GetDailyStatisticsQuery request, CancellationToken cancellationToken)
-    {
-        var (totalEntries, totalExits, currentCount) = await _entryRecordRepository.GetDailyStatisticsAsync(request.Date);
-
-        return new DailyStatisticsDto(
-            Date: request.Date.Date,
-            TotalEntries: totalEntries,
-            TotalExits: totalExits,
-            CurrentCount: currentCount
-        );
-    }
-}
-
-/// <summary>
-/// Handler for getting entry records by gate.
-/// </summary>
-public class GetEntryRecordsByGateQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetEntryRecordsByGateQuery, List<EntryRecord>>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<List<EntryRecord>> Handle(GetEntryRecordsByGateQuery request, CancellationToken cancellationToken)
-    {
-        return await _entryRecordRepository.GetByEntryGateAsync(request.EntryGate);
-    }
-}
-
-/// <summary>
-/// Handler for getting active entry for a visitor.
-/// </summary>
-public class GetActiveEntryForVisitorQueryHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<GetActiveEntryForVisitorQuery, EntryRecord?>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-
-    public async Task<EntryRecord?> Handle(GetActiveEntryForVisitorQuery request, CancellationToken cancellationToken)
-    {
-        return await _entryRecordRepository.GetActiveEntryForVisitorAsync(request.VisitorId);
+        var groupedSpec = _mapper.Map<GroupedSpec<EntryRecordSpec>>(request);
+        var groupedStats = await _entryRecordRepo.GetGroupedStatsAsync(groupedSpec);
+        return _mapper.Map<List<GroupedEntryRecordStatsDto>>(groupedStats);
     }
 }

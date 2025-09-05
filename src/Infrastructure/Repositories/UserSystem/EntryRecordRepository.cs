@@ -1,5 +1,8 @@
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
+using DbApp.Domain.Specifications.Common;
+using DbApp.Domain.Specifications.UserSystem;
+using DbApp.Domain.Statistics.UserSystem;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.UserSystem;
@@ -38,63 +41,6 @@ public class EntryRecordRepository(ApplicationDbContext dbContext) : IEntryRecor
             .ToListAsync();
     }
 
-    public async Task<List<EntryRecord>> GetByVisitorIdAsync(int visitorId)
-    {
-        return await _dbContext.EntryRecords
-            .Include(er => er.Visitor)
-            .ThenInclude(v => v.User)
-            .Include(er => er.Ticket)
-            .Where(er => er.VisitorId == visitorId)
-            .OrderByDescending(er => er.EntryTime)
-            .ToListAsync();
-    }
-
-    public async Task<List<EntryRecord>> GetCurrentVisitorsAsync()
-    {
-        return await _dbContext.EntryRecords
-            .Include(er => er.Visitor)
-            .ThenInclude(v => v.User)
-            .Include(er => er.Ticket)
-            .Where(er => er.ExitTime == null)
-            .OrderByDescending(er => er.EntryTime)
-            .ToListAsync();
-    }
-
-    public async Task<List<EntryRecord>> GetByDateRangeAsync(DateTime startDate, DateTime endDate)
-    {
-        return await _dbContext.EntryRecords
-            .Include(er => er.Visitor)
-            .ThenInclude(v => v.User)
-            .Include(er => er.Ticket)
-            .Where(er => er.EntryTime >= startDate && er.EntryTime <= endDate)
-            .OrderByDescending(er => er.EntryTime)
-            .ToListAsync();
-    }
-
-    public async Task<int> GetCurrentVisitorCountAsync()
-    {
-        return await _dbContext.EntryRecords
-            .CountAsync(er => er.ExitTime == null);
-    }
-
-    public async Task<(int TotalEntries, int TotalExits, int CurrentCount)> GetDailyStatisticsAsync(DateTime date)
-    {
-        var startOfDay = date.Date;
-        var endOfDay = startOfDay.AddDays(1);
-
-        var totalEntries = await _dbContext.EntryRecords
-            .CountAsync(er => er.EntryTime >= startOfDay && er.EntryTime < endOfDay);
-
-        var totalExits = await _dbContext.EntryRecords
-            .CountAsync(er => er.ExitTime.HasValue &&
-                             er.ExitTime >= startOfDay &&
-                             er.ExitTime < endOfDay);
-
-        var currentCount = await GetCurrentVisitorCountAsync();
-
-        return (totalEntries, totalExits, currentCount);
-    }
-
     public async Task UpdateAsync(EntryRecord entryRecord)
     {
         entryRecord.UpdatedAt = DateTime.UtcNow;
@@ -108,25 +54,215 @@ public class EntryRecordRepository(ApplicationDbContext dbContext) : IEntryRecor
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task<List<EntryRecord>> GetByEntryGateAsync(string entryGate)
+    public async Task<EntryRecord?> GetActiveEntryByVisitorIdAsync(int visitorId)
     {
         return await _dbContext.EntryRecords
             .Include(er => er.Visitor)
             .ThenInclude(v => v.User)
             .Include(er => er.Ticket)
-            .Where(er => er.EntryGate == entryGate)
-            .OrderByDescending(er => er.EntryTime)
+            .FirstOrDefaultAsync(er => er.VisitorId == visitorId && er.ExitTime == null);
+    }
+
+    public async Task<List<EntryRecord>> SearchAsync(PaginatedSpec<EntryRecordSpec> spec)
+    {
+        var query = _dbContext.EntryRecords
+            .Include(er => er.Visitor)
+            .ThenInclude(v => v.User)
+            .Include(er => er.Ticket)
+            .AsQueryable();
+
+        // Apply filters
+        query = ApplySpecFilters(query, spec.InnerSpec);
+
+        // Apply sorting
+        query = ApplySorting(query, spec.OrderBy, spec.Descending);
+
+        // Apply pagination
+        return await query
+            .Skip((spec.Page - 1) * spec.PageSize)
+            .Take(spec.PageSize)
             .ToListAsync();
     }
 
-    public async Task<EntryRecord?> GetActiveEntryForVisitorAsync(int visitorId)
+    public async Task<EntryRecordStats> GetStatsAsync(EntryRecordSpec spec)
     {
-        return await _dbContext.EntryRecords
+        var query = _dbContext.EntryRecords
             .Include(er => er.Visitor)
             .ThenInclude(v => v.User)
-            .Include(er => er.Ticket)
-            .Where(er => er.VisitorId == visitorId && er.ExitTime == null)
-            .OrderByDescending(er => er.EntryTime)
-            .FirstOrDefaultAsync();
+            .AsQueryable();
+
+        // Apply filters
+        query = ApplySpecFilters(query, spec);
+
+        var totalEntries = await query.CountAsync();
+        var totalExits = await query.CountAsync(er => er.ExitTime != null);
+        var activeEntries = await query.CountAsync(er => er.ExitTime == null);
+        var uniqueVisitors = await query.Select(er => er.VisitorId).Distinct().CountAsync();
+
+        var firstEntry = await query.OrderBy(er => er.EntryTime).FirstOrDefaultAsync();
+        var lastEntry = await query.OrderByDescending(er => er.EntryTime).FirstOrDefaultAsync();
+
+        var entryGateCount = await query.Select(er => er.EntryGate).Distinct().CountAsync();
+        var exitGateCount = await query.Where(er => er.ExitGate != null).Select(er => er.ExitGate).Distinct().CountAsync();
+
+        return new EntryRecordStats
+        {
+            TotalEntries = totalEntries,
+            TotalExits = totalExits,
+            ActiveEntries = activeEntries,
+            UniqueVisitors = uniqueVisitors,
+            FirstEntryTime = firstEntry?.EntryTime,
+            LastEntryTime = lastEntry?.EntryTime,
+            EntryGateCount = entryGateCount,
+            ExitGateCount = exitGateCount
+        };
+    }
+
+    public async Task<int> CountAsync(EntryRecordSpec spec)
+    {
+        var query = _dbContext.EntryRecords
+            .Include(er => er.Visitor)
+            .ThenInclude(v => v.User)
+            .AsQueryable();
+
+        query = ApplySpecFilters(query, spec);
+        return await query.CountAsync();
+    }
+
+    public async Task<List<EntryRecordStats>> GetGroupedStatsAsync(GroupedSpec<EntryRecordSpec> spec)
+    {
+        var query = _dbContext.EntryRecords
+            .Include(er => er.Visitor)
+            .ThenInclude(v => v.User)
+            .AsQueryable();
+
+        // Apply filters
+        if (spec.InnerSpec != null)
+        {
+            query = ApplySpecFilters(query, spec.InnerSpec);
+        }
+
+        // Group by specified field
+        var groupedQuery = spec.GroupBy.ToLowerInvariant() switch
+        {
+            "entrygate" => query.GroupBy(er => er.EntryGate),
+            "exitgate" => query.GroupBy(er => er.ExitGate ?? "No Exit"),
+            "date" => query.GroupBy(er => er.EntryTime.Date.ToString("yyyy-MM-dd")),
+            "isactive" => query.GroupBy(er => er.ExitTime == null ? "Active" : "Exited"),
+            _ => query.GroupBy(er => er.EntryGate)
+        };
+
+        var results = await groupedQuery
+            .Select(g => new
+            {
+                GroupKey = g.Key.ToString(),
+                TotalEntries = g.Count(),
+                TotalExits = g.Count(er => er.ExitTime != null),
+                ActiveEntries = g.Count(er => er.ExitTime == null),
+                UniqueVisitors = g.Select(er => er.VisitorId).Distinct().Count(),
+                FirstEntryTime = g.Min(er => er.EntryTime),
+                LastEntryTime = g.Max(er => er.EntryTime)
+            })
+            .ToListAsync();
+
+        return [.. results.Select(r => new EntryRecordStats
+        {
+            TotalEntries = r.TotalEntries,
+            TotalExits = r.TotalExits,
+            ActiveEntries = r.ActiveEntries,
+            UniqueVisitors = r.UniqueVisitors,
+            FirstEntryTime = r.FirstEntryTime,
+            LastEntryTime = r.LastEntryTime,
+            EntryGateCount = 1, // For grouped stats, each group represents one gate/category
+            ExitGateCount = r.TotalExits > 0 ? 1 : 0
+        })];
+    }
+
+    private static IQueryable<EntryRecord> ApplySpecFilters(IQueryable<EntryRecord> query, EntryRecordSpec spec)
+    {
+        if (!string.IsNullOrWhiteSpace(spec.Keyword))
+        {
+            query = query.Where(er =>
+                er.EntryGate.Contains(spec.Keyword) ||
+                (er.ExitGate != null && er.ExitGate.Contains(spec.Keyword)) ||
+                er.Visitor.User.Username.Contains(spec.Keyword) ||
+                er.Visitor.User.DisplayName.Contains(spec.Keyword));
+        }
+
+        if (spec.VisitorId.HasValue)
+            query = query.Where(er => er.VisitorId == spec.VisitorId);
+
+        if (spec.Start.HasValue)
+            query = query.Where(er => er.EntryTime >= spec.Start);
+
+        if (spec.End.HasValue)
+            query = query.Where(er => er.EntryTime <= spec.End);
+
+        if (spec.EntryTimeStart.HasValue)
+            query = query.Where(er => er.EntryTime >= spec.EntryTimeStart);
+
+        if (spec.EntryTimeEnd.HasValue)
+            query = query.Where(er => er.EntryTime <= spec.EntryTimeEnd);
+
+        if (spec.ExitTimeStart.HasValue)
+            query = query.Where(er => er.ExitTime >= spec.ExitTimeStart);
+
+        if (spec.ExitTimeEnd.HasValue)
+            query = query.Where(er => er.ExitTime <= spec.ExitTimeEnd);
+
+        if (!string.IsNullOrWhiteSpace(spec.EntryGate))
+            query = query.Where(er => er.EntryGate == spec.EntryGate);
+
+        if (!string.IsNullOrWhiteSpace(spec.ExitGate))
+            query = query.Where(er => er.ExitGate == spec.ExitGate);
+
+        if (spec.TicketId.HasValue)
+            query = query.Where(er => er.TicketId == spec.TicketId);
+
+        if (spec.IsActive.HasValue)
+        {
+            if (spec.IsActive.Value)
+                query = query.Where(er => er.ExitTime == null);
+            else
+                query = query.Where(er => er.ExitTime != null);
+        }
+
+        return query;
+    }
+
+    private static IQueryable<EntryRecord> ApplySorting(IQueryable<EntryRecord> query, string? sortBy, bool descending)
+    {
+        var sortKey = sortBy?.Trim().ToLowerInvariant();
+
+        return sortKey switch
+        {
+            "entrytime" => descending
+                ? query.OrderByDescending(er => er.EntryTime)
+                : query.OrderBy(er => er.EntryTime),
+
+            "exittime" => descending
+                ? query.OrderByDescending(er => er.ExitTime)
+                : query.OrderBy(er => er.ExitTime),
+
+            "entrygate" => descending
+                ? query.OrderByDescending(er => er.EntryGate)
+                : query.OrderBy(er => er.EntryGate),
+
+            "exitgate" => descending
+                ? query.OrderByDescending(er => er.ExitGate)
+                : query.OrderBy(er => er.ExitGate),
+
+            "visitorname" => descending
+                ? query.OrderByDescending(er => er.Visitor.User.DisplayName)
+                : query.OrderBy(er => er.Visitor.User.DisplayName),
+
+            "createdat" => descending
+                ? query.OrderByDescending(er => er.CreatedAt)
+                : query.OrderBy(er => er.CreatedAt),
+
+            _ => descending
+                ? query.OrderByDescending(er => er.EntryTime)
+                : query.OrderBy(er => er.EntryTime)
+        };
     }
 }

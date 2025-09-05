@@ -5,130 +5,82 @@ using MediatR;
 namespace DbApp.Application.UserSystem.EntryRecords;
 
 /// <summary>
-/// Handler for registering visitor entry into the park.
+/// Exception thrown when an entry record is not found.
 /// </summary>
-public class RegisterEntryCommandHandler(
-    IEntryRecordRepository entryRecordRepository,
-    IVisitorRepository visitorRepository) : IRequestHandler<RegisterEntryCommand, int>
+public class EntryRecordNotFoundException : Exception
 {
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
-    private readonly IVisitorRepository _visitorRepository = visitorRepository;
-
-    public async Task<int> Handle(RegisterEntryCommand request, CancellationToken cancellationToken)
-    {
-        // Verify visitor exists
-        var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId);
-        if (visitor == null)
-        {
-            throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found.");
-        }
-
-        // Check if visitor is blacklisted
-        if (visitor.IsBlacklisted)
-        {
-            throw new InvalidOperationException($"Visitor {request.VisitorId} is blacklisted and cannot enter the park.");
-        }
-
-        // Check if visitor is already in the park
-        var activeEntry = await _entryRecordRepository.GetActiveEntryForVisitorAsync(request.VisitorId);
-        if (activeEntry != null)
-        {
-            throw new InvalidOperationException($"Visitor {request.VisitorId} is already in the park (entry at {activeEntry.EntryTime}).");
-        }
-
-        var entryRecord = new EntryRecord
-        {
-            VisitorId = request.VisitorId,
-            EntryTime = DateTime.UtcNow,
-            EntryGate = request.EntryGate,
-            TicketId = request.TicketId,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        return await _entryRecordRepository.CreateAsync(entryRecord);
-    }
+    public EntryRecordNotFoundException(int entryRecordId)
+        : base($"Entry record with ID {entryRecordId} not found.") { }
 }
 
 /// <summary>
-/// Handler for registering visitor exit from the park.
+/// Centralized handler for all entry record commands.
 /// </summary>
-public class RegisterExitCommandHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<RegisterExitCommand, Unit>
+public class EntryRecordCommandHandlers(IEntryRecordRepository entryRecordRepo) :
+    IRequestHandler<CreateEntryRecordCommand, int>,
+    IRequestHandler<UpdateEntryRecordCommand, Unit>,
+    IRequestHandler<DeleteEntryRecordCommand, Unit>
 {
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
+    private readonly IEntryRecordRepository _entryRecordRepo = entryRecordRepo;
 
-    public async Task<Unit> Handle(RegisterExitCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateEntryRecordCommand request, CancellationToken cancellationToken)
     {
-        // Find the active entry record for the visitor
-        var activeEntry = await _entryRecordRepository.GetActiveEntryForVisitorAsync(request.VisitorId);
-        if (activeEntry == null)
+        if (request.Type.Equals("entry", StringComparison.InvariantCultureIgnoreCase))
         {
-            throw new InvalidOperationException($"No active entry found for visitor {request.VisitorId}. Visitor is not currently in the park.");
+            // Create new entry record
+            var entryRecord = new EntryRecord
+            {
+                VisitorId = request.VisitorId,
+                EntryTime = DateTime.UtcNow,
+                EntryGate = request.GateName,
+                TicketId = request.TicketId
+            };
+            return await _entryRecordRepo.CreateAsync(entryRecord);
         }
-
-        // Update the entry record with exit information
-        activeEntry.ExitTime = DateTime.UtcNow;
-        activeEntry.ExitGate = request.ExitGate;
-        activeEntry.UpdatedAt = DateTime.UtcNow;
-
-        await _entryRecordRepository.UpdateAsync(activeEntry);
-        return Unit.Value;
+        else if (request.Type.Equals("exit", StringComparison.InvariantCultureIgnoreCase))
+        {
+            // Find active entry record and update with exit information
+            var activeEntry = await _entryRecordRepo.GetActiveEntryByVisitorIdAsync(request.VisitorId)
+                ?? throw new InvalidOperationException($"No active entry found for visitor {request.VisitorId}.");
+            activeEntry.ExitTime = DateTime.UtcNow;
+            activeEntry.ExitGate = request.GateName;
+            await _entryRecordRepo.UpdateAsync(activeEntry);
+            return activeEntry.EntryRecordId;
+        }
+        else
+        {
+            throw new ArgumentException($"Invalid type '{request.Type}'. Must be 'entry' or 'exit'.");
+        }
     }
-}
-
-/// <summary>
-/// Handler for updating an entry record.
-/// </summary>
-public class UpdateEntryRecordCommandHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<UpdateEntryRecordCommand, Unit>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
 
     public async Task<Unit> Handle(UpdateEntryRecordCommand request, CancellationToken cancellationToken)
     {
-        var entryRecord = await _entryRecordRepository.GetByIdAsync(request.EntryRecordId);
-        if (entryRecord == null)
-        {
-            throw new InvalidOperationException($"Entry record with ID {request.EntryRecordId} not found.");
-        }
+        var entryRecord = await _entryRecordRepo.GetByIdAsync(request.EntryRecordId)
+            ?? throw new EntryRecordNotFoundException(request.EntryRecordId);
 
-        // Update only provided fields
-        if (!string.IsNullOrEmpty(request.EntryGate))
+        if (request.EntryGate != null)
         {
             entryRecord.EntryGate = request.EntryGate;
         }
-
         if (request.ExitGate != null)
         {
             entryRecord.ExitGate = request.ExitGate;
         }
-
         if (request.TicketId.HasValue)
         {
             entryRecord.TicketId = request.TicketId;
         }
 
-        entryRecord.UpdatedAt = DateTime.UtcNow;
-
-        await _entryRecordRepository.UpdateAsync(entryRecord);
+        await _entryRecordRepo.UpdateAsync(entryRecord);
         return Unit.Value;
     }
-}
-
-/// <summary>
-/// Handler for deleting an entry record.
-/// </summary>
-public class DeleteEntryRecordCommandHandler(IEntryRecordRepository entryRecordRepository) : IRequestHandler<DeleteEntryRecordCommand, Unit>
-{
-    private readonly IEntryRecordRepository _entryRecordRepository = entryRecordRepository;
 
     public async Task<Unit> Handle(DeleteEntryRecordCommand request, CancellationToken cancellationToken)
     {
-        var entryRecord = await _entryRecordRepository.GetByIdAsync(request.EntryRecordId);
-        if (entryRecord == null)
-        {
-            throw new InvalidOperationException($"Entry record with ID {request.EntryRecordId} not found.");
-        }
+        var entryRecord = await _entryRecordRepo.GetByIdAsync(request.EntryRecordId)
+            ?? throw new EntryRecordNotFoundException(request.EntryRecordId);
 
-        await _entryRecordRepository.DeleteAsync(entryRecord);
+        await _entryRecordRepo.DeleteAsync(entryRecord);
         return Unit.Value;
     }
 }
