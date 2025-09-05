@@ -14,6 +14,12 @@ public class EmployeesController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateEmployeeCommand command)
     {
+        // 检查模型验证
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         var newEmployeeId = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id = newEmployeeId }, null);
     }
@@ -31,10 +37,24 @@ public class EmployeesController(IMediator mediator) : ControllerBase
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, UpdateEmployeeCommand command)
     {
-        if (id != command.EmployeeId)
-            return BadRequest("ID mismatch");
+        // 检查模型验证
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
 
-        await _mediator.Send(command);
+        // 创建一个新的命令对象，其中EmployeeId来自URL参数
+        var updateCommand = new UpdateEmployeeCommand(
+            id, // 使用URL中的id作为EmployeeId
+            command.StaffNumber,
+            command.Position,
+            command.DepartmentName,
+            command.TeamId,
+            command.ManagerId,
+            command.Certification,
+            command.ResponsibilityArea);
+
+        await _mediator.Send(updateCommand);
         return NoContent();
     }
 
@@ -45,31 +65,34 @@ public class EmployeesController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
+    // 统一的查询端点，通过查询参数区分不同查询条件
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetEmployees(
+        [FromQuery] string? keyword = null,
+        [FromQuery] string? departmentName = null,
+        [FromQuery] StaffType? staffType = null)
     {
-        var employees = await _mediator.Send(new GetAllEmployeesQuery());
-        return Ok(employees);
-    }
+        // 根据提供的查询参数决定使用哪种查询
+        if (!string.IsNullOrEmpty(keyword))
+        {
+            var employees = await _mediator.Send(new SearchEmployeesQuery(keyword));
+            return Ok(employees);
+        }
 
-    [HttpGet("search")]
-    public async Task<IActionResult> Search([FromQuery] string keyword)
-    {
-        var employees = await _mediator.Send(new SearchEmployeesQuery(keyword));
-        return Ok(employees);
-    }
-    [HttpGet("department/{departmentName}")]
-    public async Task<IActionResult> GetByDepartment(string departmentName)
-    {
-        var employees = await _mediator.Send(new GetEmployeesByDepartmentQuery(departmentName));
-        return Ok(employees);
-    }
+        if (!string.IsNullOrEmpty(departmentName))
+        {
+            var employees = await _mediator.Send(new GetEmployeesByDepartmentQuery(departmentName));
+            return Ok(employees);
+        }
 
-    [HttpGet("stafftype/{staffType}")]
-    public async Task<IActionResult> GetByStaffType(StaffType staffType)
-    {
-        var employees = await _mediator.Send(new GetEmployeesByStaffTypeQuery(staffType));
-        return Ok(employees);
+        if (staffType.HasValue)
+        {
+            var employees = await _mediator.Send(new GetEmployeesByStaffTypeQuery(staffType.Value));
+            return Ok(employees);
+        }
+
+        // 默认情况：获取所有员工
+        var allEmployees = await _mediator.Send(new GetAllEmployeesQuery());
+        return Ok(allEmployees);
     }
 }
-
