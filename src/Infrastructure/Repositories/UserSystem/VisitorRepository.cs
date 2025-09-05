@@ -7,17 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.UserSystem;
 
-public class VisitorRepository : IVisitorRepository
+public class VisitorRepository(ApplicationDbContext context) : IVisitorRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public VisitorRepository(ApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly ApplicationDbContext _context = context;
 
     public async Task<int> CreateAsync(Visitor visitor)
     {
+        _context.Users.Add(visitor.User);
         _context.Visitors.Add(visitor);
         await _context.SaveChangesAsync();
         return visitor.VisitorId;
@@ -43,6 +39,7 @@ public class VisitorRepository : IVisitorRepository
     {
         visitor.User.UpdatedAt = DateTime.UtcNow;
         visitor.UpdatedAt = DateTime.UtcNow;
+        _context.Users.Update(visitor.User);
         _context.Visitors.Update(visitor);
         await _context.SaveChangesAsync();
     }
@@ -50,6 +47,7 @@ public class VisitorRepository : IVisitorRepository
     public async Task DeleteAsync(Visitor visitor)
     {
         _context.Visitors.Remove(visitor);
+        _context.Users.Remove(visitor.User);
         await _context.SaveChangesAsync();
     }
 

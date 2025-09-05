@@ -7,8 +7,10 @@ namespace DbApp.Application.UserSystem.Visitors;
 /// <summary>
 /// DTO for visitor query response, including user and visitor-specific fields.
 /// </summary>
-public class VisitorDto : UserDto
+public class VisitorDto
 {
+    public UserDto User { get; set; } = null!;
+    public int VisitorId { get; set; }
     public VisitorType VisitorType { get; set; }
     public int Points { get; set; }
     public string? MemberLevel { get; set; }

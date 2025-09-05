@@ -34,7 +34,7 @@ public class VisitorQueryHandlers(IVisitorRepository visitorRepo, IMapper mapper
     public async Task<SearchVisitorsResult> Handle(SearchVisitorsQuery request, CancellationToken cancellationToken)
     {
         var searchSpec = _mapper.Map<PaginatedSpec<VisitorSpec>>(request);
-        var countSpec = _mapper.Map<VisitorSpec>(request);
+        var countSpec = searchSpec.InnerSpec;
 
         var visitors = await _visitorRepo.SearchAsync(searchSpec);
         var totalCount = await _visitorRepo.CountAsync(countSpec);

@@ -32,10 +32,19 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo) :
                 DisplayName = request.DisplayName,
                 PhoneNumber = request.PhoneNumber,
                 BirthDate = request.BirthDate,
-                Gender = request.Gender
+                Gender = request.Gender,
+                RegisterTime = DateTime.UtcNow,
+                PermissionLevel = 1,
+                RoleId = 1,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
             },
             VisitorType = request.VisitorType,
-            Height = request.Height
+            Points = 0,
+            IsBlacklisted = false,
+            Height = request.Height,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
         return await _visitorRepo.CreateAsync(visitor);
     }

@@ -15,8 +15,7 @@ public class VisitorMappingProfile : Profile
         CreateMap<User, UserDto>()
             .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName));
 
-        CreateMap<Visitor, VisitorDto>()
-            .IncludeBase<User, UserDto>();
+        CreateMap<Visitor, VisitorDto>();
 
         CreateMap<VisitorStats, VisitorStatsDto>();
 
