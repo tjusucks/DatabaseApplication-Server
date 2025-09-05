@@ -65,29 +65,65 @@ namespace DbApp.WebApi.Controllers
             }
         }
 
-        // 根据ID获取员工绩效记录
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var review = await _mediator.Send(new GetEmployeeReviewByIdQuery(id));
-                return review != null ? Ok(review) : NotFound();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 获取所有员工绩效记录
+        // 统一查询端点 - 根据不同参数返回不同结果
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetEmployeeReviews(
+            [FromQuery] int? id = null,
+            [FromQuery] int? employeeId = null,
+            [FromQuery] string? period = null,
+            [FromQuery] int? evaluatorId = null,
+            [FromQuery] int? year = null,
+            [FromQuery] int? month = null,
+            [FromQuery] int? quarter = null,
+            [FromQuery] bool statistics = false)
         {
             try
             {
-                var reviews = await _mediator.Send(new GetAllEmployeeReviewsQuery());
-                return Ok(reviews);
+                // 根据ID获取特定的员工绩效记录
+                if (id.HasValue)
+                {
+                    var review = await _mediator.Send(new GetEmployeeReviewByIdQuery(id.Value));
+                    return review != null ? Ok(review) : NotFound();
+                }
+
+                // 获取员工绩效统计信息
+                if (employeeId.HasValue && year.HasValue && statistics)
+                {
+                    var statisticsResult = await _mediator.Send(new GetEmployeeReviewStatisticsQuery(employeeId.Value, year.Value, month, quarter));
+                    return Ok(statisticsResult);
+                }
+
+                // 根据员工ID和考核周期获取绩效记录
+                if (employeeId.HasValue && !string.IsNullOrEmpty(period))
+                {
+                    var review = await _mediator.Send(new GetEmployeeReviewByEmployeeAndPeriodQuery(employeeId.Value, period));
+                    return review != null ? Ok(review) : NotFound();
+                }
+
+                // 根据员工ID获取绩效记录
+                if (employeeId.HasValue)
+                {
+                    var reviews = await _mediator.Send(new GetEmployeeReviewsByEmployeeQuery(employeeId.Value));
+                    return Ok(reviews);
+                }
+
+                // 根据考核周期获取绩效记录
+                if (!string.IsNullOrEmpty(period))
+                {
+                    var reviews = await _mediator.Send(new GetEmployeeReviewsByPeriodQuery(period));
+                    return Ok(reviews);
+                }
+
+                // 根据评估人ID获取绩效记录
+                if (evaluatorId.HasValue)
+                {
+                    var reviews = await _mediator.Send(new GetEmployeeReviewsByEvaluatorQuery(evaluatorId.Value));
+                    return Ok(reviews);
+                }
+
+                // 获取所有员工绩效记录
+                var allReviews = await _mediator.Send(new GetAllEmployeeReviewsQuery());
+                return Ok(allReviews);
             }
             catch (Exception ex)
             {
@@ -95,80 +131,6 @@ namespace DbApp.WebApi.Controllers
             }
         }
 
-        // 根据员工ID获取绩效记录
-        [HttpGet("employee/{employeeId}")]
-        public async Task<IActionResult> GetByEmployee(int employeeId)
-        {
-            try
-            {
-                var reviews = await _mediator.Send(new GetEmployeeReviewsByEmployeeQuery(employeeId));
-                return Ok(reviews);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 根据考核周期获取绩效记录
-        [HttpGet("period/{period}")]
-        public async Task<IActionResult> GetByPeriod(string period)
-        {
-            try
-            {
-                var reviews = await _mediator.Send(new GetEmployeeReviewsByPeriodQuery(period));
-                return Ok(reviews);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 根据评估人ID获取绩效记录
-        [HttpGet("evaluator/{evaluatorId}")]
-        public async Task<IActionResult> GetByEvaluator(int evaluatorId)
-        {
-            try
-            {
-                var reviews = await _mediator.Send(new GetEmployeeReviewsByEvaluatorQuery(evaluatorId));
-                return Ok(reviews);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 根据员工ID和考核周期获取绩效记录
-        [HttpGet("employee/{employeeId}/period/{period}")]
-        public async Task<IActionResult> GetByEmployeeAndPeriod(int employeeId, string period)
-        {
-            try
-            {
-                var review = await _mediator.Send(new GetEmployeeReviewByEmployeeAndPeriodQuery(employeeId, period));
-                return review != null ? Ok(review) : NotFound();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 获取员工绩效统计信息
-        [HttpGet("employee/{employeeId}/statistics")]
-        public async Task<IActionResult> GetEmployeeStatistics(int employeeId, int year, int? month = null, int? quarter = null)
-        {
-            try
-            {
-                var statistics = await _mediator.Send(new GetEmployeeReviewStatisticsQuery(employeeId, year, month, quarter));
-                return Ok(statistics);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
         [HttpPost("attendance-deduction")]
         public async Task<IActionResult> CreateAttendanceDeduction([FromBody] CreateAttendanceDeductionCommand command)
         {
@@ -183,5 +145,19 @@ namespace DbApp.WebApi.Controllers
             }
         }
 
+        // 保留原有的GetById方法以支持CreatedAtAction
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var review = await _mediator.Send(new GetEmployeeReviewByIdQuery(id));
+                return review != null ? Ok(review) : NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
