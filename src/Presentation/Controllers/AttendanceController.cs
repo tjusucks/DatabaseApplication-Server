@@ -24,7 +24,7 @@ namespace DbApp.WebApi.Controllers
             try
             {
                 var id = await _mediator.Send(command);
-                return CreatedAtAction(nameof(GetById), new { id }, new { id });
+                return CreatedAtAction(nameof(GenericQuery), new { id }, new { id });
             }
             catch (Exception ex)
             {
@@ -65,20 +65,6 @@ namespace DbApp.WebApi.Controllers
             }
         }
 
-        // 根据ID获取考勤记录
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var attendance = await _mediator.Send(new GetAttendanceByIdQuery(id));
-                return attendance != null ? Ok(attendance) : NotFound();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
 
         // 员工签到
         [HttpPost("checkin")]
@@ -143,116 +129,26 @@ namespace DbApp.WebApi.Controllers
             }
         }
 
-        // 获取员工考勤记录
-        [HttpGet("employee/{employeeId}")]
-        public async Task<IActionResult> GetEmployeeAttendance(
-            int employeeId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
+        // 统一查询接口
+        [HttpPost("query")]
+        public async Task<IActionResult> GenericQuery([FromBody] GenericAttendanceQueryRequest request)
         {
             try
             {
-                var result = await _mediator.Send(new GetEmployeeAttendanceQuery(employeeId, startDate, endDate));
+                var result = await _mediator.Send(request);
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        // 获取员工考勤统计
-        [HttpGet("employee/{employeeId}/stats")]
-        public async Task<IActionResult> GetEmployeeStats(
-            int employeeId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
-        {
-            try
+            catch (KeyNotFoundException ex)
             {
-                var result = await _mediator.Send(new GetEmployeeStatsQuery(employeeId, startDate, endDate));
-                return Ok(result);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 获取员工月度考勤统计
-        [HttpGet("employee/{employeeId}/monthly/{year}/{month}")]
-        public async Task<IActionResult> GetEmployeeMonthlyStats(
-            int employeeId, int year, int month)
-        {
-            try
-            {
-                var result = await _mediator.Send(new GetEmployeeMonthlyStatsQuery(employeeId, year, month));
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 获取部门考勤记录
-        [HttpGet("department/{departmentId}")]
-        public async Task<IActionResult> GetDepartmentAttendance(
-            string departmentId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
-        {
-            try
-            {
-                var result = await _mediator.Send(new GetDepartmentAttendanceQuery(departmentId, startDate, endDate));
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 获取部门考勤统计
-        [HttpGet("department/{departmentId}/stats")]
-        public async Task<IActionResult> GetDepartmentStats(
-            string departmentId, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
-        {
-            try
-            {
-                var result = await _mediator.Send(new GetDepartmentStatsQuery(departmentId, startDate, endDate));
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        // 获取异常考勤记录
-        [HttpGet("abnormal")]
-        public async Task<IActionResult> GetAbnormalRecords(
-            [FromQuery] int? employeeId,
-            [FromQuery] DateTime startDate,
-            [FromQuery] DateTime endDate)
-        {
-            try
-            {
-                var result = await _mediator.Send(new GetAbnormalRecordsQuery(employeeId, startDate, endDate));
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-        // 检查员工是否全勤
-        [HttpGet("employee/{employeeId}/full-attendance/{year}/{month}")]
-        public async Task<IActionResult> CheckEmployeeFullAttendance(
-            int employeeId, int year, int month)
-        {
-            try
-            {
-                var isFullAttendance = await _mediator.Send(new CheckEmployeeFullAttendanceQuery(employeeId, year, month));
-                return Ok(new { IsFullAttendance = isFullAttendance });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
+                return StatusCode(500, ex.Message);
             }
         }
     }
