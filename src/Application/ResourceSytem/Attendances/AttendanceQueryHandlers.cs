@@ -241,4 +241,107 @@ namespace DbApp.Application.ResourceSystem.Attendances
             return lateDays == 0 && absentDays == 0;
         }
     }
+
+    //统一查询处理器
+    public class GenericAttendanceQueryHandler : IRequestHandler<GenericAttendanceQueryRequest, object>
+    {
+        private readonly IMediator _mediator;
+
+        public GenericAttendanceQueryHandler(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        public async Task<object> Handle(GenericAttendanceQueryRequest request, CancellationToken cancellationToken)
+        {
+            return request.QueryType switch
+            {
+                AttendanceQueryType.GetById => await HandleGetById(request),
+                AttendanceQueryType.GetEmployeeAttendance => await HandleEmployeeAttendance(request),
+                AttendanceQueryType.GetDepartmentAttendance => await HandleDepartmentAttendance(request),
+                AttendanceQueryType.GetAbnormalRecords => await HandleAbnormalRecords(request),
+                AttendanceQueryType.GetEmployeeStats => await HandleEmployeeStats(request),
+                AttendanceQueryType.GetEmployeeMonthlyStats => await HandleEmployeeMonthlyStats(request),
+                AttendanceQueryType.GetDepartmentStats => await HandleDepartmentStats(request),
+                AttendanceQueryType.CheckFullAttendance => await HandleCheckFullAttendance(request),
+                _ => throw new ArgumentException($"未知查询类型: {request.QueryType}")
+            };
+        }
+
+        private async Task<object> HandleGetById(GenericAttendanceQueryRequest request)
+        {
+            if (!request.Id.HasValue) throw new ArgumentException("缺少ID参数");
+            var result = await _mediator.Send(new GetAttendanceByIdQuery(request.Id.Value));
+            return result ?? throw new KeyNotFoundException($"找不到ID为{request.Id.Value}的考勤记录");
+        }
+
+        private async Task<object> HandleEmployeeAttendance(GenericAttendanceQueryRequest request)
+        {
+            if (!request.EmployeeId.HasValue) throw new ArgumentException("缺少EmployeeId参数");
+            return await _mediator.Send(new GetEmployeeAttendanceQuery(
+                request.EmployeeId.Value,
+                request.StartDate,
+                request.EndDate));
+        }
+
+        private async Task<object> HandleDepartmentAttendance(GenericAttendanceQueryRequest request)
+        {
+            if (string.IsNullOrEmpty(request.DepartmentId)) throw new ArgumentException("缺少DepartmentId参数");
+            return await _mediator.Send(new GetDepartmentAttendanceQuery(
+                request.DepartmentId,
+                request.StartDate,
+                request.EndDate));
+        }
+
+        private async Task<object> HandleAbnormalRecords(GenericAttendanceQueryRequest request)
+        {
+            if (!request.StartDate.HasValue || !request.EndDate.HasValue)
+                throw new ArgumentException("缺少时间范围参数");
+
+            return await _mediator.Send(new GetAbnormalRecordsQuery(
+                request.EmployeeId,
+                request.StartDate.Value,
+                request.EndDate.Value));
+        }
+
+        private async Task<object> HandleEmployeeStats(GenericAttendanceQueryRequest request)
+        {
+            if (!request.EmployeeId.HasValue) throw new ArgumentException("缺少EmployeeId参数");
+            return await _mediator.Send(new GetEmployeeStatsQuery(
+                request.EmployeeId.Value,
+                request.StartDate,
+                request.EndDate));
+        }
+
+        private async Task<object> HandleEmployeeMonthlyStats(GenericAttendanceQueryRequest request)
+        {
+            if (!request.EmployeeId.HasValue || !request.Year.HasValue || !request.Month.HasValue)
+                throw new ArgumentException("缺少EmployeeId、Year或Month参数");
+
+            return await _mediator.Send(new GetEmployeeMonthlyStatsQuery(
+                request.EmployeeId.Value,
+                request.Year.Value,
+                request.Month.Value));
+        }
+
+        private async Task<object> HandleDepartmentStats(GenericAttendanceQueryRequest request)
+        {
+            if (string.IsNullOrEmpty(request.DepartmentId)) throw new ArgumentException("缺少DepartmentId参数");
+            return await _mediator.Send(new GetDepartmentStatsQuery(
+                request.DepartmentId,
+                request.StartDate,
+                request.EndDate));
+        }
+
+        private async Task<object> HandleCheckFullAttendance(GenericAttendanceQueryRequest request)
+        {
+            if (!request.EmployeeId.HasValue || !request.Year.HasValue || !request.Month.HasValue)
+                throw new ArgumentException("缺少EmployeeId、Year或Month参数");
+
+            return await _mediator.Send(new CheckEmployeeFullAttendanceQuery(
+                request.EmployeeId.Value,
+                request.Year.Value,
+                request.Month.Value));
+        }
+    }
 }
