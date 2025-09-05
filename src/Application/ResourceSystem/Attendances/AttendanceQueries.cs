@@ -6,12 +6,21 @@ using MediatR;
 namespace DbApp.Application.ResourceSystem.Attendances
 {
     // 获取考勤记录查询
+<<<<<<< HEAD
     public record GetAttendanceByIdQuery(int Id) : IRequest<AttendanceDto?>;
     public record GetEmployeeAttendanceQuery(int EmployeeId, DateTime? StartDate, DateTime? EndDate) : IRequest<List<AttendanceDto>>;
     public record GetDepartmentAttendanceQuery(string DepartmentId, DateTime? StartDate, DateTime? EndDate) : IRequest<List<AttendanceDto>>;
 
     // 获取异常考勤记录查询
     public record GetAbnormalRecordsQuery(int? EmployeeId, DateTime StartDate, DateTime EndDate) : IRequest<List<AttendanceDto>>;
+=======
+    public record GetAttendanceByIdQuery(int Id) : IRequest<Attendance?>;
+    public record GetEmployeeAttendanceQuery(int EmployeeId, DateTime? StartDate, DateTime? EndDate) : IRequest<List<Attendance>>;
+    public record GetDepartmentAttendanceQuery(string DepartmentId, DateTime? StartDate, DateTime? EndDate) : IRequest<List<Attendance>>;
+
+    // 获取异常考勤记录查询
+    public record GetAbnormalRecordsQuery(int? EmployeeId, DateTime StartDate, DateTime EndDate) : IRequest<List<Attendance>>;
+>>>>>>> 5d53cd6 (fix some naming issues)
 
     // 获取统计信息查询
     public record GetEmployeeStatsQuery(int EmployeeId, DateTime? StartDate, DateTime? EndDate) : IRequest<EmployeeStatsResponse>;

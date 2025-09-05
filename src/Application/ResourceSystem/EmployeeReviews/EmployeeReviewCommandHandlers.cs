@@ -135,16 +135,24 @@ namespace DbApp.Application.ResourceSystem.EmployeeReviews
             if (DateTime.TryParseExact(period + "-01", "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
             {
                 var startDate = new DateTime(date.Year, date.Month, 1, 0, 0, 0, DateTimeKind.Unspecified);
+<<<<<<< HEAD
                 var lastDay = DateTime.DaysInMonth(date.Year, date.Month);
                 var endDate = new DateTime(date.Year, date.Month, lastDay, 0, 0, 0, DateTimeKind.Unspecified);
+=======
+                var endDate = startDate.AddMonths(1).AddDays(-1);
+>>>>>>> 5d53cd6 (fix some naming issues)
                 return (startDate, endDate);
             }
 
             // 默认返回当前月
             var now = DateTime.Now;
             var defaultStartDate = new DateTime(now.Year, now.Month, 1, 0, 0, 0, DateTimeKind.Unspecified);
+<<<<<<< HEAD
             var defaultLastDay = DateTime.DaysInMonth(now.Year, now.Month);
             var defaultEndDate = new DateTime(now.Year, now.Month, defaultLastDay, 0, 0, 0, DateTimeKind.Unspecified);
+=======
+            var defaultEndDate = defaultStartDate.AddMonths(1).AddDays(-1);
+>>>>>>> 5d53cd6 (fix some naming issues)
             return (defaultStartDate, defaultEndDate);
         }
 
@@ -152,8 +160,13 @@ namespace DbApp.Application.ResourceSystem.EmployeeReviews
         {
             // 扣分规则：每次迟到扣1分，每次缺勤扣3分
             var totalDeduction = lateDays * 1 + absentDays * 3;
+<<<<<<< HEAD
             // 限制最大扣分不超过20分，并将扣分表示为负数
             return -Math.Min(totalDeduction, 20);
+=======
+            // 限制最大扣分不超过20分
+            return Math.Min(totalDeduction, 20);
+>>>>>>> 5d53cd6 (fix some naming issues)
         }
     }
 }

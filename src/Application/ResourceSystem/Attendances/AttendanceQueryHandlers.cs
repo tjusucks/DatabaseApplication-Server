@@ -10,7 +10,11 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.Attendances
 {
+<<<<<<< HEAD
     public class GetAttendanceByIdQueryHandler : IRequestHandler<GetAttendanceByIdQuery, AttendanceDto?>
+=======
+    public class GetAttendanceByIdQueryHandler : IRequestHandler<GetAttendanceByIdQuery, Attendance?>
+>>>>>>> 5d53cd6 (fix some naming issues)
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -19,6 +23,7 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
+<<<<<<< HEAD
         public async Task<AttendanceDto?> Handle(GetAttendanceByIdQuery request, CancellationToken cancellationToken)
         {
             var attendance = await _attendanceRepository.GetByIdAsync(request.Id);
@@ -47,6 +52,15 @@ namespace DbApp.Application.ResourceSystem.Attendances
     }
 
     public class GetEmployeeAttendanceQueryHandler : IRequestHandler<GetEmployeeAttendanceQuery, List<AttendanceDto>>
+=======
+        public async Task<Attendance?> Handle(GetAttendanceByIdQuery request, CancellationToken cancellationToken)
+        {
+            return await _attendanceRepository.GetByIdAsync(request.Id);
+        }
+    }
+
+    public class GetEmployeeAttendanceQueryHandler : IRequestHandler<GetEmployeeAttendanceQuery, List<Attendance>>
+>>>>>>> 5d53cd6 (fix some naming issues)
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -55,6 +69,7 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
+<<<<<<< HEAD
         public async Task<List<AttendanceDto>> Handle(GetEmployeeAttendanceQuery request, CancellationToken cancellationToken)
         {
             var attendances = await _attendanceRepository.GetByEmployeeAsync(
@@ -86,6 +101,19 @@ namespace DbApp.Application.ResourceSystem.Attendances
     }
 
     public class GetDepartmentAttendanceQueryHandler : IRequestHandler<GetDepartmentAttendanceQuery, List<AttendanceDto>>
+=======
+        public async Task<List<Attendance>> Handle(GetEmployeeAttendanceQuery request, CancellationToken cancellationToken)
+        {
+            return (await _attendanceRepository.GetByEmployeeAsync(
+                request.EmployeeId,
+                request.StartDate,
+                request.EndDate
+            )).ToList();
+        }
+    }
+
+    public class GetDepartmentAttendanceQueryHandler : IRequestHandler<GetDepartmentAttendanceQuery, List<Attendance>>
+>>>>>>> 5d53cd6 (fix some naming issues)
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -94,6 +122,7 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
+<<<<<<< HEAD
         public async Task<List<AttendanceDto>> Handle(GetDepartmentAttendanceQuery request, CancellationToken cancellationToken)
         {
             var attendances = await _attendanceRepository.GetByDepartmentAsync(
@@ -125,6 +154,19 @@ namespace DbApp.Application.ResourceSystem.Attendances
     }
 
     public class GetAbnormalRecordsQueryHandler : IRequestHandler<GetAbnormalRecordsQuery, List<AttendanceDto>>
+=======
+        public async Task<List<Attendance>> Handle(GetDepartmentAttendanceQuery request, CancellationToken cancellationToken)
+        {
+            return (await _attendanceRepository.GetByDepartmentAsync(
+                request.DepartmentId,
+                request.StartDate,
+                request.EndDate
+            )).ToList();
+        }
+    }
+
+    public class GetAbnormalRecordsQueryHandler : IRequestHandler<GetAbnormalRecordsQuery, List<Attendance>>
+>>>>>>> 5d53cd6 (fix some naming issues)
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -133,6 +175,7 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
+<<<<<<< HEAD
         public async Task<List<AttendanceDto>> Handle(GetAbnormalRecordsQuery request, CancellationToken cancellationToken)
         {
             var attendances = await _attendanceRepository.GetAbnormalRecordsAsync(
@@ -160,6 +203,15 @@ namespace DbApp.Application.ResourceSystem.Attendances
                     DepartmentName = attendance.Employee.DepartmentName
                 }
             }).ToList();
+=======
+        public async Task<List<Attendance>> Handle(GetAbnormalRecordsQuery request, CancellationToken cancellationToken)
+        {
+            return (await _attendanceRepository.GetAbnormalRecordsAsync(
+                request.EmployeeId,
+                request.StartDate,
+                request.EndDate
+            )).ToList();
+>>>>>>> 5d53cd6 (fix some naming issues)
         }
     }
 
