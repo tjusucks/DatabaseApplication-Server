@@ -60,6 +60,26 @@ public class VisitorsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+    /// Update visitor contact information (email and phone number).
+    /// </summary>
+    [HttpPut("{id}/contact")]
+    public async Task<IActionResult> UpdateContact([FromRoute] int id, [FromBody] UpdateVisitorContactCommand command)
+    {
+        if (id != command.VisitorId)
+            return BadRequest(new { Error = "ID in URL does not match ID in request body" });
+
+        try
+        {
+            await _mediator.Send(command);
+            return Ok(new { Message = "Contact information updated successfully" });
+        }
+        catch (Exception ex) when (ex.Message.Contains("Members must have at least one contact method"))
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Delete a visitor.
     /// </summary>
     [HttpDelete("{id}")]
@@ -126,12 +146,21 @@ public class VisitorsController(IMediator mediator) : ControllerBase
 
     /// <summary>
     /// Upgrade a visitor to member status.
+    /// Requires either email or phone number to be registered.
     /// </summary>
     [HttpPost("{id}/membership")]
     public async Task<IActionResult> UpgradeToMember([FromRoute] int id)
     {
-        await _mediator.Send(new UpgradeToMemberCommand(id));
-        return Ok(new { Message = "Visitor upgraded to member successfully" });
+        try
+        {
+            await _mediator.Send(new UpgradeToMemberCommand(id));
+            return Ok(new { Message = "Visitor upgraded to member successfully" });
+        }
+        catch (Exception ex) when (ex.Message.Contains("Email or phone number is required") ||
+                                   ex.Message.Contains("Cannot upgrade blacklisted visitor"))
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
     }
 
     /// <summary>
@@ -145,27 +174,45 @@ public class VisitorsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Add points to a visitor.
+    /// Add points to a member visitor.
+    /// Only members can earn points.
     /// </summary>
     [HttpPost("{id}/points/add")]
     public async Task<IActionResult> AddPoints([FromRoute] int id, [FromBody] AddPointsCommand command)
     {
-        if (id != command.VisitorId)
-            return BadRequest(new { Error = "ID in URL does not match ID in request body" });
+        await _mediator.Send(new AddPointsToVisitorCommand(id, command.Points, command.Reason));
+        return Ok(new { Message = "Points added successfully" });
+    }
 
+    /// <summary>
+    /// Deduct points from a member visitor.
+    /// Only members can have points deducted.
+    /// </summary>
+    [HttpPost("{id}/points/deduct")]
+    public async Task<IActionResult> DeductPoints([FromRoute] int id, [FromBody] DeductPointsCommand command)
+    {
+        await _mediator.Send(new DeductPointsFromVisitorCommand(id, command.Points, command.Reason));
+        return Ok(new { Message = "Points deducted successfully" });
+    }
+
+    /// <summary>
+    /// Add points to a member visitor by email or phone number.
+    /// Only members can earn points.
+    /// </summary>
+    [HttpPost("points/add-by-contact")]
+    public async Task<IActionResult> AddPointsByContact([FromBody] AddPointsByContactCommand command)
+    {
         await _mediator.Send(command);
         return Ok(new { Message = "Points added successfully" });
     }
 
     /// <summary>
-    /// Deduct points from a visitor.
+    /// Deduct points from a member visitor by email or phone number.
+    /// Only members can have points deducted.
     /// </summary>
-    [HttpPost("{id}/points/deduct")]
-    public async Task<IActionResult> DeductPoints([FromRoute] int id, [FromBody] DeductPointsCommand command)
+    [HttpPost("points/deduct-by-contact")]
+    public async Task<IActionResult> DeductPointsByContact([FromBody] DeductPointsByContactCommand command)
     {
-        if (id != command.VisitorId)
-            return BadRequest(new { Error = "ID in URL does not match ID in request body" });
-
         await _mediator.Send(command);
         return Ok(new { Message = "Points deducted successfully" });
     }

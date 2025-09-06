@@ -14,7 +14,7 @@ public class DatabaseFixtureTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         var db = fixture.DbContext;
         Assert.Equal(4, await db.Roles.CountAsync());
-        Assert.Equal(0, await db.Users.CountAsync());
+        Assert.Equal(5, await db.Users.CountAsync()); // 5 seed users
 
         // Insert test data.
         db.Roles.Add(new Role
@@ -52,6 +52,6 @@ public class DatabaseFixtureTests(DatabaseFixture fixture) : IAsyncLifetime
         Assert.False(await db.Users.AnyAsync(u => u.UserId == 1000));
 
         Assert.Equal(4, await db.Roles.CountAsync());
-        Assert.Equal(0, await db.Users.CountAsync());
+        Assert.Equal(5, await db.Users.CountAsync()); // 5 seed users
     }
 }

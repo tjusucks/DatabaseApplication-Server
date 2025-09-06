@@ -114,7 +114,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
             query = query.Where(r =>
                 (r.Visitor != null && r.Visitor.User != null && (
                     r.Visitor.User.Username.Contains(keyword) ||
-                    r.Visitor.User.Email.Contains(keyword) ||
+                    (r.Visitor.User.Email != null && r.Visitor.User.Email.Contains(keyword)) ||
                     (r.Visitor.User.PhoneNumber != null && r.Visitor.User.PhoneNumber.Contains(keyword))
                 )) ||
                 (r.Promotion != null && r.Promotion.PromotionName.Contains(keyword)) ||

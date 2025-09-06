@@ -185,12 +185,18 @@ public class VisitorRepository(ApplicationDbContext context) : IVisitorRepositor
             query = query.Where(v =>
                 v.User.Username.Contains(spec.Keyword) ||
                 v.User.DisplayName.Contains(spec.Keyword) ||
-                v.User.Email.Contains(spec.Keyword) ||
+                (v.User.Email != null && v.User.Email.Contains(spec.Keyword)) ||
                 (v.User.PhoneNumber != null && v.User.PhoneNumber.Contains(spec.Keyword)));
         }
 
         if (spec.UserId.HasValue)
             query = query.Where(v => v.User.UserId == spec.UserId);
+
+        if (!string.IsNullOrWhiteSpace(spec.Email))
+            query = query.Where(v => v.User.Email == spec.Email);
+
+        if (!string.IsNullOrWhiteSpace(spec.PhoneNumber))
+            query = query.Where(v => v.User.PhoneNumber == spec.PhoneNumber);
 
         if (spec.BirthDateStart.HasValue)
             query = query.Where(v => v.User.BirthDate >= spec.BirthDateStart);

@@ -206,7 +206,7 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
                 t.SerialNumber.Contains(keyword) ||
                 (t.Visitor != null && t.Visitor.User != null && (
                     t.Visitor.User.Username.Contains(keyword) ||
-                    t.Visitor.User.Email.Contains(keyword)
+                    (t.Visitor.User.Email != null && t.Visitor.User.Email.Contains(keyword))
                 )) ||
                 t.TicketType.TypeName.Contains(keyword)
             );

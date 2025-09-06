@@ -9,6 +9,8 @@ public class UserSpec
 {
     public string? Keyword { get; set; } // Search keyword in username, email, display name, and phone number.
     public int? UserId { get; set; }
+    public string? Email { get; set; } // Exact email match
+    public string? PhoneNumber { get; set; } // Exact phone number match
     public DateTime? BirthDateStart { get; set; }
     public DateTime? BirthDateEnd { get; set; }
     public Gender? Gender { get; set; }

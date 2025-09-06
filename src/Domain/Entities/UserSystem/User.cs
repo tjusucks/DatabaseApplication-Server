@@ -26,8 +26,9 @@ public class User
 
     /// <summary>
     /// User's email address for communication and account recovery.
+    /// Optional for visitor creation, required for member upgrade.
     /// </summary>
-    public string Email { get; set; } = string.Empty;
+    public string? Email { get; set; }
 
     /// <summary>
     /// Display name shown to other users.
@@ -77,4 +78,23 @@ public class User
 
     // Navigation properties.
     public Role Role { get; set; } = null!;
+
+    /// <summary>
+    /// Validates that the user has at least one contact method (email or phone).
+    /// </summary>
+    /// <returns>True if user has email or phone number.</returns>
+    public bool HasContactInformation()
+    {
+        return !string.IsNullOrWhiteSpace(Email) || !string.IsNullOrWhiteSpace(PhoneNumber);
+    }
+
+    /// <summary>
+    /// Checks if the user is eligible for member upgrade.
+    /// Requires at least one contact method.
+    /// </summary>
+    /// <returns>True if eligible for member upgrade.</returns>
+    public bool IsEligibleForMemberUpgrade()
+    {
+        return HasContactInformation();
+    }
 }
