@@ -10,7 +10,7 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.Attendances
 {
-    public class GetAttendanceByIdQueryHandler : IRequestHandler<GetAttendanceByIdQuery, Attendance?>
+    public class GetAttendanceByIdQueryHandler : IRequestHandler<GetAttendanceByIdQuery, AttendanceDto?>
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -19,13 +19,34 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
-        public async Task<Attendance?> Handle(GetAttendanceByIdQuery request, CancellationToken cancellationToken)
+        public async Task<AttendanceDto?> Handle(GetAttendanceByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _attendanceRepository.GetByIdAsync(request.Id);
+            var attendance = await _attendanceRepository.GetByIdAsync(request.Id);
+            if (attendance == null) return null;
+
+            return new AttendanceDto
+            {
+                AttendanceId = attendance.AttendanceId,
+                EmployeeId = attendance.EmployeeId,
+                AttendanceDate = attendance.AttendanceDate,
+                CheckInTime = attendance.CheckInTime,
+                CheckOutTime = attendance.CheckOutTime,
+                AttendanceStatus = attendance.AttendanceStatus,
+                LeaveType = attendance.LeaveType,
+                CreatedAt = attendance.CreatedAt,
+                UpdatedAt = attendance.UpdatedAt,
+                Employee = new EmployeeInfoDto
+                {
+                    EmployeeId = attendance.Employee.EmployeeId,
+                    StaffNumber = attendance.Employee.StaffNumber,
+                    Position = attendance.Employee.Position,
+                    DepartmentName = attendance.Employee.DepartmentName
+                }
+            };
         }
     }
 
-    public class GetEmployeeAttendanceQueryHandler : IRequestHandler<GetEmployeeAttendanceQuery, List<Attendance>>
+    public class GetEmployeeAttendanceQueryHandler : IRequestHandler<GetEmployeeAttendanceQuery, List<AttendanceDto>>
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -34,17 +55,37 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
-        public async Task<List<Attendance>> Handle(GetEmployeeAttendanceQuery request, CancellationToken cancellationToken)
+        public async Task<List<AttendanceDto>> Handle(GetEmployeeAttendanceQuery request, CancellationToken cancellationToken)
         {
-            return (await _attendanceRepository.GetByEmployeeAsync(
+            var attendances = await _attendanceRepository.GetByEmployeeAsync(
                 request.EmployeeId,
                 request.StartDate,
                 request.EndDate
-            )).ToList();
+            );
+
+            return attendances.Select(attendance => new AttendanceDto
+            {
+                AttendanceId = attendance.AttendanceId,
+                EmployeeId = attendance.EmployeeId,
+                AttendanceDate = attendance.AttendanceDate,
+                CheckInTime = attendance.CheckInTime,
+                CheckOutTime = attendance.CheckOutTime,
+                AttendanceStatus = attendance.AttendanceStatus,
+                LeaveType = attendance.LeaveType,
+                CreatedAt = attendance.CreatedAt,
+                UpdatedAt = attendance.UpdatedAt,
+                Employee = new EmployeeInfoDto
+                {
+                    EmployeeId = attendance.Employee.EmployeeId,
+                    StaffNumber = attendance.Employee.StaffNumber,
+                    Position = attendance.Employee.Position,
+                    DepartmentName = attendance.Employee.DepartmentName
+                }
+            }).ToList();
         }
     }
 
-    public class GetDepartmentAttendanceQueryHandler : IRequestHandler<GetDepartmentAttendanceQuery, List<Attendance>>
+    public class GetDepartmentAttendanceQueryHandler : IRequestHandler<GetDepartmentAttendanceQuery, List<AttendanceDto>>
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -53,17 +94,37 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
-        public async Task<List<Attendance>> Handle(GetDepartmentAttendanceQuery request, CancellationToken cancellationToken)
+        public async Task<List<AttendanceDto>> Handle(GetDepartmentAttendanceQuery request, CancellationToken cancellationToken)
         {
-            return (await _attendanceRepository.GetByDepartmentAsync(
+            var attendances = await _attendanceRepository.GetByDepartmentAsync(
                 request.DepartmentId,
                 request.StartDate,
                 request.EndDate
-            )).ToList();
+            );
+
+            return attendances.Select(attendance => new AttendanceDto
+            {
+                AttendanceId = attendance.AttendanceId,
+                EmployeeId = attendance.EmployeeId,
+                AttendanceDate = attendance.AttendanceDate,
+                CheckInTime = attendance.CheckInTime,
+                CheckOutTime = attendance.CheckOutTime,
+                AttendanceStatus = attendance.AttendanceStatus,
+                LeaveType = attendance.LeaveType,
+                CreatedAt = attendance.CreatedAt,
+                UpdatedAt = attendance.UpdatedAt,
+                Employee = new EmployeeInfoDto
+                {
+                    EmployeeId = attendance.Employee.EmployeeId,
+                    StaffNumber = attendance.Employee.StaffNumber,
+                    Position = attendance.Employee.Position,
+                    DepartmentName = attendance.Employee.DepartmentName
+                }
+            }).ToList();
         }
     }
 
-    public class GetAbnormalRecordsQueryHandler : IRequestHandler<GetAbnormalRecordsQuery, List<Attendance>>
+    public class GetAbnormalRecordsQueryHandler : IRequestHandler<GetAbnormalRecordsQuery, List<AttendanceDto>>
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
@@ -72,13 +133,33 @@ namespace DbApp.Application.ResourceSystem.Attendances
             _attendanceRepository = attendanceRepository;
         }
 
-        public async Task<List<Attendance>> Handle(GetAbnormalRecordsQuery request, CancellationToken cancellationToken)
+        public async Task<List<AttendanceDto>> Handle(GetAbnormalRecordsQuery request, CancellationToken cancellationToken)
         {
-            return (await _attendanceRepository.GetAbnormalRecordsAsync(
+            var attendances = await _attendanceRepository.GetAbnormalRecordsAsync(
                 request.EmployeeId,
                 request.StartDate,
                 request.EndDate
-            )).ToList();
+            );
+
+            return attendances.Select(attendance => new AttendanceDto
+            {
+                AttendanceId = attendance.AttendanceId,
+                EmployeeId = attendance.EmployeeId,
+                AttendanceDate = attendance.AttendanceDate,
+                CheckInTime = attendance.CheckInTime,
+                CheckOutTime = attendance.CheckOutTime,
+                AttendanceStatus = attendance.AttendanceStatus,
+                LeaveType = attendance.LeaveType,
+                CreatedAt = attendance.CreatedAt,
+                UpdatedAt = attendance.UpdatedAt,
+                Employee = new EmployeeInfoDto
+                {
+                    EmployeeId = attendance.Employee.EmployeeId,
+                    StaffNumber = attendance.Employee.StaffNumber,
+                    Position = attendance.Employee.Position,
+                    DepartmentName = attendance.Employee.DepartmentName
+                }
+            }).ToList();
         }
     }
 
