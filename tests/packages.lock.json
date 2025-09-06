@@ -1740,6 +1740,7 @@
       "infrastructure": {
         "type": "Project",
         "dependencies": {
+          "Application": "[1.0.0, )",
           "Domain": "[1.0.0, )",
           "Microsoft.EntityFrameworkCore": "[9.0.7, )",
           "Microsoft.EntityFrameworkCore.Relational": "[9.0.7, )",

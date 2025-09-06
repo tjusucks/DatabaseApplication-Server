@@ -1847,7 +1847,6 @@ namespace DbApp.Infrastructure.Migrations
                         .HasColumnName("display_name");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("VARCHAR2(100 CHAR)")
                         .HasColumnName("email");
 
@@ -1896,7 +1895,12 @@ namespace DbApp.Infrastructure.Migrations
                     b.HasIndex("CreatedAt");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("\"email\" IS NOT NULL");
+
+                    b.HasIndex("PhoneNumber")
+                        .IsUnique()
+                        .HasFilter("\"phone_number\" IS NOT NULL");
 
                     b.HasIndex("RoleId");
 

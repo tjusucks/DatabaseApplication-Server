@@ -35,11 +35,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("VARCHAR2(256 CHAR)")
             .IsRequired();
 
-        // Email - unique and required.
+        // Email - unique but optional (nullable).
         builder.Property(u => u.Email)
             .HasColumnName("email")
-            .HasColumnType("VARCHAR2(100 CHAR)")
-            .IsRequired();
+            .HasColumnType("VARCHAR2(100 CHAR)");
 
         // Display name - required.
         builder.Property(u => u.DisplayName)
@@ -105,6 +104,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsUnique();
 
         builder.HasIndex(u => u.Email)
+            .IsUnique();
+
+        builder.HasIndex(u => u.PhoneNumber)
             .IsUnique();
 
         builder.HasIndex(u => u.CreatedAt);

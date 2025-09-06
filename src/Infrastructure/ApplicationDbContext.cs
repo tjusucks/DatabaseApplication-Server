@@ -6,7 +6,6 @@ namespace DbApp.Infrastructure;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-
     // DbSet properties for each entity.
     // User System.
     public DbSet<User> Users { get; set; }

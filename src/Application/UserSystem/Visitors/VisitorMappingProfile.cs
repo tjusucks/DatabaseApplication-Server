@@ -1,0 +1,27 @@
+using AutoMapper;
+using DbApp.Application.UserSystem.Users;
+using DbApp.Domain.Entities.UserSystem;
+using DbApp.Domain.Specifications.UserSystem;
+using DbApp.Domain.Statistics.UserSystem;
+
+namespace DbApp.Application.UserSystem.Visitors;
+
+public class VisitorMappingProfile : Profile
+{
+    public VisitorMappingProfile()
+    {
+        // Entity to DTO mappings.
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.RoleName));
+
+        CreateMap<Visitor, VisitorDto>();
+
+        CreateMap<VisitorStats, VisitorStatsDto>();
+        CreateMap<GroupedVisitorStats, GroupedVisitorStatsDto>();
+
+        // Query to Spec mappings (for filtering/statistics).
+        CreateMap<SearchVisitorsQuery, VisitorSpec>();
+        CreateMap<GetVisitorStatsQuery, VisitorSpec>();
+        CreateMap<GetGroupedVisitorStatsQuery, VisitorSpec>();
+    }
+}

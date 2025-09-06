@@ -13,6 +13,7 @@ public class TestApiFactory(DatabaseFixture fixture) : WebApplicationFactory<Pro
     private readonly DatabaseFixture _fixture = fixture;
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.UseEnvironment("Test");
         builder.ConfigureServices(services =>
         {
             // Remove existing DbContext.

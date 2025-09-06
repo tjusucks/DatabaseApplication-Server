@@ -91,29 +91,74 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
         query = ApplyFilters(query, spec.Keyword, spec.StartDate, spec.EndDate,
             spec.TicketTypeId, spec.PromotionId, spec.PaymentStatus);
 
-        var groupedQuery = spec.GroupBy switch
+        // Special handling for date grouping
+        if (spec.GroupBy.ToLowerInvariant() == "date")
         {
-            "TicketType" => query.GroupBy(t => new
+            var dateGroupedQuery = query.GroupBy(t => t.ReservationItem.Reservation.CreatedAt.Date);
+
+            var dateResults = await dateGroupedQuery
+                .Select(g => new
+                {
+                    GroupKey = g.Key, // This will be DateTime (date only)
+                    TicketsSold = g.Count(),
+                    Revenue = g.Select(t => t.ReservationItem).Distinct().Sum(ri => ri.TotalAmount),
+                    FirstSale = g.Min(t => (DateTime?)t.ReservationItem.Reservation.CreatedAt),
+                    LastSale = g.Max(t => (DateTime?)t.ReservationItem.Reservation.CreatedAt)
+                })
+                .ToListAsync();
+
+            // Calculate refund data and convert to final result in memory
+            var finalResults = new List<GroupedTicketSaleStats>();
+            foreach (var result in dateResults)
+            {
+                var ticketIds = await query
+                    .Where(t => t.ReservationItem.Reservation.CreatedAt.Date == result.GroupKey)
+                    .Select(t => t.TicketId)
+                    .ToListAsync();
+
+                var refundedTickets = await _dbContext.RefundRecords
+                    .CountAsync(rr => ticketIds.Contains(rr.TicketId));
+                var refundAmount = await _dbContext.RefundRecords
+                    .Where(rr => ticketIds.Contains(rr.TicketId))
+                    .SumAsync(rr => rr.RefundAmount);
+
+                finalResults.Add(new GroupedTicketSaleStats
+                {
+                    GroupKey = result.GroupKey.ToString("yyyy-MM-dd"),
+                    GroupName = result.GroupKey.ToString("yyyy-MM-dd"),
+                    TicketsSold = result.TicketsSold,
+                    Revenue = result.Revenue,
+                    AveragePrice = result.TicketsSold > 0 ? result.Revenue / result.TicketsSold : 0,
+                    RefundedTickets = refundedTickets,
+                    RefundAmount = refundAmount,
+                    RefundRate = result.TicketsSold > 0 ? (decimal)refundedTickets / result.TicketsSold : 0,
+                    FirstSale = result.FirstSale,
+                    LastSale = result.LastSale
+                });
+            }
+
+            return ApplyGroupedSorting(finalResults, spec.SortBy, spec.Descending);
+        }
+
+        // Handle other grouping types normally
+        var groupedQuery = spec.GroupBy.ToLowerInvariant() switch
+        {
+            "tickettype" => query.GroupBy(t => new
             {
                 Key = t.TicketTypeId.ToString(),
                 Name = t.TicketType.TypeName
             }),
-            "Promotion" => query.GroupBy(t => new
+            "promotion" => query.GroupBy(t => new
             {
                 Key = t.ReservationItem.Reservation.PromotionId.ToString() ?? "None",
                 Name = t.ReservationItem.Reservation.Promotion != null
                     ? t.ReservationItem.Reservation.Promotion.PromotionName
                     : "No Promotion"
             }),
-            "PaymentStatus" => query.GroupBy(t => new
+            "paymentstatus" => query.GroupBy(t => new
             {
                 Key = t.ReservationItem.Reservation.PaymentStatus.ToString(),
                 Name = t.ReservationItem.Reservation.PaymentStatus.ToString()
-            }),
-            "Date" => query.GroupBy(t => new
-            {
-                Key = t.ReservationItem.Reservation.CreatedAt.Date.ToString("yyyy-MM-dd"),
-                Name = t.ReservationItem.Reservation.CreatedAt.Date.ToString("yyyy-MM-dd")
             }),
             _ => query.GroupBy(t => new
             {
@@ -127,10 +172,8 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
             GroupKey = g.Key.Key,
             GroupName = g.Key.Name,
             TicketsSold = g.Count(),
-            Revenue = g
-                .Select(t => t.ReservationItem).Distinct().Sum(ri => ri.TotalAmount),
-            AveragePrice = g
-                .Select(t => t.ReservationItem).Distinct().Sum(ri => ri.TotalAmount) / g.Count(),
+            Revenue = g.Select(t => t.ReservationItem).Distinct().Sum(ri => ri.TotalAmount),
+            AveragePrice = g.Select(t => t.ReservationItem).Distinct().Sum(ri => ri.TotalAmount) / g.Count(),
             RefundedTickets = _dbContext.RefundRecords
                 .Count(rr => g.Any(t => t.TicketId == rr.TicketId)),
             RefundAmount = _dbContext.RefundRecords
@@ -139,16 +182,13 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
             LastSale = g.Max(t => (DateTime?)t.ReservationItem.Reservation.CreatedAt)
         }).ToListAsync();
 
-        // Calculate RefundRate.
+        // Calculate RefundRate for non-date groupings
         foreach (var result in results)
         {
             result.RefundRate = result.TicketsSold > 0 ? (decimal)result.RefundedTickets / result.TicketsSold : 0;
         }
 
-        // Apply sorting to grouped results.
-        results = ApplyGroupedSorting(results, spec.SortBy, spec.Descending);
-
-        return results;
+        return ApplyGroupedSorting(results, spec.SortBy, spec.Descending);
     }
 
     private static IQueryable<Ticket> ApplyFilters(
@@ -166,7 +206,7 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
                 t.SerialNumber.Contains(keyword) ||
                 (t.Visitor != null && t.Visitor.User != null && (
                     t.Visitor.User.Username.Contains(keyword) ||
-                    t.Visitor.User.Email.Contains(keyword)
+                    (t.Visitor.User.Email != null && t.Visitor.User.Email.Contains(keyword))
                 )) ||
                 t.TicketType.TypeName.Contains(keyword)
             );
