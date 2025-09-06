@@ -22,5 +22,6 @@ public class TestApiFactory(DatabaseFixture fixture) : WebApplicationFactory<Pro
             // Inject fixture's DbContext as singleton.
             services.AddSingleton(_fixture.DbContext);
         });
+        builder.UseEnvironment("Testing");
     }
 }
