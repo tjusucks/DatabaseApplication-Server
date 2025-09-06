@@ -1,3 +1,4 @@
+using DbApp.Domain.Constants.UserSystem;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
 using MediatR;
@@ -7,7 +8,7 @@ namespace DbApp.Application.UserSystem.Visitors;
 /// <summary>
 /// Centralized handler for all visitor commands.
 /// </summary>
-public class VisitorCommandHandlers(IVisitorRepository visitorRepo) :
+public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipService membershipService) :
     IRequestHandler<CreateVisitorCommand, int>,
     IRequestHandler<UpdateVisitorCommand, Unit>,
     IRequestHandler<DeleteVisitorCommand, Unit>,
@@ -19,6 +20,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo) :
     IRequestHandler<DeductPointsCommand, Unit>
 {
     private readonly IVisitorRepository _visitorRepo = visitorRepo;
+    private readonly IMembershipService _membershipService = membershipService;
 
     public async Task<int> Handle(CreateVisitorCommand request, CancellationToken cancellationToken)
     {
@@ -117,7 +119,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo) :
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
             ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
 
-        visitor.MemberLevel = "Member";
+        visitor.MemberLevel = MembershipConstants.LevelNames.Bronze;
         visitor.MemberSince = DateTime.UtcNow;
         await _visitorRepo.UpdateAsync(visitor);
         return Unit.Value;
@@ -137,21 +139,13 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo) :
 
     public async Task<Unit> Handle(AddPointsCommand request, CancellationToken cancellationToken)
     {
-        var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
-
-        visitor.Points += request.Points;
-        await _visitorRepo.UpdateAsync(visitor);
+        await _membershipService.AddPointsAsync(request.VisitorId, request.Points);
         return Unit.Value;
     }
 
     public async Task<Unit> Handle(DeductPointsCommand request, CancellationToken cancellationToken)
     {
-        var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
-
-        visitor.Points = Math.Max(0, visitor.Points - request.Points);
-        await _visitorRepo.UpdateAsync(visitor);
+        await _membershipService.DeductPointsAsync(request.VisitorId, request.Points);
         return Unit.Value;
     }
 }

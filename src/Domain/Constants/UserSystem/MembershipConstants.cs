@@ -1,4 +1,4 @@
-namespace DbApp.Domain.Constants;
+namespace DbApp.Domain.Constants.UserSystem;
 
 /// <summary>
 /// Constants related to membership system.
@@ -48,5 +48,40 @@ public static class MembershipConstants
         public const decimal Silver = 0.9m;    // 9折 (90%)
         public const decimal Gold = 0.8m;      // 8折 (80%)
         public const decimal Platinum = 0.7m;  // 7折 (70%)
+    }
+
+    public static string GetLevelByPoints(int points)
+    {
+        if (points >= PointsThresholds.Platinum)
+            return LevelNames.Platinum;
+        if (points >= PointsThresholds.Gold)
+            return LevelNames.Gold;
+        if (points >= PointsThresholds.Silver)
+            return LevelNames.Silver;
+        return LevelNames.Bronze;
+    }
+
+    public static decimal GetDiscountMultiplier(string level)
+    {
+        return level switch
+        {
+            LevelNames.Platinum => DiscountMultipliers.Platinum,
+            LevelNames.Gold => DiscountMultipliers.Gold,
+            LevelNames.Silver => DiscountMultipliers.Silver,
+            _ => DiscountMultipliers.Bronze,
+        };
+    }
+
+    public static int GetPointsEarningForActivity(string activity)
+    {
+        return activity switch
+        {
+            "TicketPurchase" => PointsEarning.TicketPurchase,
+            "ParkEntry" => PointsEarning.ParkEntry,
+            "RideUsage" => PointsEarning.RideUsage,
+            "EventParticipation" => PointsEarning.EventParticipation,
+            "BirthdayBonus" => PointsEarning.BirthdayBonus,
+            _ => 0,
+        };
     }
 }
