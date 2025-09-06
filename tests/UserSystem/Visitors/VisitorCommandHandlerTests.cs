@@ -93,15 +93,20 @@ public class VisitorCommandHandlerTests
     public async Task UpgradeToMemberCommandHandler_WhenVisitorExists_ShouldUpgradeToMember()
     {
         // Arrange
-        var visitor = new Visitor 
-        { 
-            VisitorId = 1, 
+        var visitor = new Visitor
+        {
+            VisitorId = 1,
             VisitorType = VisitorType.Regular,
             Points = 1200,
-            IsBlacklisted = false
+            IsBlacklisted = false,
+            User = new User
+            {
+                Email = "test@example.com",
+                PhoneNumber = "1234567890"
+            }
         };
         var command = new UpgradeToMemberCommand(1);
-        
+
         _mockVisitorRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(visitor);
 
@@ -145,14 +150,9 @@ public class VisitorCommandHandlerTests
     public async Task AddPointsCommandHandler_WhenValidRequest_ShouldAddPoints()
     {
         // Arrange
-        var visitor = new Visitor 
-        { 
-            VisitorId = 1, 
-            Points = 500,
-            MemberLevel = "Bronze"
-        };
+        var visitor = new Visitor { VisitorId = 1, Points = 500 };
         var command = new AddPointsCommand(1, 600, "Test reward");
-        
+
         _mockVisitorRepository.Setup(x => x.GetByIdAsync(1))
             .ReturnsAsync(visitor);
 
@@ -162,9 +162,7 @@ public class VisitorCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        Assert.Equal(1100, visitor.Points);
-        Assert.Equal("Silver", visitor.MemberLevel); // Should upgrade to Silver
-        _mockVisitorRepository.Verify(x => x.UpdateAsync(visitor), Times.Once);
+        _mockVisitorRepository.Verify(x => x.AddPointsAsync(1, 600), Times.Once);
     }
 
     [Fact]
@@ -243,11 +241,7 @@ public class VisitorCommandHandlerTests
     public async Task UpdateVisitorCommandHandler_WhenValidHeight_ShouldUpdateVisitor()
     {
         // Arrange
-        var visitor = new Visitor { VisitorId = 1, Height = 170 };
         var command = new UpdateVisitorCommand(1, null, null, null, null, null, 175, null, null);
-        
-        _mockVisitorRepository.Setup(x => x.GetByIdAsync(1))
-            .ReturnsAsync(visitor);
 
         var handler = new UpdateVisitorCommandHandler(_mockVisitorRepository.Object);
 
@@ -255,27 +249,24 @@ public class VisitorCommandHandlerTests
         await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        Assert.Equal(175, visitor.Height);
-        Assert.NotNull(visitor.UpdatedAt);
-        _mockVisitorRepository.Verify(x => x.UpdateAsync(visitor), Times.Once);
+        _mockVisitorRepository.Verify(x => x.UpdateVisitorInfoAsync(1, null, null, null, null, null, 175, null, null), Times.Once);
     }
 
     [Fact]
     public async Task UpdateVisitorCommandHandler_WhenInvalidHeight_ShouldThrowException()
     {
         // Arrange
-        var visitor = new Visitor { VisitorId = 1, Height = 170 };
         var command = new UpdateVisitorCommand(1, null, null, null, null, null, 400, null, null); // Invalid height
-        
-        _mockVisitorRepository.Setup(x => x.GetByIdAsync(1))
-            .ReturnsAsync(visitor);
+
+        _mockVisitorRepository.Setup(x => x.UpdateVisitorInfoAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<Gender?>(), It.IsAny<VisitorType?>(), It.IsAny<int?>(), It.IsAny<int?>(), It.IsAny<string>()))
+            .ThrowsAsync(new ArgumentException("Height must be between 50 and 300 cm"));
 
         var handler = new UpdateVisitorCommandHandler(_mockVisitorRepository.Object);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(
             () => handler.Handle(command, CancellationToken.None));
-        
+
         Assert.Contains("Height must be between 50 and 300 cm", exception.Message);
     }
 

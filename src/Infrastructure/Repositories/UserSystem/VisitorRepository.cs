@@ -161,16 +161,21 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
 
     public async Task AddPointsAsync(int visitorId, int points)
     {
-        var visitor = await GetByIdAsync(visitorId);
-        if (visitor != null)
+        var visitor = await GetByIdAsync(visitorId)
+            ?? throw new InvalidOperationException($"Visitor with ID {visitorId} not found");
+
+        // Only members can earn points
+        if (visitor.VisitorType != VisitorType.Member)
         {
-            visitor.Points += points;
-
-            // Update member level based on new points
-            MembershipService.UpdateMemberLevel(visitor);
-
-            await UpdateAsync(visitor);
+            throw new InvalidOperationException("Only members can earn points. Please upgrade to member status first.");
         }
+
+        visitor.Points += points;
+
+        // Update member level based on new points
+        MembershipService.UpdateMemberLevel(visitor);
+
+        await UpdateAsync(visitor);
     }
 
     public async Task UpdateVisitorInfoAsync(
@@ -211,7 +216,11 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         if (visitorType.HasValue)
             visitor.VisitorType = visitorType.Value;
         if (height.HasValue)
+        {
+            if (height.Value < 50 || height.Value > 300)
+                throw new ArgumentException("Height must be between 50 and 300 cm", nameof(height));
             visitor.Height = height.Value;
+        }
         if (points.HasValue)
             visitor.Points = points.Value;
         if (memberLevel != null)
@@ -225,14 +234,27 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
 
     public async Task<bool> DeductPointsAsync(int visitorId, int points)
     {
-        var visitor = await GetByIdAsync(visitorId);
-        if (visitor != null && visitor.Points >= points)
+        var visitor = await GetByIdAsync(visitorId)
+            ?? throw new InvalidOperationException($"Visitor with ID {visitorId} not found");
+
+        // Only members can use points
+        if (visitor.VisitorType != VisitorType.Member)
         {
-            visitor.Points -= points;
-            await UpdateAsync(visitor);
-            return true;
+            throw new InvalidOperationException("Only members can use points. Please upgrade to member status first.");
         }
-        return false;
+
+        if (visitor.Points < points)
+        {
+            return false; // Insufficient points
+        }
+
+        visitor.Points -= points;
+
+        // Update member level if necessary (might downgrade)
+        MembershipService.UpdateMemberLevel(visitor);
+
+        await UpdateAsync(visitor);
+        return true;
     }
 
     public async Task<int> GetSearchCountAsync(
@@ -293,7 +315,7 @@ public class VisitorRepository(ApplicationDbContext dbContext) : IVisitorReposit
         {
             query = query.Where(v =>
                 v.User.DisplayName.Contains(keyword) ||
-                v.User.Email.Contains(keyword) ||
+                (v.User.Email != null && v.User.Email.Contains(keyword)) ||
                 (v.User.PhoneNumber != null && v.User.PhoneNumber.Contains(keyword)));
         }
 

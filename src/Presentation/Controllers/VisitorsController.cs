@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using DbApp.Application.UserSystem.Visitors;
 using DbApp.Domain.Enums.UserSystem;
 using MediatR;
@@ -300,4 +301,174 @@ public class VisitorsController(IMediator mediator) : ControllerBase
             return NotFound(new { Error = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Upgrade a visitor to member status.
+    /// </summary>
+    /// <param name="id">The visitor ID.</param>
+    /// <returns>Success response.</returns>
+    [HttpPost("{id}/upgrade-to-member")]
+    public async Task<IActionResult> UpgradeToMember(int id)
+    {
+        try
+        {
+            await _mediator.Send(new UpgradeToMemberCommand(id));
+            return Ok(new { Message = "Visitor successfully upgraded to member" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Add points to a visitor's account.
+    /// </summary>
+    /// <param name="id">The visitor ID.</param>
+    /// <param name="request">The points addition request.</param>
+    /// <returns>Points operation result.</returns>
+    [HttpPost("{id}/points/add")]
+    public async Task<IActionResult> AddPoints(int id, [FromBody] AddPointsRequest request)
+    {
+        try
+        {
+            var visitor = await _mediator.Send(new GetVisitorByIdQuery(id));
+            if (visitor == null)
+                return NotFound(new { Error = $"Visitor with ID {id} not found" });
+
+            var oldLevel = visitor.MemberLevel;
+            await _mediator.Send(new AddPointsCommand(id, request.Points, request.Reason));
+
+            // Get updated visitor to check for level changes
+            var updatedVisitor = await _mediator.Send(new GetVisitorByIdQuery(id));
+            var levelChanged = oldLevel != updatedVisitor?.MemberLevel;
+
+            return Ok(new
+            {
+                Success = true,
+                Message = $"Successfully added {request.Points} points",
+                CurrentPoints = updatedVisitor?.Points ?? 0,
+                CurrentMemberLevel = updatedVisitor?.MemberLevel,
+                LevelChanged = levelChanged,
+                NewLevel = levelChanged ? updatedVisitor?.MemberLevel : null
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Deduct points from a visitor's account.
+    /// </summary>
+    /// <param name="id">The visitor ID.</param>
+    /// <param name="request">The points deduction request.</param>
+    /// <returns>Points operation result.</returns>
+    [HttpPost("{id}/points/deduct")]
+    public async Task<IActionResult> DeductPoints(int id, [FromBody] DeductPointsRequest request)
+    {
+        try
+        {
+            var visitor = await _mediator.Send(new GetVisitorByIdQuery(id));
+            if (visitor == null)
+                return NotFound(new { Error = $"Visitor with ID {id} not found" });
+
+            var oldLevel = visitor.MemberLevel;
+            var success = await _mediator.Send(new DeductPointsCommand(id, request.Points, request.Reason));
+
+            if (!success)
+            {
+                return BadRequest(new
+                {
+                    Success = false,
+                    Error = "Insufficient points for this operation",
+                    CurrentPoints = visitor.Points,
+                    CurrentMemberLevel = visitor.MemberLevel
+                });
+            }
+
+            // Get updated visitor to check for level changes
+            var updatedVisitor = await _mediator.Send(new GetVisitorByIdQuery(id));
+            var levelChanged = oldLevel != updatedVisitor?.MemberLevel;
+
+            return Ok(new
+            {
+                Success = true,
+                Message = $"Successfully deducted {request.Points} points",
+                CurrentPoints = updatedVisitor?.Points ?? 0,
+                CurrentMemberLevel = updatedVisitor?.MemberLevel,
+                LevelChanged = levelChanged,
+                NewLevel = levelChanged ? updatedVisitor?.MemberLevel : null
+            });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Get membership statistics.
+    /// </summary>
+    /// <returns>Membership statistics.</returns>
+    [HttpGet("statistics")]
+    public async Task<IActionResult> GetStatistics()
+    {
+        var statistics = await _mediator.Send(new GetMembershipStatisticsQuery());
+        return Ok(statistics);
+    }
+
+    /// <summary>
+    /// Update visitor's contact information (email and phone).
+    /// </summary>
+    /// <param name="id">Visitor ID.</param>
+    /// <param name="request">Contact information to update.</param>
+    /// <returns>Success response.</returns>
+    [HttpPut("{id}/contact")]
+    public async Task<IActionResult> UpdateContact(int id, [FromBody] UpdateVisitorContactRequest request)
+    {
+        try
+        {
+            await _mediator.Send(new UpdateVisitorContactCommand(id, request.Email, request.PhoneNumber));
+            return Ok(new { Message = "Contact information updated successfully" });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Error = ex.Message });
+        }
+    }
+}
+
+/// <summary>
+/// Request model for adding points.
+/// </summary>
+public class AddPointsRequest
+{
+    [JsonRequired]
+    public int Points { get; set; }
+    public string Reason { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Request model for deducting points.
+/// </summary>
+public class DeductPointsRequest
+{
+    [JsonRequired]
+    public int Points { get; set; }
+    public string Reason { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Request model for updating visitor contact information.
+/// </summary>
+public class UpdateVisitorContactRequest
+{
+    public string? Email { get; set; }
+    public string? PhoneNumber { get; set; }
 }

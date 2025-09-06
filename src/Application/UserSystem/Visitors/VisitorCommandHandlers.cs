@@ -19,13 +19,19 @@ public class CreateVisitorCommandHandler(
     {
         try
         {
+            // Validate that at least one contact method is provided
+            if (string.IsNullOrWhiteSpace(request.Email) && string.IsNullOrWhiteSpace(request.PhoneNumber))
+            {
+                throw new ArgumentException("Either email or phone number must be provided");
+            }
+
             // Create user entity with navigation property
             var user = new User
             {
                 Username = request.Username,
-                Email = request.Email,
+                Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email,
                 DisplayName = request.DisplayName,
-                PhoneNumber = request.PhoneNumber,
+                PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber,
                 BirthDate = request.BirthDate,
                 Gender = request.Gender,
                 PasswordHash = request.PasswordHash,
@@ -111,6 +117,12 @@ public class UpgradeToMemberCommandHandler(IVisitorRepository visitorRepository)
         if (visitor.IsBlacklisted)
         {
             throw new InvalidOperationException("Cannot upgrade blacklisted visitor to member");
+        }
+
+        // Check if user has contact information (email or phone)
+        if (!visitor.User.IsEligibleForMemberUpgrade())
+        {
+            throw new InvalidOperationException("Email or phone number is required to become a member");
         }
 
         MembershipService.UpgradeToMember(visitor);
@@ -292,6 +304,43 @@ public class DeleteVisitorCommandHandler(
 
         await _visitorRepository.DeleteAsync(visitor);
         await _userRepository.DeleteAsync(user);
+
+        return Unit.Value;
+    }
+}
+
+/// <summary>
+/// Handler for updating visitor's contact information.
+/// </summary>
+public class UpdateVisitorContactCommandHandler(IVisitorRepository visitorRepository)
+    : IRequestHandler<UpdateVisitorContactCommand, Unit>
+{
+    private readonly IVisitorRepository _visitorRepository = visitorRepository;
+
+    public async Task<Unit> Handle(UpdateVisitorContactCommand request, CancellationToken cancellationToken)
+    {
+        var visitor = await _visitorRepository.GetByIdAsync(request.VisitorId)
+            ?? throw new InvalidOperationException($"Visitor with ID {request.VisitorId} not found");
+
+        // Update contact information
+        if (request.Email != null)
+        {
+            visitor.User.Email = string.IsNullOrWhiteSpace(request.Email) ? null : request.Email;
+        }
+
+        if (request.PhoneNumber != null)
+        {
+            visitor.User.PhoneNumber = string.IsNullOrWhiteSpace(request.PhoneNumber) ? null : request.PhoneNumber;
+        }
+
+        // Validate that at least one contact method remains
+        if (!visitor.User.HasContactInformation())
+        {
+            throw new InvalidOperationException("At least one contact method (email or phone) must be provided");
+        }
+
+        visitor.User.UpdatedAt = DateTime.UtcNow;
+        await _visitorRepository.UpdateAsync(visitor);
 
         return Unit.Value;
     }

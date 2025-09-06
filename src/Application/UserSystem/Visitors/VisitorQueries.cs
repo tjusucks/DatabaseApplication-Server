@@ -32,7 +32,7 @@ public record VisitorHistoryDto(
     int VisitorId,
     string Username,
     string DisplayName,
-    string Email,
+    string? Email,
     string? PhoneNumber,
     DateTime? BirthDate,
     int? Age,

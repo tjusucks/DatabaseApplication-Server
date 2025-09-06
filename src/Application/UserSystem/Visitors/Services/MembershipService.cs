@@ -26,11 +26,28 @@ public static class MembershipService
     }
 
     /// <summary>
-    /// Gets the discount multiplier for a member level.
+    /// Gets the discount multiplier for a visitor.
+    /// Only members are eligible for discounts.
+    /// </summary>
+    /// <param name="visitor">The visitor to check.</param>
+    /// <returns>The discount multiplier (e.g., 0.7 for 30% discount).</returns>
+    public static decimal GetDiscountMultiplier(Visitor visitor)
+    {
+        // Only members get discounts
+        if (visitor.VisitorType != VisitorType.Member)
+        {
+            return MembershipConstants.DiscountMultipliers.Bronze; // No discount for regular visitors
+        }
+
+        return GetDiscountMultiplierByLevel(visitor.MemberLevel);
+    }
+
+    /// <summary>
+    /// Gets the discount multiplier for a member level (internal helper method).
     /// </summary>
     /// <param name="memberLevel">The member level.</param>
     /// <returns>The discount multiplier (e.g., 0.7 for 30% discount).</returns>
-    public static decimal GetDiscountMultiplier(string? memberLevel)
+    internal static decimal GetDiscountMultiplierByLevel(string? memberLevel)
     {
         return memberLevel switch
         {
@@ -43,26 +60,53 @@ public static class MembershipService
 
     /// <summary>
     /// Calculates the final price after applying member discount.
+    /// Only members are eligible for discounts.
+    /// </summary>
+    /// <param name="originalPrice">The original price.</param>
+    /// <param name="visitor">The visitor to calculate discount for.</param>
+    /// <returns>The final price after discount.</returns>
+    public static decimal CalculateDiscountedPrice(decimal originalPrice, Visitor visitor)
+    {
+        var discountMultiplier = GetDiscountMultiplier(visitor);
+        return originalPrice * discountMultiplier;
+    }
+
+    /// <summary>
+    /// Calculates the final price after applying member discount by level (internal helper method).
     /// </summary>
     /// <param name="originalPrice">The original price.</param>
     /// <param name="memberLevel">The member level.</param>
     /// <returns>The final price after discount.</returns>
-    public static decimal CalculateDiscountedPrice(decimal originalPrice, string? memberLevel)
+    internal static decimal CalculateDiscountedPriceByLevel(decimal originalPrice, string? memberLevel)
     {
-        var discountMultiplier = GetDiscountMultiplier(memberLevel);
+        var discountMultiplier = GetDiscountMultiplierByLevel(memberLevel);
         return originalPrice * discountMultiplier;
     }
 
     /// <summary>
     /// Updates the visitor's member level based on their current points.
+    /// Only members can have their levels updated.
     /// </summary>
     /// <param name="visitor">The visitor to update.</param>
     /// <returns>True if the level was changed, false otherwise.</returns>
     public static bool UpdateMemberLevel(Visitor visitor)
     {
+        // Only members can have member levels
+        if (visitor.VisitorType != VisitorType.Member)
+        {
+            // Regular visitors always have Bronze level (no benefits)
+            var regularLevelChanged = visitor.MemberLevel != MembershipConstants.LevelNames.Bronze;
+            if (regularLevelChanged)
+            {
+                visitor.MemberLevel = MembershipConstants.LevelNames.Bronze;
+                visitor.UpdatedAt = DateTime.UtcNow;
+            }
+            return regularLevelChanged;
+        }
+
         var newLevel = DetermineMemberLevel(visitor.Points);
         var levelChanged = visitor.MemberLevel != newLevel;
-        
+
         if (levelChanged)
         {
             visitor.MemberLevel = newLevel;
@@ -74,17 +118,27 @@ public static class MembershipService
 
     /// <summary>
     /// Upgrades a visitor to member status.
+    /// Requires either phone number or email to be registered.
     /// </summary>
     /// <param name="visitor">The visitor to upgrade.</param>
+    /// <exception cref="InvalidOperationException">Thrown when visitor doesn't meet membership requirements.</exception>
     public static void UpgradeToMember(Visitor visitor)
     {
-        if (visitor.VisitorType == VisitorType.Regular)
+        if (visitor.VisitorType != VisitorType.Regular)
         {
-            visitor.VisitorType = VisitorType.Member;
-            visitor.MemberSince = DateTime.UtcNow;
-            visitor.MemberLevel = DetermineMemberLevel(visitor.Points);
-            visitor.UpdatedAt = DateTime.UtcNow;
+            return; // Already a member
         }
+
+        // Check membership requirements - either email or phone number is required
+        if (!visitor.User.IsEligibleForMemberUpgrade())
+        {
+            throw new InvalidOperationException("Either email or phone number is required to become a member");
+        }
+
+        visitor.VisitorType = VisitorType.Member;
+        visitor.MemberSince = DateTime.UtcNow;
+        visitor.MemberLevel = DetermineMemberLevel(visitor.Points);
+        visitor.UpdatedAt = DateTime.UtcNow;
     }
 
     /// <summary>

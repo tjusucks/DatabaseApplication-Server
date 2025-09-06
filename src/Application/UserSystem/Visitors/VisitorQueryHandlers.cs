@@ -173,10 +173,18 @@ public class SearchVisitorsQueryHandler(IVisitorRepository visitorRepository) : 
             VisitorType = v.VisitorType,
             Points = v.Points,
             MemberLevel = v.MemberLevel,
+            MemberSince = v.MemberSince,
             IsBlacklisted = v.IsBlacklisted,
             Height = v.Height,
             CreatedAt = v.CreatedAt,
-            UpdatedAt = v.UpdatedAt
+            UpdatedAt = v.UpdatedAt,
+            // Map user information
+            Username = v.User.Username,
+            Email = v.User.Email,
+            DisplayName = v.User.DisplayName,
+            PhoneNumber = v.User.PhoneNumber,
+            BirthDate = v.User.BirthDate,
+            Gender = v.User.Gender
         }).ToList();
 
         return new SearchVisitorsResult

@@ -35,9 +35,9 @@ public class VisitorRepositoryTests : IDisposable
 
         var users = new[]
         {
-            new User { UserId = 1, Username = "user1", Email = "user1@test.com", DisplayName = "User 1", RoleId = 1 },
-            new User { UserId = 2, Username = "user2", Email = "user2@test.com", DisplayName = "User 2", RoleId = 1 },
-            new User { UserId = 3, Username = "user3", Email = "user3@test.com", DisplayName = "User 3", RoleId = 1 }
+            new User { UserId = 1, Username = "user1", Email = "user1@test.com", DisplayName = "User 1", PhoneNumber = "1234567890", RoleId = 1 },
+            new User { UserId = 2, Username = "user2", Email = "user2@test.com", DisplayName = "User 2", PhoneNumber = "1234567891", RoleId = 1 },
+            new User { UserId = 3, Username = "user3", Email = "user3@test.com", DisplayName = "User 3", PhoneNumber = "1234567892", RoleId = 1 }
         };
         _context.Users.AddRange(users);
 
@@ -210,18 +210,27 @@ public class VisitorRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task AddPointsAsync_ShouldAddPointsToVisitor()
+    public async Task AddPointsAsync_ShouldAddPointsToMember()
     {
-        // Arrange
-        var originalPoints = 500;
+        // Arrange - Use visitor 2 who is a member
+        var originalPoints = 1500;
 
         // Act
-        await _repository.AddPointsAsync(1, 200);
+        await _repository.AddPointsAsync(2, 200);
 
         // Assert
-        var visitor = await _repository.GetByIdAsync(1);
+        var visitor = await _repository.GetByIdAsync(2);
         Assert.NotNull(visitor);
         Assert.Equal(originalPoints + 200, visitor.Points);
+    }
+
+    [Fact]
+    public async Task AddPointsAsync_WhenRegularVisitor_ShouldThrowException()
+    {
+        // Act & Assert - Visitor 1 is regular, should throw exception
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _repository.AddPointsAsync(1, 200));
+        Assert.Contains("Only members can earn points", exception.Message);
     }
 
     [Fact]
@@ -240,14 +249,23 @@ public class VisitorRepositoryTests : IDisposable
     [Fact]
     public async Task DeductPointsAsync_WhenInsufficientPoints_ShouldReturnFalse()
     {
-        // Act
-        var result = await _repository.DeductPointsAsync(1, 1000); // Visitor 1 has only 500 points
+        // Act - Use visitor 2 (member) but try to deduct more than they have
+        var result = await _repository.DeductPointsAsync(2, 2000); // Visitor 2 has only 1500 points
 
         // Assert
         Assert.False(result);
-        var visitor = await _repository.GetByIdAsync(1);
+        var visitor = await _repository.GetByIdAsync(2);
         Assert.NotNull(visitor);
-        Assert.Equal(500, visitor.Points); // Points should remain unchanged
+        Assert.Equal(1500, visitor.Points); // Points should remain unchanged
+    }
+
+    [Fact]
+    public async Task DeductPointsAsync_WhenRegularVisitor_ShouldThrowException()
+    {
+        // Act & Assert - Visitor 1 is regular, should throw exception
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _repository.DeductPointsAsync(1, 100));
+        Assert.Contains("Only members can use points", exception.Message);
     }
 
     [Fact]
@@ -267,6 +285,15 @@ public class VisitorRepositoryTests : IDisposable
 
     public void Dispose()
     {
-        _context.Dispose();
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _context?.Dispose();
+        }
     }
 }

@@ -237,7 +237,43 @@ dotnet ef database update
 - 使用固定ID确保代码中的`RoleId = 1`等引用有效
 - 种子数据只在首次迁移时插入，后续不会重复
 
-## 🔌 集成接口
+## � **与设计文档的差异对比**
+
+### **设计文档中没有，但我们实现中新增的字段**
+
+#### **`users` 表新增字段：**
+- `permission_level` (NUMBER(2)) - 权限等级控制，设计文档中没有
+- `register_time` (TIMESTAMP) - 注册时间，设计文档中没有
+- `created_at` (TIMESTAMP) - 创建时间，设计文档中没有
+- `updated_at` (TIMESTAMP) - 更新时间，设计文档中没有
+
+#### **`visitors` 表新增字段：**
+- `created_at` (TIMESTAMP) - 创建时间，设计文档中没有
+- `updated_at` (TIMESTAMP) - 更新时间，设计文档中没有
+
+#### **所有表通用新增：**
+- 几乎所有表都添加了 `created_at` 和 `updated_at` 时间戳字段，用于审计追踪
+
+### **业务逻辑差异**
+| 差异项 | 原设计 | 当前实现 |
+|--------|--------|----------|
+| 联系方式要求 | 邮箱必填 | 邮箱或手机号二选一 |
+| 会员升级条件 | 无特殊要求 | 必须有联系方式 |
+| 积分系统 | 基础记录 | 自动等级升级 |
+| 手机号约束 | 无唯一约束 | 添加唯一约束 |
+| 数据审计 | 无时间戳 | 完整的创建/更新时间追踪 |
+
+### **本分支新建的数据库表（29张）**
+```
+roles, users, visitors, blacklist, employees, staff_teams, team_members,
+entry_records, tickets, ticket_types, price_rules, price_histories,
+promotions, promotion_ticket_types, promotion_conditions, promotion_actions,
+reservations, reservation_items, refund_records, coupons, amusement_rides,
+ride_traffic_stats, maintenance_records, inspection_records, seasonal_events,
+salary_records, attendances, employee_reviews, financial_records
+```
+
+## �🔌 集成接口
 
 ### **命令接口 (写操作)**
 ```csharp

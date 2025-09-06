@@ -7,11 +7,12 @@ namespace DbApp.Application.UserSystem.Visitors;
 
 /// <summary>
 /// Command to create a new visitor with complete user information.
+/// Either email or phone number must be provided.
 /// </summary>
 /// <param name="Username">Unique username for the visitor.</param>
-/// <param name="Email">Email address for communication.</param>
+/// <param name="Email">Email address for communication (optional if phone provided).</param>
 /// <param name="DisplayName">Display name for the visitor.</param>
-/// <param name="PhoneNumber">Phone number for contact.</param>
+/// <param name="PhoneNumber">Phone number for contact (optional if email provided).</param>
 /// <param name="BirthDate">Birth date for age verification.</param>
 /// <param name="Gender">Gender information.</param>
 /// <param name="VisitorType">Type of visitor (regular or member).</param>
@@ -19,7 +20,7 @@ namespace DbApp.Application.UserSystem.Visitors;
 /// <param name="PasswordHash">Hashed password for authentication.</param>
 public record CreateVisitorCommand(
     string Username,
-    string Email,
+    string? Email,
     string DisplayName,
     string? PhoneNumber,
     DateTime? BirthDate,
@@ -112,3 +113,18 @@ public record UnblacklistVisitorCommand(int VisitorId) : IRequest<Unit>;
 /// </summary>
 /// <param name="VisitorId">The visitor ID to delete.</param>
 public record DeleteVisitorCommand(int VisitorId) : IRequest<Unit>;
+
+/// <summary>
+/// Command to update visitor's contact information (email and phone).
+/// This allows users to complete their profile for member upgrade.
+/// </summary>
+/// <param name="VisitorId">The visitor ID to update.</param>
+/// <param name="Email">New email address.</param>
+/// <param name="PhoneNumber">New phone number.</param>
+public record UpdateVisitorContactCommand(
+    int VisitorId,
+    string? Email = null,
+    string? PhoneNumber = null
+) : IRequest<Unit>;
+
+

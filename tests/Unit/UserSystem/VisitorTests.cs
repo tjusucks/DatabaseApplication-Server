@@ -29,7 +29,7 @@ public class VisitorTests
             Email: "test@example.com",
             DisplayName: "Test User",
             PhoneNumber: "1234567890",
-            BirthDate: new DateTime(1990, 1, 1),
+            BirthDate: new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             Gender: Gender.Male,
             VisitorType: VisitorType.Regular,
             Height: 175,
@@ -165,7 +165,7 @@ public class VisitorTests
                 DisplayName = "Test User",
                 Email = "test@example.com",
                 PhoneNumber = "1234567890",
-                BirthDate = new DateTime(1990, 1, 1),
+                BirthDate = new DateTime(1990, 1, 1, 0, 0, 0, DateTimeKind.Utc),
                 RegisterTime = DateTime.UtcNow.AddDays(-30)
             }
         };

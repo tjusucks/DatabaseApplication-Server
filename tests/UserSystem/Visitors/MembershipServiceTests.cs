@@ -33,44 +33,63 @@ public class MembershipServiceTests
     }
 
     [Theory]
-    [InlineData("Bronze", 1.0)]    // 无折扣 (100%)
-    [InlineData("Silver", 0.9)]    // 9折 (90%)
-    [InlineData("Gold", 0.8)]      // 8折 (80%)
-    [InlineData("Platinum", 0.7)]  // 7折 (70%)
-    [InlineData(null, 1.0)]
-    [InlineData("Unknown", 1.0)]
-    public void GetDiscountMultiplier_ShouldReturnCorrectMultiplier(string? memberLevel, decimal expectedMultiplier)
+    [InlineData(VisitorType.Member, "Bronze", 1.0)]    // 会员Bronze无折扣 (100%)
+    [InlineData(VisitorType.Member, "Silver", 0.9)]    // 会员Silver 9折 (90%)
+    [InlineData(VisitorType.Member, "Gold", 0.8)]      // 会员Gold 8折 (80%)
+    [InlineData(VisitorType.Member, "Platinum", 0.7)]  // 会员Platinum 7折 (70%)
+    [InlineData(VisitorType.Regular, "Silver", 1.0)]   // 普通访客无折扣 (100%)
+    [InlineData(VisitorType.Regular, "Gold", 1.0)]     // 普通访客无折扣 (100%)
+    public void GetDiscountMultiplier_ShouldReturnCorrectMultiplier(VisitorType visitorType, string memberLevel, decimal expectedMultiplier)
     {
+        // Arrange
+        var visitor = new Visitor
+        {
+            VisitorType = visitorType,
+            MemberLevel = memberLevel,
+            User = new User { Email = "test@example.com", PhoneNumber = "1234567890" }
+        };
+
         // Act
-        var result = MembershipService.GetDiscountMultiplier(memberLevel);
+        var result = MembershipService.GetDiscountMultiplier(visitor);
 
         // Assert
         Assert.Equal(expectedMultiplier, result);
     }
 
     [Theory]
-    [InlineData(100.0, "Bronze", 100.0)]    // 100 * 1.0 = 100 (无折扣)
-    [InlineData(100.0, "Silver", 90.0)]     // 100 * 0.9 = 90 (9折)
-    [InlineData(100.0, "Gold", 80.0)]       // 100 * 0.8 = 80 (8折)
-    [InlineData(100.0, "Platinum", 70.0)]   // 100 * 0.7 = 70 (7折)
-    [InlineData(50.0, "Gold", 40.0)]        // 50 * 0.8 = 40
-    public void CalculateDiscountedPrice_ShouldReturnCorrectPrice(decimal originalPrice, string memberLevel, decimal expectedPrice)
+    [InlineData(100.0, VisitorType.Member, "Bronze", 100.0)]    // 会员Bronze: 100 * 1.0 = 100 (无折扣)
+    [InlineData(100.0, VisitorType.Member, "Silver", 90.0)]     // 会员Silver: 100 * 0.9 = 90 (9折)
+    [InlineData(100.0, VisitorType.Member, "Gold", 80.0)]       // 会员Gold: 100 * 0.8 = 80 (8折)
+    [InlineData(100.0, VisitorType.Member, "Platinum", 70.0)]   // 会员Platinum: 100 * 0.7 = 70 (7折)
+    [InlineData(50.0, VisitorType.Member, "Gold", 40.0)]        // 会员Gold: 50 * 0.8 = 40
+    [InlineData(100.0, VisitorType.Regular, "Gold", 100.0)]     // 普通访客: 100 * 1.0 = 100 (无折扣)
+    public void CalculateDiscountedPrice_ShouldReturnCorrectPrice(decimal originalPrice, VisitorType visitorType, string memberLevel, decimal expectedPrice)
     {
+        // Arrange
+        var visitor = new Visitor
+        {
+            VisitorType = visitorType,
+            MemberLevel = memberLevel,
+            User = new User { Email = "test@example.com", PhoneNumber = "1234567890" }
+        };
+
         // Act
-        var result = MembershipService.CalculateDiscountedPrice(originalPrice, memberLevel);
+        var result = MembershipService.CalculateDiscountedPrice(originalPrice, visitor);
 
         // Assert
         Assert.Equal(expectedPrice, result);
     }
 
     [Fact]
-    public void UpdateMemberLevel_WhenLevelChanges_ShouldReturnTrueAndUpdateLevel()
+    public void UpdateMemberLevel_WhenMemberLevelChanges_ShouldReturnTrueAndUpdateLevel()
     {
         // Arrange
         var visitor = new Visitor
         {
+            VisitorType = VisitorType.Member, // Must be a member
             Points = 1500,
-            MemberLevel = MembershipConstants.LevelNames.Bronze
+            MemberLevel = MembershipConstants.LevelNames.Bronze,
+            User = new User { Email = "test@example.com", PhoneNumber = "1234567890" }
         };
 
         // Act
@@ -79,6 +98,27 @@ public class MembershipServiceTests
         // Assert
         Assert.True(result);
         Assert.Equal(MembershipConstants.LevelNames.Silver, visitor.MemberLevel);
+        Assert.NotNull(visitor.UpdatedAt);
+    }
+
+    [Fact]
+    public void UpdateMemberLevel_WhenRegularVisitor_ShouldSetBronzeLevel()
+    {
+        // Arrange
+        var visitor = new Visitor
+        {
+            VisitorType = VisitorType.Regular, // Regular visitor
+            Points = 1500, // Even with high points
+            MemberLevel = MembershipConstants.LevelNames.Silver, // Currently Silver
+            User = new User { Email = "test@example.com", PhoneNumber = "1234567890" }
+        };
+
+        // Act
+        var result = MembershipService.UpdateMemberLevel(visitor);
+
+        // Assert
+        Assert.True(result); // Level should change from Silver to Bronze
+        Assert.Equal(MembershipConstants.LevelNames.Bronze, visitor.MemberLevel);
         Assert.NotNull(visitor.UpdatedAt);
     }
 
@@ -101,13 +141,18 @@ public class MembershipServiceTests
     }
 
     [Fact]
-    public void UpgradeToMember_WhenRegularVisitor_ShouldUpgradeToMember()
+    public void UpgradeToMember_WhenRegularVisitorWithPhoneAndEmail_ShouldUpgradeToMember()
     {
         // Arrange
         var visitor = new Visitor
         {
             VisitorType = VisitorType.Regular,
-            Points = 1200
+            Points = 1200,
+            User = new User
+            {
+                Email = "test@example.com",
+                PhoneNumber = "1234567890"
+            }
         };
 
         // Act
@@ -118,6 +163,75 @@ public class MembershipServiceTests
         Assert.NotNull(visitor.MemberSince);
         Assert.Equal(MembershipConstants.LevelNames.Silver, visitor.MemberLevel);
         Assert.NotNull(visitor.UpdatedAt);
+    }
+
+    [Fact]
+    public void UpgradeToMember_WhenVisitorHasOnlyEmail_ShouldUpgradeSuccessfully()
+    {
+        // Arrange
+        var visitor = new Visitor
+        {
+            VisitorType = VisitorType.Regular,
+            Points = 1200,
+            User = new User
+            {
+                Email = "test@example.com",
+                PhoneNumber = null // Only email, no phone
+            }
+        };
+
+        // Act
+        MembershipService.UpgradeToMember(visitor);
+
+        // Assert
+        Assert.Equal(VisitorType.Member, visitor.VisitorType);
+        Assert.NotNull(visitor.MemberSince);
+        Assert.Equal(MembershipConstants.LevelNames.Silver, visitor.MemberLevel);
+    }
+
+    [Fact]
+    public void UpgradeToMember_WhenVisitorHasOnlyPhone_ShouldUpgradeSuccessfully()
+    {
+        // Arrange
+        var visitor = new Visitor
+        {
+            VisitorType = VisitorType.Regular,
+            Points = 1200,
+            User = new User
+            {
+                Email = null, // No email
+                PhoneNumber = "1234567890"
+            }
+        };
+
+        // Act
+        MembershipService.UpgradeToMember(visitor);
+
+        // Assert
+        Assert.Equal(VisitorType.Member, visitor.VisitorType);
+        Assert.NotNull(visitor.MemberSince);
+        Assert.Equal(MembershipConstants.LevelNames.Silver, visitor.MemberLevel);
+    }
+
+    [Fact]
+    public void UpgradeToMember_WhenVisitorMissingBothEmailAndPhone_ShouldThrowException()
+    {
+        // Arrange
+        var visitor = new Visitor
+        {
+            VisitorType = VisitorType.Regular,
+            Points = 1200,
+            User = new User
+            {
+                Email = null, // Missing email
+                PhoneNumber = null // Missing phone
+            }
+        };
+
+        // Act & Assert
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            MembershipService.UpgradeToMember(visitor));
+        Assert.Contains("Either email or phone number is required", exception.Message);
     }
 
     [Fact]
