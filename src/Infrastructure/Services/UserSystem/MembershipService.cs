@@ -1,5 +1,5 @@
-using DbApp.Domain.Interfaces.UserSystem;
 using DbApp.Domain.Constants.UserSystem;
+using DbApp.Domain.Interfaces.UserSystem;
 
 namespace DbApp.Infrastructure.Services.UserSystem;
 

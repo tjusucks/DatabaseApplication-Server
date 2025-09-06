@@ -3,6 +3,7 @@ using DbApp.Domain.Interfaces.UserSystem;
 using DbApp.Domain.Specifications.Common;
 using DbApp.Domain.Specifications.UserSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.UserSystem.EntryRecords;
 
@@ -22,7 +23,7 @@ public class EntryRecordQueryHandlers(IEntryRecordRepository entryRecordRepo, IM
     public async Task<EntryRecordDto?> Handle(GetEntryRecordByIdQuery request, CancellationToken cancellationToken)
     {
         var entryRecord = await _entryRecordRepo.GetByIdAsync(request.EntryRecordId)
-            ?? throw new KeyNotFoundException($"Entry record with ID {request.EntryRecordId} not found.");
+            ?? throw new NotFoundException($"Entry record with ID {request.EntryRecordId} not found.");
         return _mapper.Map<EntryRecordDto>(entryRecord);
     }
 

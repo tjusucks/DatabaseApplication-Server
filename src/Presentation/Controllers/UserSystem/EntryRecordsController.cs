@@ -20,15 +20,8 @@ public class EntryRecordsController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateEntryRecordCommand command)
     {
-        try
-        {
-            var entryRecordId = await _mediator.Send(command);
-            return CreatedAtAction(nameof(GetById), new { id = entryRecordId }, new { EntryRecordId = entryRecordId });
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { Error = ex.Message });
-        }
+        var entryRecordId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id = entryRecordId }, new { EntryRecordId = entryRecordId });
     }
 
     /// <summary>

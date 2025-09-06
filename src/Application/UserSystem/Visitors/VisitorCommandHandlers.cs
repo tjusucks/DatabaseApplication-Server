@@ -2,6 +2,7 @@ using DbApp.Domain.Constants.UserSystem;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.UserSystem.Visitors;
 
@@ -54,7 +55,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(UpdateVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
+            ?? throw new NotFoundException($"Visitor {request.VisitorId} not found.");
 
         if (request.DisplayName != null)
         {
@@ -88,7 +89,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(DeleteVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
+            ?? throw new NotFoundException($"Visitor {request.VisitorId} not found.");
 
         await _visitorRepo.DeleteAsync(visitor);
         return Unit.Value;
@@ -97,7 +98,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(BlacklistVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
+            ?? throw new NotFoundException($"Visitor {request.VisitorId} not found.");
 
         visitor.IsBlacklisted = true;
         await _visitorRepo.UpdateAsync(visitor);
@@ -107,7 +108,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(UnblacklistVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
+            ?? throw new NotFoundException($"Visitor {request.VisitorId} not found.");
 
         visitor.IsBlacklisted = false;
         await _visitorRepo.UpdateAsync(visitor);
@@ -117,7 +118,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(UpgradeToMemberCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
+            ?? throw new NotFoundException($"Visitor {request.VisitorId} not found.");
 
         visitor.MemberLevel = MembershipConstants.LevelNames.Bronze;
         visitor.MemberSince = DateTime.UtcNow;
@@ -128,7 +129,7 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(RemoveMembershipCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new KeyNotFoundException($"Visitor {request.VisitorId} not found.");
+            ?? throw new NotFoundException($"Visitor {request.VisitorId} not found.");
 
         visitor.MemberLevel = null;
         visitor.MemberSince = null;

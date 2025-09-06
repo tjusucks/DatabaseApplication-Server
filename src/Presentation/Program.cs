@@ -2,8 +2,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
 using DotNetEnv;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using static DbApp.Domain.Exceptions;
 
 // Load environment variables from .env file if it exists.
 if (File.Exists(".env"))
@@ -57,7 +59,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 // Register repository implementations for dependency injection.
 builder.Services.Scan(scan => scan
     .FromAssemblies(typeof(ApplicationDbContext).Assembly)
-    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository")))
+    .AddClasses(classes => classes.Where(type => type.Name.EndsWith("Repository") || type.Name.EndsWith("Service")))
     .AsImplementedInterfaces()
     .WithScopedLifetime());
 
@@ -97,6 +99,29 @@ if (app.Environment.IsDevelopment())
 
 // Force HTTPS redirection for security.
 app.UseHttpsRedirection();
+
+// Register exception handling middleware.
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.ContentType = "application/json";
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        context.Response.StatusCode = exception switch
+        {
+            NotFoundException => StatusCodes.Status404NotFound,
+            ForbiddenException => StatusCodes.Status403Forbidden,
+            ValidationException => StatusCodes.Status400BadRequest,
+            ConflictException => StatusCodes.Status409Conflict,
+            UnauthorizedException => StatusCodes.Status401Unauthorized,
+            _ => StatusCodes.Status500InternalServerError
+        };
+
+        var result = new { Error = exception?.Message };
+        await context.Response.WriteAsJsonAsync(result);
+    });
+});
 
 // Add a root endpoint for the welcome page.
 app.MapGet("/", async context =>
