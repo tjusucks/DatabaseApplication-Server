@@ -68,7 +68,7 @@ public record GetGroupedEntryRecordStatsQuery(
     string? ExitGate,
     int? TicketId,
     bool? IsActive,
-    bool Descend = true,
+    bool Descending = true,
     string GroupBy = "Date",
     string OrderBy = "TotalEntries"
 ) : IRequest<List<GroupedEntryRecordStatsDto>>;

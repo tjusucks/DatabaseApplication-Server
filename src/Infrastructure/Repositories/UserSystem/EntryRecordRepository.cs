@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
 using DbApp.Domain.Specifications.Common;
@@ -72,7 +73,7 @@ public class EntryRecordRepository(ApplicationDbContext dbContext) : IEntryRecor
             .AsQueryable();
 
         // Apply filters
-        query = ApplySpecFilters(query, spec.InnerSpec);
+        query = ApplyFilters(query, spec.InnerSpec);
 
         // Apply sorting
         query = ApplySorting(query, spec.OrderBy, spec.Descending);
@@ -92,7 +93,7 @@ public class EntryRecordRepository(ApplicationDbContext dbContext) : IEntryRecor
             .AsQueryable();
 
         // Apply filters
-        query = ApplySpecFilters(query, spec);
+        query = ApplyFilters(query, spec);
 
         var totalEntries = await query.CountAsync();
         var totalExits = await query.CountAsync(er => er.ExitTime != null);
@@ -125,60 +126,100 @@ public class EntryRecordRepository(ApplicationDbContext dbContext) : IEntryRecor
             .ThenInclude(v => v.User)
             .AsQueryable();
 
-        query = ApplySpecFilters(query, spec);
+        query = ApplyFilters(query, spec);
         return await query.CountAsync();
     }
 
-    public async Task<List<EntryRecordStats>> GetGroupedStatsAsync(GroupedSpec<EntryRecordSpec> spec)
+    public async Task<List<GroupedEntryRecordStats>> GetGroupedStatsAsync(GroupedSpec<EntryRecordSpec> spec)
     {
         var query = _dbContext.EntryRecords
             .Include(er => er.Visitor)
             .ThenInclude(v => v.User)
             .AsQueryable();
 
-        // Apply filters
-        if (spec.InnerSpec != null)
+        query = ApplyFilters(query, spec.InnerSpec);
+
+        // Special handling for date grouping
+        if (spec.GroupBy.ToLowerInvariant() == "date")
         {
-            query = ApplySpecFilters(query, spec.InnerSpec);
+            var dateGroupedQuery = query.GroupBy(er => er.EntryTime.Date);
+
+            var dateResults = await dateGroupedQuery
+                .Select(g => new
+                {
+                    GroupKey = g.Key, // This will be DateTime (date only)
+                    TotalEntries = g.Count(),
+                    TotalExits = g.Count(er => er.ExitTime != null),
+                    ActiveEntries = g.Count(er => er.ExitTime == null),
+                    UniqueVisitors = g.Select(er => er.VisitorId).Distinct().Count(),
+                    FirstEntryTime = g.Min(er => er.EntryTime),
+                    LastEntryTime = g.Max(er => er.EntryTime),
+                    EntryGateCount = g.Select(er => er.EntryGate).Distinct().Count(),
+                    ExitGateCount = g.Where(er => er.ExitGate != null).Select(er => er.ExitGate).Distinct().Count()
+                })
+                .ToListAsync();
+
+            // Convert to final result in memory with string formatting
+            return [.. dateResults.Select(r => new GroupedEntryRecordStats
+            {
+                GroupKey = r.GroupKey.ToString("yyyy-MM-dd"),
+                GroupName = r.GroupKey.ToString("yyyy-MM-dd"),
+                TotalEntries = r.TotalEntries,
+                TotalExits = r.TotalExits,
+                ActiveEntries = r.ActiveEntries,
+                UniqueVisitors = r.UniqueVisitors,
+                FirstEntryTime = r.FirstEntryTime,
+                LastEntryTime = r.LastEntryTime,
+                EntryGateCount = r.EntryGateCount,
+                ExitGateCount = r.ExitGateCount
+            })];
         }
 
-        // Group by specified field
+        // Handle other grouping types normally
         var groupedQuery = spec.GroupBy.ToLowerInvariant() switch
         {
-            "entrygate" => query.GroupBy(er => er.EntryGate),
-            "exitgate" => query.GroupBy(er => er.ExitGate ?? "No Exit"),
-            "date" => query.GroupBy(er => er.EntryTime.Date.ToString("yyyy-MM-dd")),
-            "isactive" => query.GroupBy(er => er.ExitTime == null ? "Active" : "Exited"),
-            _ => query.GroupBy(er => er.EntryGate)
+            "entrygate" => query.GroupBy(er => new
+            {
+                Key = er.EntryGate,
+                Name = er.EntryGate
+            }),
+            "exitgate" => query.GroupBy(er => new
+            {
+                Key = er.ExitGate ?? "No Exit",
+                Name = er.ExitGate ?? "No Exit"
+            }),
+            "isactive" => query.GroupBy(er => new
+            {
+                Key = er.ExitTime == null ? "Active" : "Exited",
+                Name = er.ExitTime == null ? "Active" : "Exited"
+            }),
+            _ => query.GroupBy(er => new
+            {
+                Key = er.EntryGate,
+                Name = er.EntryGate
+            })
         };
 
         var results = await groupedQuery
-            .Select(g => new
+            .Select(g => new GroupedEntryRecordStats
             {
-                GroupKey = g.Key.ToString(),
+                GroupKey = g.Key.Key,
+                GroupName = g.Key.Name,
                 TotalEntries = g.Count(),
                 TotalExits = g.Count(er => er.ExitTime != null),
                 ActiveEntries = g.Count(er => er.ExitTime == null),
                 UniqueVisitors = g.Select(er => er.VisitorId).Distinct().Count(),
                 FirstEntryTime = g.Min(er => er.EntryTime),
-                LastEntryTime = g.Max(er => er.EntryTime)
+                LastEntryTime = g.Max(er => er.EntryTime),
+                EntryGateCount = g.Select(er => er.EntryGate).Distinct().Count(),
+                ExitGateCount = g.Where(er => er.ExitGate != null).Select(er => er.ExitGate).Distinct().Count()
             })
             .ToListAsync();
 
-        return [.. results.Select(r => new EntryRecordStats
-        {
-            TotalEntries = r.TotalEntries,
-            TotalExits = r.TotalExits,
-            ActiveEntries = r.ActiveEntries,
-            UniqueVisitors = r.UniqueVisitors,
-            FirstEntryTime = r.FirstEntryTime,
-            LastEntryTime = r.LastEntryTime,
-            EntryGateCount = 1, // For grouped stats, each group represents one gate/category
-            ExitGateCount = r.TotalExits > 0 ? 1 : 0
-        })];
+        return results;
     }
 
-    private static IQueryable<EntryRecord> ApplySpecFilters(IQueryable<EntryRecord> query, EntryRecordSpec spec)
+    private static IQueryable<EntryRecord> ApplyFilters(IQueryable<EntryRecord> query, EntryRecordSpec spec)
     {
         if (!string.IsNullOrWhiteSpace(spec.Keyword))
         {

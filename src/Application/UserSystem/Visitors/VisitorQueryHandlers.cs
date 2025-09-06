@@ -33,11 +33,18 @@ public class VisitorQueryHandlers(IVisitorRepository visitorRepo, IMapper mapper
 
     public async Task<SearchVisitorsResult> Handle(SearchVisitorsQuery request, CancellationToken cancellationToken)
     {
-        var searchSpec = _mapper.Map<PaginatedSpec<VisitorSpec>>(request);
-        var countSpec = searchSpec.InnerSpec;
+        var searchSpec = _mapper.Map<VisitorSpec>(request);
+        var paginatedSpec = new PaginatedSpec<VisitorSpec>
+        {
+            InnerSpec = searchSpec,
+            Page = request.Page,
+            PageSize = request.PageSize,
+            OrderBy = request.OrderBy,
+            Descending = request.Descending
+        };
 
-        var visitors = await _visitorRepo.SearchAsync(searchSpec);
-        var totalCount = await _visitorRepo.CountAsync(countSpec);
+        var visitors = await _visitorRepo.SearchAsync(paginatedSpec);
+        var totalCount = await _visitorRepo.CountAsync(paginatedSpec.InnerSpec);
 
         var resultDtos = _mapper.Map<List<VisitorDto>>(visitors);
 
@@ -60,9 +67,16 @@ public class VisitorQueryHandlers(IVisitorRepository visitorRepo, IMapper mapper
 
     public async Task<List<GroupedVisitorStatsDto>> Handle(GetGroupedVisitorStatsQuery request, CancellationToken cancellationToken)
     {
-        var groupedStatsSpec = _mapper.Map<GroupedSpec<VisitorSpec>>(request);
-        var groupedStats = await _visitorRepo.GetGroupedStatsAsync(groupedStatsSpec);
+        var searchSpec = _mapper.Map<VisitorSpec>(request);
+        var groupedSpec = new GroupedSpec<VisitorSpec>
+        {
+            InnerSpec = searchSpec,
+            GroupBy = request.GroupBy,
+            OrderBy = request.OrderBy,
+            Descending = request.Descending
+        };
 
+        var groupedStats = await _visitorRepo.GetGroupedStatsAsync(groupedSpec);
         return _mapper.Map<List<GroupedVisitorStatsDto>>(groupedStats);
     }
 }

@@ -60,5 +60,5 @@ public interface IEntryRecordRepository
     /// <summary>
     /// Get grouped entry record statistics with filtering.
     /// </summary>
-    Task<List<EntryRecordStats>> GetGroupedStatsAsync(GroupedSpec<EntryRecordSpec> spec);
+    Task<List<GroupedEntryRecordStats>> GetGroupedStatsAsync(GroupedSpec<EntryRecordSpec> spec);
 }

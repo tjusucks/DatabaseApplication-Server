@@ -35,11 +35,19 @@ public class EntryRecordQueryHandlers(IEntryRecordRepository entryRecordRepo, IM
 
     public async Task<SearchEntryRecordsResult> Handle(SearchEntryRecordsQuery request, CancellationToken cancellationToken)
     {
-        var searchSpec = _mapper.Map<PaginatedSpec<EntryRecordSpec>>(request);
-        var countSpec = searchSpec.InnerSpec;
+        var searchSpec = _mapper.Map<EntryRecordSpec>(request)
+            ?? throw new ValidationException("Invalid search parameters.");
+        var paginatedSpec = new PaginatedSpec<EntryRecordSpec>
+        {
+            InnerSpec = searchSpec,
+            Page = request.Page,
+            PageSize = request.PageSize,
+            OrderBy = request.OrderBy,
+            Descending = request.Descending
+        };
 
-        var entryRecords = await _entryRecordRepo.SearchAsync(searchSpec);
-        var totalCount = await _entryRecordRepo.CountAsync(countSpec);
+        var entryRecords = await _entryRecordRepo.SearchAsync(paginatedSpec);
+        var totalCount = await _entryRecordRepo.CountAsync(paginatedSpec.InnerSpec);
 
         var entryRecordDtos = _mapper.Map<List<EntryRecordDto>>(entryRecords);
 
@@ -47,8 +55,8 @@ public class EntryRecordQueryHandlers(IEntryRecordRepository entryRecordRepo, IM
         {
             Items = entryRecordDtos,
             TotalCount = totalCount,
-            Page = searchSpec.Page,
-            PageSize = searchSpec.PageSize,
+            Page = request.Page,
+            PageSize = request.PageSize,
         };
     }
 
@@ -61,7 +69,15 @@ public class EntryRecordQueryHandlers(IEntryRecordRepository entryRecordRepo, IM
 
     public async Task<List<GroupedEntryRecordStatsDto>> Handle(GetGroupedEntryRecordStatsQuery request, CancellationToken cancellationToken)
     {
-        var groupedSpec = _mapper.Map<GroupedSpec<EntryRecordSpec>>(request);
+        var searchSpec = _mapper.Map<EntryRecordSpec>(request);
+        var groupedSpec = new GroupedSpec<EntryRecordSpec>
+        {
+            InnerSpec = searchSpec,
+            GroupBy = request.GroupBy,
+            OrderBy = request.OrderBy,
+            Descending = request.Descending
+        };
+
         var groupedStats = await _entryRecordRepo.GetGroupedStatsAsync(groupedSpec);
         return _mapper.Map<List<GroupedEntryRecordStatsDto>>(groupedStats);
     }

@@ -53,5 +53,5 @@ public interface IVisitorRepository
     /// <summary>
     /// Get grouped visitor statistics with filtering. (admin use)
     /// </summary>
-    Task<List<VisitorStats>> GetGroupedStatsAsync(GroupedSpec<VisitorSpec> spec);
+    Task<List<GroupedVisitorStats>> GetGroupedStatsAsync(GroupedSpec<VisitorSpec> spec);
 }

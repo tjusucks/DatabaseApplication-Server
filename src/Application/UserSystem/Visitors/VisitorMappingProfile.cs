@@ -1,7 +1,6 @@
 using AutoMapper;
 using DbApp.Application.UserSystem.Users;
 using DbApp.Domain.Entities.UserSystem;
-using DbApp.Domain.Specifications.Common;
 using DbApp.Domain.Specifications.UserSystem;
 using DbApp.Domain.Statistics.UserSystem;
 
@@ -18,10 +17,11 @@ public class VisitorMappingProfile : Profile
         CreateMap<Visitor, VisitorDto>();
 
         CreateMap<VisitorStats, VisitorStatsDto>();
+        CreateMap<GroupedVisitorStats, GroupedVisitorStatsDto>();
 
         // Query to Spec mappings (for filtering/statistics).
-        CreateMap<SearchVisitorsQuery, PaginatedSpec<VisitorSpec>>();
+        CreateMap<SearchVisitorsQuery, VisitorSpec>();
         CreateMap<GetVisitorStatsQuery, VisitorSpec>();
-        CreateMap<GetGroupedVisitorStatsQuery, GroupedSpec<VisitorSpec>>();
+        CreateMap<GetGroupedVisitorStatsQuery, VisitorSpec>();
     }
 }

@@ -41,6 +41,19 @@ public class SearchVisitorsResult : PaginatedResult<VisitorDto>
 {
 }
 
-public class GroupedVisitorStatsDto : GroupedResult<VisitorStatsDto>
+public class GroupedVisitorStatsDto
 {
+    public string GroupKey { get; set; } = string.Empty;
+    public string GroupName { get; set; } = string.Empty;
+    public int TotalVisitors { get; set; }
+    public int TotalMembers { get; set; }
+    public int RegularVisitors { get; set; }
+    public int BlacklistedVisitors { get; set; }
+    public int BronzeMembers { get; set; }
+    public int SilverMembers { get; set; }
+    public int GoldMembers { get; set; }
+    public int PlatinumMembers { get; set; }
+    public decimal MembershipRate { get; set; }
+    public int TotalPointsIssued { get; set; }
+    public double AveragePointsPerMember { get; set; }
 }

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
 using DbApp.Domain.Specifications.Common;
@@ -118,7 +119,7 @@ public class VisitorRepository(ApplicationDbContext context) : IVisitorRepositor
         return await query.CountAsync();
     }
 
-    public async Task<List<VisitorStats>> GetGroupedStatsAsync(GroupedSpec<VisitorSpec> spec)
+    public async Task<List<GroupedVisitorStats>> GetGroupedStatsAsync(GroupedSpec<VisitorSpec> spec)
     {
         var query = _context.Visitors
             .Include(v => v.User)
@@ -127,37 +128,54 @@ public class VisitorRepository(ApplicationDbContext context) : IVisitorRepositor
         // Apply filters
         query = ApplyFilters(query, spec.InnerSpec);
 
-        // Group by specified field
+        // Group by specified field using anonymous object with Key and Name
         var groupedQuery = spec.GroupBy.ToLowerInvariant() switch
         {
-            "visitortype" => query.GroupBy(v => v.VisitorType.ToString()),
-            "memberlevel" => query.GroupBy(v => v.MemberLevel ?? "Regular"),
-            "isblacklisted" => query.GroupBy(v => v.IsBlacklisted ? "Blacklisted" : "Active"),
-            "gender" => query.GroupBy(v => v.User.Gender.ToString()),
-            _ => query.GroupBy(v => v.VisitorType.ToString())
+            "visitortype" => query.GroupBy(v => new
+            {
+                Key = v.VisitorType.ToString(),
+                Name = v.VisitorType.ToString()
+            }),
+            "memberlevel" => query.GroupBy(v => new
+            {
+                Key = v.MemberLevel ?? "Regular",
+                Name = v.MemberLevel ?? "Regular"
+            }),
+            "isblacklisted" => query.GroupBy(v => new
+            {
+                Key = v.IsBlacklisted ? "Blacklisted" : "Active",
+                Name = v.IsBlacklisted ? "Blacklisted" : "Active"
+            }),
+            "gender" => query.GroupBy(v => new
+            {
+                Key = v.User.Gender.ToString() ?? "Unknown",
+                Name = v.User.Gender.ToString() ?? "Unknown"
+            }),
+            _ => query.GroupBy(v => new
+            {
+                Key = v.VisitorType.ToString(),
+                Name = v.VisitorType.ToString()
+            })
         };
 
         var results = await groupedQuery
-            .Select(g => new
+            .Select(g => new GroupedVisitorStats
             {
-                GroupKey = g.Key,
+                GroupKey = g.Key.Key,
+                GroupName = g.Key.Name,
                 TotalVisitors = g.Count(),
                 TotalMembers = g.Count(v => !string.IsNullOrEmpty(v.MemberLevel)),
                 BlacklistedVisitors = g.Count(v => v.IsBlacklisted),
-                TotalPoints = g.Sum(v => v.Points)
+                TotalPointsIssued = g.Sum(v => v.Points),
+                RegularVisitors = g.Count() - g.Count(v => !string.IsNullOrEmpty(v.MemberLevel)),
+                MembershipRate = g.Any() ? (decimal)g.Count(v => !string.IsNullOrEmpty(v.MemberLevel)) / g.Count() : 0,
+                AveragePointsPerMember = g.Any(v => !string.IsNullOrEmpty(v.MemberLevel))
+                    ? (double)g.Sum(v => v.Points) / g.Count(v => !string.IsNullOrEmpty(v.MemberLevel))
+                    : 0
             })
             .ToListAsync();
 
-        return [.. results.Select(r => new VisitorStats
-        {
-            TotalVisitors = r.TotalVisitors,
-            TotalMembers = r.TotalMembers,
-            RegularVisitors = r.TotalVisitors - r.TotalMembers,
-            BlacklistedVisitors = r.BlacklistedVisitors,
-            MembershipRate = r.TotalVisitors > 0 ? (decimal)r.TotalMembers / r.TotalVisitors : 0,
-            TotalPointsIssued = r.TotalPoints,
-            AveragePointsPerMember = r.TotalMembers > 0 ? (double)r.TotalPoints / r.TotalMembers : 0
-        })];
+        return results;
     }
 
     private static IQueryable<Visitor> ApplyFilters(IQueryable<Visitor> query, VisitorSpec spec)

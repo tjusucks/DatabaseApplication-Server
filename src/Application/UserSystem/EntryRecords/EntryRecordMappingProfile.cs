@@ -1,6 +1,5 @@
 using AutoMapper;
 using DbApp.Domain.Entities.UserSystem;
-using DbApp.Domain.Specifications.Common;
 using DbApp.Domain.Specifications.UserSystem;
 using DbApp.Domain.Statistics.UserSystem;
 
@@ -16,10 +15,11 @@ public class EntryRecordMappingProfile : Profile
             .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => !src.ExitTime.HasValue));
 
         CreateMap<EntryRecordStats, EntryRecordStatsDto>();
+        CreateMap<GroupedEntryRecordStats, GroupedEntryRecordStatsDto>();
 
         // Query to Spec mappings (for filtering/statistics).
-        CreateMap<SearchEntryRecordsQuery, PaginatedSpec<EntryRecordSpec>>();
+        CreateMap<SearchEntryRecordsQuery, EntryRecordSpec>();
         CreateMap<GetEntryRecordStatsQuery, EntryRecordSpec>();
-        CreateMap<GetGroupedEntryRecordStatsQuery, GroupedSpec<EntryRecordSpec>>();
+        CreateMap<GetGroupedEntryRecordStatsQuery, EntryRecordSpec>();
     }
 }

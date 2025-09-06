@@ -48,6 +48,18 @@ public class SearchEntryRecordsResult : PaginatedResult<EntryRecordDto>
 /// <summary>
 /// DTO for grouped entry record statistics.
 /// </summary>
-public class GroupedEntryRecordStatsDto : GroupedResult<EntryRecordStatsDto>
+public class GroupedEntryRecordStatsDto
 {
+    public string GroupKey { get; set; } = string.Empty;
+    public string GroupName { get; set; } = string.Empty;
+    public int TotalEntries { get; set; }
+    public int TotalExits { get; set; }
+    public int ActiveEntries { get; set; }
+    public int UniqueVisitors { get; set; }
+    public DateTime? FirstEntryTime { get; set; }
+    public DateTime? LastEntryTime { get; set; }
+    public DateTime? FirstExitTime { get; set; }
+    public DateTime? LastExitTime { get; set; }
+    public int EntryGateCount { get; set; }
+    public int ExitGateCount { get; set; }
 }
