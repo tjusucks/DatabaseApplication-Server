@@ -152,13 +152,13 @@ public static class MembershipService
         {
             var today = DateTime.Today;
             var birthDate = visitor.User.BirthDate.Value.Date;
-            
+
             if (today.Month == birthDate.Month && today.Day == birthDate.Day)
             {
                 return MembershipConstants.PointsEarning.BirthdayBonus;
             }
         }
-        
+
         return 0;
     }
 }
