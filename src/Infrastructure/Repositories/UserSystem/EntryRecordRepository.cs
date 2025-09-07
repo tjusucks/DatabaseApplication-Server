@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
 using DbApp.Domain.Specifications.Common;

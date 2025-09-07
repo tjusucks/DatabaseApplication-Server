@@ -1,6 +1,4 @@
 using DbApp.Domain.Entities.UserSystem;
-using DbApp.Domain.Specifications.Common;
-using DbApp.Domain.Specifications.UserSystem;
 
 namespace DbApp.Domain.Interfaces.UserSystem;
 

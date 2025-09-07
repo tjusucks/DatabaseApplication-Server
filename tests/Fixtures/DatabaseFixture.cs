@@ -2,7 +2,6 @@ using System.Data.Common;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Respawn;
 
 namespace DbApp.Tests.Fixtures;

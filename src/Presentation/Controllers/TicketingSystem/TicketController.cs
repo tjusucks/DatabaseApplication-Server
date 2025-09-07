@@ -28,7 +28,7 @@ public class TicketController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <param name="query">Statistics parameters.</param>
     /// <returns>Ticket sales statistics.</returns>
-    [HttpGet("sales/stats/search")]
+    [HttpGet("sales/stats")]
     public async Task<ActionResult<TicketSaleStatsDto>> GetTicketSalesStats(
         [FromQuery] GetTicketSaleStatsQuery query)
     {
@@ -41,7 +41,7 @@ public class TicketController(IMediator mediator) : ControllerBase
     /// </summary>
     /// <param name="query">Grouped statistics parameters.</param>
     /// <returns>Grouped ticket sales statistics.</returns>
-    [HttpGet("sales/stats/grouped/search")]
+    [HttpGet("sales/stats/grouped")]
     public async Task<ActionResult<List<GroupedTicketSaleStatsDto>>> GetGroupedTicketSalesStats(
         [FromQuery] GetGroupedTicketSaleStatsQuery query)
     {

@@ -34,6 +34,7 @@
 **分层设计**: `Controller → Command/Query → Handler → Repository → Database`
 
 **关键特性**:
+
 - **单事务处理**: 确保数据一致性
 - **RESTful API**: 标准化接口设计
 - **EF Core数据种子**: 自动初始化基础数据和测试访客
@@ -44,6 +45,7 @@
 ## 基础运行流程
 
 ### **请求处理流程**
+
 ```
 1. HTTP请求 → Controller
 2. Controller → 创建Command/Query
@@ -54,6 +56,7 @@
 ```
 
 ### **典型流程示例 - 创建访客**
+
 ```
 POST /api/user/visitors
     ↓
@@ -77,6 +80,7 @@ VisitorId → Controller → JSON响应
 ### **1. 访客创建 (支持可选联系信息)**
 
 **运行流程**:
+
 1. **接收请求** → `POST /api/user/visitors`
 2. **参数验证** → DataAnnotations自动验证（邮箱和电话可选）
 3. **创建命令** → 转换为`CreateVisitorCommand`
@@ -116,6 +120,7 @@ public class CreateVisitorCommandHandler(IVisitorRepository visitorRepository)
 ```
 
 **关键点**:
+
 - 邮箱和电话号码都是可选字段
 - 使用导航属性确保User和Visitor在同一事务中创建
 - 新创建的访客默认为Regular类型
@@ -123,6 +128,7 @@ public class CreateVisitorCommandHandler(IVisitorRepository visitorRepository)
 ### **2. 会员升级 (联系信息验证)**
 
 **运行流程**:
+
 1. **接收请求** → `POST /api/user/visitors/{id}/membership`
 2. **访客验证** → 检查访客是否存在且未被拉黑
 3. **联系信息检查** → 验证是否有邮箱或电话号码
@@ -167,6 +173,7 @@ POST /api/user/visitors/1/membership
 ### **3. 会员积分管理 (仅限会员)**
 
 **运行流程**:
+
 1. **接收请求** → `POST /api/user/visitors/{id}/points/add`
 2. **会员验证** → 检查访客是否为会员类型
 3. **积分计算** → 更新积分总数
@@ -216,6 +223,7 @@ private static string CalculateMemberLevel(int points) => points switch
 ## 数据初始化
 
 ### **数据种子运行流程**
+
 ```
 1. 应用启动 → EF Core初始化
 2. OnModelCreating → 调用数据种子方法
@@ -226,6 +234,7 @@ private static string CalculateMemberLevel(int points) => points switch
 ```
 
 ### **EF Core数据种子实现**
+
 ```csharp
 // DataSeeding.cs - 数据种子定义
 public static void SeedData(ModelBuilder modelBuilder)
@@ -255,6 +264,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 ```
 
 ### **部署流程**
+
 ```bash
 # 1. 创建包含数据种子的迁移
 dotnet ef migrations add SeedRoleData
@@ -267,6 +277,7 @@ dotnet ef database update
 ```
 
 **关键点**:
+
 - 数据种子在迁移中自动执行，无需手动插入
 - 使用固定ID确保代码中的`RoleId = 1`等引用有效
 - 种子数据只在首次迁移时插入，后续不会重复
@@ -276,16 +287,19 @@ dotnet ef database update
 ### **本次更新的核心变更**
 
 #### **User实体修改：**
+
 - `email` 字段从必需改为可选 (`string?`)
 - 添加 `HasContactInformation()` 方法检查联系方式
 - 添加 `IsEligibleForMemberUpgrade()` 方法验证升级条件
 
 #### **数据库约束更新：**
+
 - Email字段支持NULL值
 - Email和PhoneNumber字段添加唯一约束（仅对非NULL值）
 - 修复编译器警告和可空引用类型问题
 
 ### **业务逻辑变更**
+
 | 功能 | 原实现 | 当前实现 |
 |------|--------|----------|
 | 访客创建 | 邮箱必填 | 邮箱和电话都可选 |
@@ -295,6 +309,7 @@ dotnet ef database update
 | 数据种子 | 仅角色数据 | 包含5个测试访客 |
 
 ### **新增API端点**
+
 ```
 PUT /api/user/visitors/{id}/contact - 更新联系信息
 POST /api/user/visitors/points/add-by-contact - 通过联系方式加分
@@ -302,6 +317,7 @@ POST /api/user/visitors/points/deduct-by-contact - 通过联系方式扣分
 ```
 
 ### **测试覆盖**
+
 - 新增15个单元测试用例
 - 覆盖访客创建、会员升级、积分管理等核心功能
 - 所有27个测试100%通过
@@ -309,6 +325,7 @@ POST /api/user/visitors/points/deduct-by-contact - 通过联系方式扣分
 ## 集成接口
 
 ### **命令接口 (写操作)**
+
 ```csharp
 // 访客管理
 IRequestHandler<CreateVisitorCommand, int>
@@ -324,6 +341,7 @@ IRequestHandler<DeductPointsByContactCommand, Unit>
 ```
 
 ### **查询接口 (读操作)**
+
 ```csharp
 // 访客查询
 IRequestHandler<GetAllVisitorsQuery, List<VisitorDto>>
@@ -336,6 +354,7 @@ IRequestHandler<GetMemberStatisticsQuery, MemberStatisticsDto>
 ## 扩展指南
 
 ### **新功能开发流程**
+
 ```
 1. 需求分析 → 确定功能边界和接口
 2. 设计Command/Query → 定义输入输出结构
@@ -347,6 +366,7 @@ IRequestHandler<GetMemberStatisticsQuery, MemberStatisticsDto>
 ```
 
 ### **添加新功能的具体步骤**
+
 1. **定义Command/Query** - 在Application层创建命令或查询
 2. **实现Handler** - 编写业务逻辑处理器
 3. **添加Controller** - 创建API端点
@@ -354,6 +374,7 @@ IRequestHandler<GetMemberStatisticsQuery, MemberStatisticsDto>
 5. **编写测试** - 单元测试和集成测试
 
 ### **常见扩展场景**
+
 ```csharp
 // 场景1: 添加访客照片功能
 public record UploadVisitorPhotoCommand(int VisitorId, byte[] PhotoData) : IRequest;
@@ -368,6 +389,7 @@ public record VerifyContactInformationCommand(int VisitorId, string Verification
 ## 监控和健康检查
 
 ### **健康检查端点**
+
 ```
 GET /health          # 应用程序健康状态
 GET /health/ready    # 就绪状态检查
@@ -375,6 +397,7 @@ GET /health/live     # 存活状态检查
 ```
 
 ### **关键指标**
+
 - **响应时间**: API端点平均响应时间
 - **成功率**: 请求成功率 (>99%)
 - **数据库连接**: 连接池状态
@@ -385,11 +408,13 @@ GET /health/live     # 存活状态检查
 ## 快速开始
 
 ### **环境要求**
+
 - .NET 9.0+
 - Oracle Database
 - Redis (可选，用于缓存)
 
 ### **启动步骤**
+
 ```bash
 # 1. 克隆项目
 git clone <repository-url>
@@ -405,6 +430,7 @@ dotnet run --project src/Presentation
 ```
 
 ### **测试API**
+
 ```bash
 # 创建访客（支持可选邮箱和电话）
 curl -X POST "http://localhost:5036/api/user/visitors" \
