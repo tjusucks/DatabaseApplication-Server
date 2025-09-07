@@ -42,7 +42,7 @@ public class GetAllEmployeesQueryHandler(IEmployeeRepository employeeRepository)
             {
                 UserId = employee.User.UserId,
                 Username = employee.User.Username,
-                Email = employee.User.Email,
+                Email = employee.User.Email ?? string.Empty,
                 PhoneNumber = employee.User.PhoneNumber ?? string.Empty,
                 DisplayName = employee.User.DisplayName
             }
@@ -100,7 +100,7 @@ public class GetEmployeeByIdQueryHandler(IEmployeeRepository employeeRepository)
             {
                 UserId = employee.User.UserId,
                 Username = employee.User.Username,
-                Email = employee.User.Email,
+                Email = employee.User.Email ?? string.Empty,
                 PhoneNumber = employee.User.PhoneNumber ?? string.Empty,
                 DisplayName = employee.User.DisplayName
             }
@@ -159,7 +159,7 @@ public class GetEmployeesByDepartmentQueryHandler(IEmployeeRepository employeeRe
             {
                 UserId = employee.User.UserId,
                 Username = employee.User.Username,
-                Email = employee.User.Email,
+                Email = employee.User.Email ?? string.Empty,
                 PhoneNumber = employee.User.PhoneNumber ?? string.Empty,
                 DisplayName = employee.User.DisplayName
             }
@@ -217,7 +217,7 @@ public class SearchEmployeesQueryHandler(IEmployeeRepository employeeRepository)
             {
                 UserId = employee.User.UserId,
                 Username = employee.User.Username,
-                Email = employee.User.Email,
+                Email = employee.User.Email ?? string.Empty,
                 PhoneNumber = employee.User.PhoneNumber ?? string.Empty,
                 DisplayName = employee.User.DisplayName
             }
@@ -275,7 +275,7 @@ public class GetEmployeesByStaffTypeQueryHandler(IEmployeeRepository employeeRep
             {
                 UserId = employee.User.UserId,
                 Username = employee.User.Username,
-                Email = employee.User.Email,
+                Email = employee.User.Email ?? string.Empty,
                 PhoneNumber = employee.User.PhoneNumber ?? string.Empty,
                 DisplayName = employee.User.DisplayName
             }
