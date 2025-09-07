@@ -2,6 +2,7 @@ using System.Data.Common;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Respawn;
 
 namespace DbApp.Tests.Fixtures;
@@ -14,21 +15,59 @@ public class DatabaseFixture : IAsyncLifetime
 
     public DatabaseFixture()
     {
-        var oracleConnectionString = Env.GetString("TestOracleConnection") ??
+        // Load .env file from Presentation directory
+        var currentDir = Directory.GetCurrentDirectory();
+
+        // Try multiple possible paths
+        var possiblePaths = new[]
+        {
+            Path.Combine(currentDir, "..", "..", "..", "src", "Presentation", ".env"),
+            Path.Combine(currentDir, "..", "..", "..", "..", "src", "Presentation", ".env"),
+            Path.Combine(currentDir, "src", "Presentation", ".env"),
+            Path.Combine(currentDir, "..", "src", "Presentation", ".env")
+        };
+
+        string? envPath = null;
+        foreach (var path in possiblePaths)
+        {
+            if (File.Exists(path))
+            {
+                envPath = path;
+                break;
+            }
+        }
+
+        if (envPath != null)
+        {
+            Env.Load(envPath);
+        }
+
+        var testConnection = Env.GetString("TestOracleConnection");
+
+        var oracleConnectionString = testConnection ??
             "Data Source=localhost:1521/FREEPDB1;User ID=TESTUSER;Password=TESTPASSWORD;";
 
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseOracle(oracleConnectionString)
             .UseEnumCheckConstraints()
             .UseValidationCheckConstraints()
+            .UseSeeding((context, changed) =>
+            {
+                DataSeeding.SeedData(context);
+            })
+            .UseAsyncSeeding(async (context, changed, cancellationToken) =>
+            {
+                await DataSeeding.SeedDataAsync(context);
+            })
             .Options;
 
         DbContext = new ApplicationDbContext(options);
     }
 
-    public Task ResetDatabaseAsync()
+    public async Task ResetDatabaseAsync()
     {
-        return _respawner.ResetAsync(_connection);
+        await _respawner.ResetAsync(_connection);
+        await DbContext.Database.EnsureCreatedAsync();
     }
 
     public async Task InitializeAsync()
@@ -40,7 +79,7 @@ public class DatabaseFixture : IAsyncLifetime
         {
             ConnectionString = DbContext.Database.GetConnectionString()
         };
-        string schema = builder["User ID"].ToString() ?? "TESTUSER";
+        string schema = (builder["User ID"]?.ToString() ?? "TESTUSER").ToUpper();
 
         var respawnerOptions = new RespawnerOptions
         {
