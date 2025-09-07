@@ -3,10 +3,10 @@ using DbApp.Domain.Enums.UserSystem;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DbApp.Presentation.Controllers;
+namespace DbApp.Presentation.Controllers.UserSystem;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/user/employees")]
 public class EmployeesController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
@@ -66,7 +66,7 @@ public class EmployeesController(IMediator mediator) : ControllerBase
     }
 
     // 统一的查询端点，通过查询参数区分不同查询条件
-    [HttpGet]
+    [HttpGet("search")]
     public async Task<IActionResult> GetEmployees(
         [FromQuery] string? keyword = null,
         [FromQuery] string? departmentName = null,

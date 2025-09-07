@@ -1,23 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using MediatR;
 
 namespace DbApp.Application.ResourceSystem.Attendances
 {
-    public class GetAttendanceByIdQueryHandler : IRequestHandler<GetAttendanceByIdQuery, AttendanceDto?>
+    public class GetAttendanceByIdQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<GetAttendanceByIdQuery, AttendanceDto?>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public GetAttendanceByIdQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<AttendanceDto?> Handle(GetAttendanceByIdQuery request, CancellationToken cancellationToken)
         {
@@ -46,14 +35,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
         }
     }
 
-    public class GetEmployeeAttendanceQueryHandler : IRequestHandler<GetEmployeeAttendanceQuery, List<AttendanceDto>>
+    public class GetEmployeeAttendanceQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<GetEmployeeAttendanceQuery, List<AttendanceDto>>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public GetEmployeeAttendanceQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<List<AttendanceDto>> Handle(GetEmployeeAttendanceQuery request, CancellationToken cancellationToken)
         {
@@ -85,14 +69,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
         }
     }
 
-    public class GetDepartmentAttendanceQueryHandler : IRequestHandler<GetDepartmentAttendanceQuery, List<AttendanceDto>>
+    public class GetDepartmentAttendanceQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<GetDepartmentAttendanceQuery, List<AttendanceDto>>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public GetDepartmentAttendanceQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<List<AttendanceDto>> Handle(GetDepartmentAttendanceQuery request, CancellationToken cancellationToken)
         {
@@ -124,14 +103,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
         }
     }
 
-    public class GetAbnormalRecordsQueryHandler : IRequestHandler<GetAbnormalRecordsQuery, List<AttendanceDto>>
+    public class GetAbnormalRecordsQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<GetAbnormalRecordsQuery, List<AttendanceDto>>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public GetAbnormalRecordsQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<List<AttendanceDto>> Handle(GetAbnormalRecordsQuery request, CancellationToken cancellationToken)
         {
@@ -163,14 +137,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
         }
     }
 
-    public class GetEmployeeStatsQueryHandler : IRequestHandler<GetEmployeeStatsQuery, EmployeeStatsResponse>
+    public class GetEmployeeStatsQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<GetEmployeeStatsQuery, EmployeeStatsResponse>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public GetEmployeeStatsQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<EmployeeStatsResponse> Handle(GetEmployeeStatsQuery request, CancellationToken cancellationToken)
         {
@@ -198,14 +167,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
         }
     }
 
-    public class GetEmployeeMonthlyStatsQueryHandler : IRequestHandler<GetEmployeeMonthlyStatsQuery, MonthlyStatsResponse>
+    public class GetEmployeeMonthlyStatsQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<GetEmployeeMonthlyStatsQuery, MonthlyStatsResponse>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public GetEmployeeMonthlyStatsQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<MonthlyStatsResponse> Handle(GetEmployeeMonthlyStatsQuery request, CancellationToken cancellationToken)
         {
@@ -226,12 +190,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
             };
         }
     }
-    public class UpdateAttendanceStatusCommandHandler : IRequestHandler<UpdateAttendanceStatusCommand>
+    public class UpdateAttendanceStatusCommandHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<UpdateAttendanceStatusCommand>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public UpdateAttendanceStatusCommandHandler(IAttendanceRepository attendanceRepository)
-            => _attendanceRepository = attendanceRepository;
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task Handle(UpdateAttendanceStatusCommand request, CancellationToken cancellationToken)
         {
@@ -242,14 +203,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
             await _attendanceRepository.UpdateAsync(attendance);
         }
     }
-    public class GetDepartmentStatsQueryHandler : IRequestHandler<GetDepartmentStatsQuery, DepartmentStatsResponse>
+    public class GetDepartmentStatsQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<GetDepartmentStatsQuery, DepartmentStatsResponse>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public GetDepartmentStatsQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<DepartmentStatsResponse> Handle(GetDepartmentStatsQuery request, CancellationToken cancellationToken)
         {
@@ -297,14 +253,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
             };
         }
     }
-    public class CheckEmployeeFullAttendanceQueryHandler : IRequestHandler<CheckEmployeeFullAttendanceQuery, bool>
+    public class CheckEmployeeFullAttendanceQueryHandler(IAttendanceRepository attendanceRepository) : IRequestHandler<CheckEmployeeFullAttendanceQuery, bool>
     {
-        private readonly IAttendanceRepository _attendanceRepository;
-
-        public CheckEmployeeFullAttendanceQueryHandler(IAttendanceRepository attendanceRepository)
-        {
-            _attendanceRepository = attendanceRepository;
-        }
+        private readonly IAttendanceRepository _attendanceRepository = attendanceRepository;
 
         public async Task<bool> Handle(CheckEmployeeFullAttendanceQuery request, CancellationToken cancellationToken)
         {
@@ -324,14 +275,9 @@ namespace DbApp.Application.ResourceSystem.Attendances
     }
 
     //统一查询处理器
-    public class GenericAttendanceQueryHandler : IRequestHandler<GenericAttendanceQueryRequest, object>
+    public class GenericAttendanceQueryHandler(IMediator mediator) : IRequestHandler<GenericAttendanceQueryRequest, object>
     {
-        private readonly IMediator _mediator;
-
-        public GenericAttendanceQueryHandler(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        private readonly IMediator _mediator = mediator;
 
         public async Task<object> Handle(GenericAttendanceQueryRequest request, CancellationToken cancellationToken)
         {

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using DbApp.Domain.Entities.ResourceSystem;
 using MediatR;
 
 namespace DbApp.Application.ResourceSystem.Attendances

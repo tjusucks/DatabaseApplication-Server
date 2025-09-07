@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using MediatR;
 

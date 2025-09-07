@@ -1,4 +1,3 @@
-using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 
 namespace DbApp.Application.UserSystem.Employees;

@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Json;
 using System.Text.Json;
 using DbApp.Application.UserSystem.Employees;
 using DbApp.Domain.Entities.UserSystem;
@@ -120,9 +119,9 @@ public class EmployeeIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
         // Test various employee endpoints
         var endpoints = new[]
         {
-            "/api/employees",
-            "/api/employees?keyword=Test",
-            "/api/employees?departmentName=IT"
+            "/api/user/employees/search",
+            "/api/user/employees/search?keyword=Test",
+            "/api/user/employees/search?departmentName=IT"
         };
 
         foreach (var endpoint in endpoints)
@@ -175,7 +174,7 @@ public class EmployeeIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
         jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 
         // Call the API endpoint.
-        var response = await client.GetAsync($"/api/employees/{_testEmployeeId}");
+        var response = await client.GetAsync($"/api/user/employees/{_testEmployeeId}");
 
         // Should return 200 OK since we have test data
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -212,7 +211,7 @@ public class EmployeeIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
         jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 
         // Call the API endpoint.
-        var response = await client.GetAsync("/api/employees");
+        var response = await client.GetAsync("/api/user/employees/search");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -245,7 +244,7 @@ public class EmployeeIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
         jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 
         // Search by keyword "Test"
-        var response = await client.GetAsync("/api/employees?keyword=Test");
+        var response = await client.GetAsync("/api/user/employees/search?keyword=Test");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -278,7 +277,7 @@ public class EmployeeIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
         jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 
         // Get employees by department
-        var response = await client.GetAsync("/api/employees?departmentName=IT");
+        var response = await client.GetAsync("/api/user/employees/search?departmentName=IT");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 

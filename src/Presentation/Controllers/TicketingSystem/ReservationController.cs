@@ -45,7 +45,7 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// <param name="visitorId">Visitor ID.</param>
     /// <param name="query">Statistics parameters.</param>
     /// <returns>Visitor reservation statistics.</returns>
-    [HttpGet("visitor/{visitorId}/stats/search")]
+    [HttpGet("visitor/{visitorId}/stats")]
     public async Task<ActionResult<ReservationStatsDto>> GetVisitorStats(
         [FromRoute] int visitorId,
         [FromQuery] GetVisitorReservationStatsQuery query)

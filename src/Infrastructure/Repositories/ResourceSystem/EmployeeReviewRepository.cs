@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
 
-public class EmployeeReviewRepository : IEmployeeReviewRepository
+public class EmployeeReviewRepository(ApplicationDbContext dbContext) : IEmployeeReviewRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public EmployeeReviewRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+    private readonly ApplicationDbContext _dbContext = dbContext;
 
     public async Task<int> CreateAsync(EmployeeReview review)
     {

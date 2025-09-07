@@ -172,8 +172,8 @@ public class AttendanceAndPerformanceIntegrationTests(DatabaseFixture fixture) :
         // Test various performance review endpoints
         var endpoints = new[]
         {
-            "/api/employeereviews",
-            $"/api/employeereviews?employeeId={_testEmployeeId}",
+            "/api/resource/employee-reviews/search",
+            $"/api/resource/employee-reviews/search?employeeId={_testEmployeeId}",
         };
 
         foreach (var endpoint in endpoints)
@@ -225,7 +225,7 @@ public class AttendanceAndPerformanceIntegrationTests(DatabaseFixture fixture) :
         jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 
         // Call the API endpoint.
-        var response = await client.GetAsync($"/api/employeereviews/{_testReviewId}");
+        var response = await client.GetAsync($"/api/resource/employee-reviews/{_testReviewId}");
 
         // Should return 200 OK since we have test data
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -258,13 +258,9 @@ public class AttendanceAndPerformanceIntegrationTests(DatabaseFixture fixture) :
         jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 
         // Test getting attendance by ID using the generic query endpoint
-        var queryRequest = new
-        {
-            QueryType = "GetById",
-            Id = _testAttendanceId
-        };
+        var url = $"/api/resource/attendance/search?queryType=GetById&id={_testAttendanceId}";
 
-        var response = await client.PostAsJsonAsync("/api/attendance/query", queryRequest);
+        var response = await client.GetAsync(url);
 
         // Should return 200 OK since we have test data
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -295,14 +291,9 @@ public class AttendanceAndPerformanceIntegrationTests(DatabaseFixture fixture) :
         jsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
 
         // Test getting attendance by employee ID using the generic query endpoint
-        var queryRequest = new
-        {
-            QueryType = "GetEmployeeAttendance",
-            EmployeeId = _testEmployeeId
-        };
+        var url = $"/api/resource/attendance/search?queryType=GetEmployeeAttendance&employeeId={_testEmployeeId}";
 
-        var response = await client.PostAsJsonAsync("/api/attendance/query", queryRequest);
-
+        var response = await client.GetAsync(url);
         // Should return 200 OK since we have test data
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 

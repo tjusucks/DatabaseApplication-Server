@@ -1,4 +1,3 @@
-using System;
 using DbApp.Domain.Enums.ResourceSystem;
 
 namespace DbApp.Application.ResourceSystem.Attendances

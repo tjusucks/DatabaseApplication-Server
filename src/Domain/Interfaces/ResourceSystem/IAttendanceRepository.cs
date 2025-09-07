@@ -1,4 +1,5 @@
 using DbApp.Domain.Entities.ResourceSystem;
+
 namespace DbApp.Domain.Interfaces.ResourceSystem;
 
 public interface IAttendanceRepository
