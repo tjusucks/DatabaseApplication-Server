@@ -3,6 +3,7 @@ using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Enums.UserSystem;
 using DbApp.Infrastructure;
+using DbApp.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
 
@@ -10,107 +11,74 @@ namespace DbApp.Tests.Integration.ResourceSystem;
 
 [Collection("Database")]
 [Trait("Category", "Integration")]
-public class MaintenanceRecordConstraintIntegrationTests
+public class InspectionRecordConstraintIntegrationTests
 {
     private readonly DatabaseFixture _fixture;
 
-    public MaintenanceRecordConstraintIntegrationTests(DatabaseFixture fixture)
+    public InspectionRecordConstraintIntegrationTests(DatabaseFixture fixture)
     {
         _fixture = fixture;
     }
 
     [Fact]
-    public async Task CreateMaintenanceRecord_WithValidData_ShouldSucceed()
+    public async Task CreateInspectionRecord_WithValidData_ShouldSucceed()
     {
         // Arrange    
-        using var context = _fixture.CreateContext();
+        using var context = _fixture.DbContext;
         var ride = await CreateTestRideAsync(context);
         var team = await CreateTestTeamAsync(context);
 
-        var record = new MaintenanceRecord
+        var record = new InspectionRecord
         {
             RideId = ride.RideId,
             TeamId = team.TeamId,
-            MaintenanceType = MaintenanceType.Preventive,
-            StartTime = DateTime.UtcNow,
-            Cost = 500.00m,
-            PartsReplaced = "Brake pads",
-            MaintenanceDetails = "Regular brake maintenance",
-            IsCompleted = false
+            CheckDate = DateTime.UtcNow,
+            CheckType = CheckType.Daily,
+            IsPassed = true,
+            IssuesFound = null,
+            Recommendations = "All systems functioning normally"
         };
 
         // Act    
-        context.MaintenanceRecords.Add(record);
+        context.InspectionRecords.Add(record);
         await context.SaveChangesAsync();
 
         // Assert    
-        Assert.True(record.MaintenanceId > 0);
-        var savedRecord = await context.MaintenanceRecords.FindAsync(record.MaintenanceId);
+        Assert.True(record.InspectionId > 0);
+        var savedRecord = await context.InspectionRecords.FindAsync(record.InspectionId);
         Assert.NotNull(savedRecord);
-        Assert.Equal(500.00m, savedRecord.Cost);
-    }
-
-    [Fact]
-    public async Task CreateMaintenanceRecord_WithNegativeCost_ShouldThrowDbUpdateException()
-    {
-        // Arrange    
-        using var context = _fixture.CreateContext();
-        var ride = await CreateTestRideAsync(context);
-        var team = await CreateTestTeamAsync(context);
-
-        var record = new MaintenanceRecord
-        {
-            RideId = ride.RideId,
-            TeamId = team.TeamId,
-            MaintenanceType = MaintenanceType.Preventive,
-            StartTime = DateTime.UtcNow,
-            Cost = -100.00m,
-            IsCompleted = false
-        };
-
-        // Act & Assert    
-        context.MaintenanceRecords.Add(record);
-        var exception = await Assert.ThrowsAsync<DbUpdateException>(() => context.SaveChangesAsync());
-
-        var errorMessage = exception.InnerException?.Message ?? exception.Message;
-        Assert.True(
-            errorMessage.Contains("cost") ||
-            errorMessage.Contains("CK_maintenance_records_cost_Range") ||
-            errorMessage.Contains("ORA-02290"),
-            $"Expected cost constraint violation, but got: {errorMessage}"
-        );
+        Assert.True(savedRecord.IsPassed);
     }
 
     [Theory]
     [InlineData(-1)]    // 低于枚举范围    
-    [InlineData(4)]     // 高于枚举范围 (MaintenanceType 0-3)    
-    public async Task CreateMaintenanceRecord_WithInvalidMaintenanceType_ShouldThrowDbUpdateException(int invalidType)
+    [InlineData(4)]     // 高于枚举范围 (CheckType 0-3)    
+    public async Task CreateInspectionRecord_WithInvalidCheckType_ShouldThrowDbUpdateException(int invalidType)
     {
         // Arrange    
-        using var context = _fixture.CreateContext();
+        using var context = _fixture.DbContext;
         var ride = await CreateTestRideAsync(context);
         var team = await CreateTestTeamAsync(context);
 
-        var record = new MaintenanceRecord
+        var record = new InspectionRecord
         {
             RideId = ride.RideId,
             TeamId = team.TeamId,
-            MaintenanceType = (MaintenanceType)invalidType,
-            StartTime = DateTime.UtcNow,
-            Cost = 100.00m,
-            IsCompleted = false
+            CheckDate = DateTime.UtcNow,
+            CheckType = (CheckType)invalidType,
+            IsPassed = true
         };
 
         // Act & Assert    
-        context.MaintenanceRecords.Add(record);
+        context.InspectionRecords.Add(record);
         var exception = await Assert.ThrowsAsync<DbUpdateException>(() => context.SaveChangesAsync());
 
         var errorMessage = exception.InnerException?.Message ?? exception.Message;
         Assert.True(
-            errorMessage.Contains("maintenance_type") ||
-            errorMessage.Contains("CK_maintenance_records_maintenance_type_Enum") ||
+            errorMessage.Contains("check_type") ||
+            errorMessage.Contains("CK_inspection_records_check_type_Enum") ||
             errorMessage.Contains("ORA-02290"),
-            $"Expected maintenance_type constraint violation, but got: {errorMessage}"
+            $"Expected check_type constraint violation, but got: {errorMessage}"
         );
     }
 
@@ -118,7 +86,7 @@ public class MaintenanceRecordConstraintIntegrationTests
     {
         var ride = new AmusementRide
         {
-            RideName = "Test Ride for Maintenance",
+            RideName = "Test Ride for Inspection",
             Location = "Test Zone",
             RideStatus = RideStatus.Operating,
             Capacity = 20,
@@ -133,15 +101,15 @@ public class MaintenanceRecordConstraintIntegrationTests
 
     private async Task<StaffTeam> CreateTestTeamAsync(ApplicationDbContext context)
     {
-        // 创建完整的数据依赖链  
+        // 创建一个测试用户和角色  
         var role = await CreateTestRoleAsync(context);
         var user = await CreateTestUserAsync(context, role.RoleId);
         var employee = await CreateTestEmployeeAsync(context, user.UserId);
 
         var team = new StaffTeam
         {
-            TeamName = "Test Maintenance Team",
-            TeamType = TeamType.Mechanic,
+            TeamName = "Test Inspection Team",
+            TeamType = TeamType.Inspector,
             LeaderId = employee.EmployeeId
         };
         context.StaffTeams.Add(team);
@@ -154,7 +122,7 @@ public class MaintenanceRecordConstraintIntegrationTests
         var role = new Role
         {
             RoleName = $"TestRole_{Guid.NewGuid():N}",
-            RoleDescription = "Test role for maintenance integration tests",
+            RoleDescription = "Test role for integration tests",
             IsSystemRole = false
         };
         context.Roles.Add(role);
@@ -169,7 +137,7 @@ public class MaintenanceRecordConstraintIntegrationTests
             Username = $"testuser_{Guid.NewGuid():N}",
             Email = $"test_{Guid.NewGuid():N}@test.com",
             PasswordHash = "hashedpassword",
-            DisplayName = "Test Maintenance User",
+            DisplayName = "Test User",
             RoleId = roleId
         };
         context.Users.Add(user);
@@ -183,8 +151,8 @@ public class MaintenanceRecordConstraintIntegrationTests
         {
             EmployeeId = userId,
             StaffNumber = $"EMP{Guid.NewGuid().ToString("N")[..16]}",
-            Position = "Test Maintenance Leader",
-            StaffType = StaffType.Manager
+            Position = "Test Inspector",
+            StaffType = StaffType.Inspector
         };
         context.Employees.Add(employee);
         await context.SaveChangesAsync();

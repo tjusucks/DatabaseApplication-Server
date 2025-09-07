@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\src\Application\Application.csproj" />
@@ -20,6 +20,7 @@
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageReference Include="EFCore.CheckConstraints" Version="9.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>

@@ -6,6 +6,8 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using static DbApp.Domain.Exceptions;
+
 
 // Load environment variables from .env file if it exists.
 if (File.Exists(".env"))

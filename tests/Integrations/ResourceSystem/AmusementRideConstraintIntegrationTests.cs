@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
+using DbApp.Tests.Fixtures;
 using Xunit;
 
 namespace DbApp.Tests.Integration.ResourceSystem;
@@ -20,7 +21,7 @@ public class AmusementRideConstraintIntegrationTests
     public async Task CreateAmusementRide_WithValidData_ShouldSucceed()
     {
         // Arrange  
-        using var context = _fixture.CreateContext();
+        using var context = _fixture.DbContext;
         var ride = new AmusementRide
         {
             RideName = "Test Roller Coaster",
@@ -50,7 +51,7 @@ public class AmusementRideConstraintIntegrationTests
     public async Task CreateAmusementRide_WithInvalidCapacity_ShouldThrowDbUpdateException(int invalidCapacity)
     {
         // Arrange    
-        using var context = _fixture.CreateContext();
+        using var context = _fixture.DbContext;
         var ride = new AmusementRide
         {
             RideName = "Invalid Ride",
@@ -84,7 +85,7 @@ public class AmusementRideConstraintIntegrationTests
     public async Task CreateAmusementRide_WithInvalidHeightLimits_ShouldThrowDbUpdateException(int minHeight, int maxHeight)
     {
         // Arrange    
-        using var context = _fixture.CreateContext();
+        using var context = _fixture.DbContext;
         var ride = new AmusementRide
         {
             RideName = "Invalid Height Ride",
@@ -116,7 +117,7 @@ public class AmusementRideConstraintIntegrationTests
     public async Task CreateAmusementRide_WithInvalidRideStatus_ShouldThrowDbUpdateException(int invalidStatus)
     {
         // Arrange    
-        using var context = _fixture.CreateContext();
+        using var context = _fixture.DbContext;
         var ride = new AmusementRide
         {
             RideName = "Invalid Status Ride",

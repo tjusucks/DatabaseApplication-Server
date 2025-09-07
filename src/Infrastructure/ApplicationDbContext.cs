@@ -42,6 +42,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<RideTrafficStat> RideTrafficStats { get; set; }
     public DbSet<SeasonalEvent> SeasonalEvents { get; set; }
     public DbSet<FinancialRecord> FinancialRecords { get; set; }
+    public bool IsDisposed { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
