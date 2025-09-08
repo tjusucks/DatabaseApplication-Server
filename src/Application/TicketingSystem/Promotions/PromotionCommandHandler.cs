@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.TicketingSystem.Promotions;
 
@@ -37,9 +38,8 @@ public class PromotionCommandHandler(
 
     public async Task<Unit> Handle(UpdatePromotionCommand request, CancellationToken cancellationToken)
     {
-        var promotion = await promotionRepository.GetByIdAsync(request.PromotionId);
-        if (promotion == null)
-            return Unit.Value;
+        var promotion = await promotionRepository.GetByIdAsync(request.PromotionId)
+            ?? throw new NotFoundException($"Promotion with ID {request.PromotionId} does not exist.");
 
         promotion.PromotionName = request.PromotionName;
         promotion.PromotionType = request.PromotionType;
@@ -61,9 +61,8 @@ public class PromotionCommandHandler(
 
     public async Task<Unit> Handle(DeletePromotionCommand request, CancellationToken cancellationToken)
     {
-        var promotion = await promotionRepository.GetByIdAsync(request.PromotionId);
-        if (promotion == null)
-            return Unit.Value;
+        var promotion = await promotionRepository.GetByIdAsync(request.PromotionId)
+            ?? throw new NotFoundException($"Promotion with ID {request.PromotionId} does not exist.");
 
         await promotionRepository.DeleteAsync(promotion);
         return Unit.Value;

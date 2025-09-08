@@ -15,7 +15,7 @@ public class PromotionConditionQueryHandler(
     public async Task<PromotionConditionDto?> Handle(GetPromotionConditionByIdQuery request, CancellationToken cancellationToken)
     {
         var condition = await conditionRepository.GetByIdAsync(request.ConditionId)
-            ?? throw new NotFoundException($"{request.ConditionId} could not found");
+            ?? throw new NotFoundException($"{request.ConditionId} could not be found");
         return mapper.Map<PromotionConditionDto>(condition);
     }
 

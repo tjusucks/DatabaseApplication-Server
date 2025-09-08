@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using static DbApp.Domain.Exceptions;

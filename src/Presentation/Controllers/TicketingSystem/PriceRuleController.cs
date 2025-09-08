@@ -36,7 +36,7 @@ public class PriceRuleController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{ruleId:int}")]
-    public async Task<ActionResult<PriceRuleDto>> Update(int ruleId, [FromBody] UpdatePriceRuleCommand command)
+    public async Task<IActionResult> Update(int ruleId, [FromBody] UpdatePriceRuleCommand command)
     {
         if (command.RuleId != ruleId)
         {
