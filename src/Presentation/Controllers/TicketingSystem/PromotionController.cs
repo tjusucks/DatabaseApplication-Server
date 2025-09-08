@@ -10,6 +10,13 @@ public class PromotionController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
+    [HttpPost]
+    public async Task<ActionResult<int>> Create([FromBody] CreatePromotionCommand command)
+    {
+        var newPromotionId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { promotionId = newPromotionId }, null);
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<PromotionDto>>> GetAll()
     {
@@ -22,13 +29,6 @@ public class PromotionController(IMediator mediator) : ControllerBase
     {
         var promotion = await _mediator.Send(new GetPromotionByIdQuery(promotionId));
         return Ok(promotion);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<int>> Create([FromBody] CreatePromotionCommand command)
-    {
-        var newPromotionId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetById), new { promotionId = newPromotionId }, null);
     }
 
     [HttpPut("{promotionId:int}")]

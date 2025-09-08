@@ -10,6 +10,13 @@ public class PromotionActionController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
+    [HttpPost]
+    public async Task<ActionResult<int>> Create([FromBody] CreatePromotionActionCommand command)
+    {
+        var newActionId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetActionById), new { promotionId = command.PromotionId, actionId = newActionId }, null);
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<PromotionActionDto>>> GetActions(int promotionId)
     {
@@ -26,13 +33,6 @@ public class PromotionActionController(IMediator mediator) : ControllerBase
             return NotFound($"Promotion action with ID {actionId} not found.");
         }
         return Ok(action);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<int>> Create([FromBody] CreatePromotionActionCommand command)
-    {
-        var newActionId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetActionById), new { promotionId = command.PromotionId, actionId = newActionId }, null);
     }
 
     [HttpPut("{actionId:int}")]

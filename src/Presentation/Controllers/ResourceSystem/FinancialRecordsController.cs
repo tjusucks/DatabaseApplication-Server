@@ -3,13 +3,40 @@ using DbApp.Domain.Enums.ResourceSystem;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DbApp.Presentation.Controllers;
+namespace DbApp.Presentation.Controllers.ResourceSystem;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/resource/financial-records")]
 public class FinancialRecordsController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
+
+    /// <summary>
+    /// Create a new financial record.
+    /// </summary>
+    [HttpPost]
+    public async Task<ActionResult<FinancialRecordDetailDto>> CreateFinancialRecord([FromBody] CreateFinancialRecordCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetFinancialRecord), new { recordId = result.RecordId }, result);
+    }
+
+    /// <summary>
+    /// Get financial record by ID.
+    /// </summary>
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<FinancialRecordDetailDto>> GetFinancialRecord(int id)
+    {
+        var query = new GetFinancialRecordByIdQuery(id);
+        var result = await _mediator.Send(query);
+
+        if (result == null)
+        {
+            return NotFound($"Financial record with ID {id} not found.");
+        }
+
+        return Ok(result);
+    }
 
     /// <summary>
     /// Search financial records with filtering and pagination.
@@ -22,20 +49,41 @@ public class FinancialRecordsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// Get financial record by ID.
+    /// Update an existing financial record.
     /// </summary>
-    [HttpGet("{recordId:int}")]
-    public async Task<ActionResult<FinancialRecordDetailDto>> GetFinancialRecord(int recordId)
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<FinancialRecordDetailDto>> UpdateFinancialRecord(int id, [FromBody] UpdateFinancialRecordCommand command)
     {
-        var query = new GetFinancialRecordByIdQuery(recordId);
-        var result = await _mediator.Send(query);
+        if (id != command.RecordId)
+        {
+            return BadRequest("Record ID in URL does not match command.");
+        }
+
+        var result = await _mediator.Send(command);
 
         if (result == null)
         {
-            return NotFound($"Financial record with ID {recordId} not found.");
+            return NotFound($"Financial record with ID {id} not found.");
         }
 
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Delete a financial record.
+    /// </summary>
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteFinancialRecord(int id)
+    {
+        var command = new DeleteFinancialRecordCommand(id);
+        var result = await _mediator.Send(command);
+
+        if (!result)
+        {
+            return NotFound($"Financial record with ID {id} not found.");
+        }
+
+        return NoContent();
     }
 
     /// <summary>
@@ -104,53 +152,5 @@ public class FinancialRecordsController(IMediator mediator) : ControllerBase
 
         var result = await _mediator.Send(query);
         return Ok(result);
-    }
-
-    /// <summary>
-    /// Create a new financial record.
-    /// </summary>
-    [HttpPost]
-    public async Task<ActionResult<FinancialRecordDetailDto>> CreateFinancialRecord([FromBody] CreateFinancialRecordCommand command)
-    {
-        var result = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetFinancialRecord), new { recordId = result.RecordId }, result);
-    }
-
-    /// <summary>
-    /// Update an existing financial record.
-    /// </summary>
-    [HttpPut("{recordId:int}")]
-    public async Task<ActionResult<FinancialRecordDetailDto>> UpdateFinancialRecord(int recordId, [FromBody] UpdateFinancialRecordCommand command)
-    {
-        if (recordId != command.RecordId)
-        {
-            return BadRequest("Record ID in URL does not match command.");
-        }
-
-        var result = await _mediator.Send(command);
-
-        if (result == null)
-        {
-            return NotFound($"Financial record with ID {recordId} not found.");
-        }
-
-        return Ok(result);
-    }
-
-    /// <summary>
-    /// Delete a financial record.
-    /// </summary>
-    [HttpDelete("{recordId:int}")]
-    public async Task<ActionResult> DeleteFinancialRecord(int recordId)
-    {
-        var command = new DeleteFinancialRecordCommand(recordId);
-        var result = await _mediator.Send(command);
-
-        if (!result)
-        {
-            return NotFound($"Financial record with ID {recordId} not found.");
-        }
-
-        return NoContent();
     }
 }
