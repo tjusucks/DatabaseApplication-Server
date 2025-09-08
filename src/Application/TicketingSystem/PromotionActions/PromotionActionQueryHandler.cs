@@ -1,6 +1,7 @@
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
 using static DbApp.Domain.Exceptions;
+
 namespace DbApp.Application.TicketingSystem.PromotionActions;
 
 public class PromotionActionQueryHandler(IPromotionActionRepository actionRepository) :
@@ -9,11 +10,8 @@ public class PromotionActionQueryHandler(IPromotionActionRepository actionReposi
 {
     public async Task<PromotionActionDto?> Handle(GetPromotionActionByIdQuery request, CancellationToken cancellationToken)
     {
-        var action = await actionRepository.GetByIdAsync(request.ActionId);
-        if (action == null)
-        {
-            throw new NotFoundException($"{request.ActionId}could not found");
-        }
+        var action = await actionRepository.GetByIdAsync(request.ActionId)
+            ?? throw new NotFoundException($"{request.ActionId} could not found");
 
         return new PromotionActionDto
         {

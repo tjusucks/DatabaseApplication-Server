@@ -27,23 +27,20 @@ public class TicketTypeQueryHandler(ITicketTypeRepository ticketTypeRepository) 
 
     public async Task<TicketTypeDto?> Handle(GetTicketTypeByIdQuery request, CancellationToken cancellationToken)
     {
-        var t = await ticketTypeRepository.GetByIdAsync(request.TicketTypeId);
-        if (t == null)
-        {
-            throw new NotFoundException($"{request.TicketTypeId}could not found");
-        }
+        var ticketType = await ticketTypeRepository.GetByIdAsync(request.TicketTypeId)
+            ?? throw new NotFoundException($"{request.TicketTypeId} could not found");
 
         return new TicketTypeDto
         {
-            TicketTypeId = t.TicketTypeId,
-            TypeName = t.TypeName,
-            Description = t.Description,
-            BasePrice = t.BasePrice,
-            RulesText = t.RulesText,
-            MaxSaleLimit = t.MaxSaleLimit,
-            CreatedAt = t.CreatedAt,
-            UpdatedAt = t.UpdatedAt,
-            ApplicableCrowd = t.ApplicableCrowd
+            TicketTypeId = ticketType.TicketTypeId,
+            TypeName = ticketType.TypeName,
+            Description = ticketType.Description,
+            BasePrice = ticketType.BasePrice,
+            RulesText = ticketType.RulesText,
+            MaxSaleLimit = ticketType.MaxSaleLimit,
+            CreatedAt = ticketType.CreatedAt,
+            UpdatedAt = ticketType.UpdatedAt,
+            ApplicableCrowd = ticketType.ApplicableCrowd
         };
     }
 }
