@@ -14,36 +14,7 @@ public class DatabaseFixture : IAsyncLifetime
 
     public DatabaseFixture()
     {
-        // Load .env file from Presentation directory
-        var currentDir = Directory.GetCurrentDirectory();
-
-        // Try multiple possible paths
-        var possiblePaths = new[]
-        {
-            Path.Combine(currentDir, "..", "..", "..", "src", "Presentation", ".env"),
-            Path.Combine(currentDir, "..", "..", "..", "..", "src", "Presentation", ".env"),
-            Path.Combine(currentDir, "src", "Presentation", ".env"),
-            Path.Combine(currentDir, "..", "src", "Presentation", ".env")
-        };
-
-        string? envPath = null;
-        foreach (var path in possiblePaths)
-        {
-            if (File.Exists(path))
-            {
-                envPath = path;
-                break;
-            }
-        }
-
-        if (envPath != null)
-        {
-            Env.Load(envPath);
-        }
-
-        var testConnection = Env.GetString("TestOracleConnection");
-
-        var oracleConnectionString = testConnection ??
+        var oracleConnectionString = Env.GetString("TestOracleConnection") ??
             "Data Source=localhost:1521/FREEPDB1;User ID=TESTUSER;Password=TESTPASSWORD;";
 
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()

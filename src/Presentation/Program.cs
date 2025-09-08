@@ -33,7 +33,7 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(typeof(DbApp.Application.IMediatorModule).Assembly);
 });
 
-// Register AutoMapper profiles for mapping entities to DTOs.
+// Register AutoMapper for DTO mapping.
 builder.Services.AddAutoMapper(cfg => { }, typeof(DbApp.Application.MappingProfile).Assembly);
 
 // Configure Entity Framework with Oracle database and check constraints.
