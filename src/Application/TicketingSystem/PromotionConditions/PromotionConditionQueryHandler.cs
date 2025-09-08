@@ -1,7 +1,7 @@
 using AutoMapper;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
-
+using static DbApp.Domain.Exceptions;
 namespace DbApp.Application.TicketingSystem.PromotionConditions;
 
 public class PromotionConditionQueryHandler(
@@ -14,7 +14,11 @@ public class PromotionConditionQueryHandler(
     public async Task<PromotionConditionDto?> Handle(GetPromotionConditionByIdQuery request, CancellationToken cancellationToken)
     {
         var condition = await conditionRepository.GetByIdAsync(request.ConditionId);
-        return condition == null ? null : mapper.Map<PromotionConditionDto>(condition);
+        if (condition == null)
+        {
+            throw new NotFoundException($"{request.ConditionId}could not found");
+        }
+        return mapper.Map<PromotionConditionDto>(condition);
     }
 
     public async Task<List<PromotionConditionDto>> Handle(GetPromotionConditionsByPromotionIdQuery request, CancellationToken cancellationToken)

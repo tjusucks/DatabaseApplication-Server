@@ -1,5 +1,6 @@
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.TicketingSystem.PriceRules;
 
@@ -33,7 +34,7 @@ public class PriceRuleQueryHandlers(IPriceRuleRepository priceRuleRepository) :
         var rule = await priceRuleRepository.GetByIdAsync(request.PriceRuleId);
         if (rule == null || rule.TicketTypeId != request.TicketTypeId)
         {
-            return null;
+           throw new NotFoundException($"无法找到 ID 为 {request.PriceRuleId} 的价格规则。");
         }
 
         return new PriceRuleDto

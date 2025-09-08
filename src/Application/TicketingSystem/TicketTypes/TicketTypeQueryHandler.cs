@@ -1,7 +1,7 @@
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
-
+using static DbApp.Domain.Exceptions;
 namespace DbApp.Application.TicketingSystem.TicketTypes;
 
 public class TicketTypeQueryHandler(ITicketTypeRepository ticketTypeRepository) :
@@ -28,7 +28,10 @@ public class TicketTypeQueryHandler(ITicketTypeRepository ticketTypeRepository) 
     public async Task<TicketTypeDto?> Handle(GetTicketTypeByIdQuery request, CancellationToken cancellationToken)
     {
         var t = await ticketTypeRepository.GetByIdAsync(request.TicketTypeId);
-        if (t == null) return null;
+        if (t == null)
+        {
+            throw new NotFoundException($"{request.TicketTypeId}could not found");
+        }
 
         return new TicketTypeDto
         {
