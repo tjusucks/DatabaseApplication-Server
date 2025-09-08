@@ -109,35 +109,35 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
     /// <summary>  
     /// Get amusement ride statistics for a date range.  
     /// </summary>  
-    public async Task<AmusementRideStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)  
-{  
-    var query = _dbContext.AmusementRides.AsQueryable();  
-  
-    if (startDate.HasValue)  
-    {  
-        query = query.Where(r => r.CreatedAt >= startDate.Value);  
-    }  
-  
-    if (endDate.HasValue)  
-    {  
-        query = query.Where(r => r.CreatedAt <= endDate.Value);  
-    }  
-  
-    var rides = await query.ToListAsync();  
-  
-    return new AmusementRideStats  
-    {  
-        TotalRides = rides.Count,  
-        OperationalRides = rides.Count(r => r.RideStatus == RideStatus.Operating),  
-        MaintenanceRides = rides.Count(r => r.RideStatus == RideStatus.Maintenance),  
-        ClosedRides = rides.Count(r => r.RideStatus == RideStatus.Closed),  
-        TotalCapacity = rides.Sum(r => r.Capacity),  
-        AverageCapacity = rides.Any() ? rides.Average(r => r.Capacity) : 0,  
-        AverageDuration = rides.Any() ? rides.Average(r => r.Duration) : 0,  
-        FirstOpenDate = rides.Where(r => r.OpenDate.HasValue).Min(r => r.OpenDate),  
-        LastOpenDate = rides.Where(r => r.OpenDate.HasValue).Max(r => r.OpenDate)  
-    };  
-}
+    public async Task<AmusementRideStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)
+    {
+        var query = _dbContext.AmusementRides.AsQueryable();
+
+        if (startDate.HasValue)
+        {
+            query = query.Where(r => r.CreatedAt >= startDate.Value);
+        }
+
+        if (endDate.HasValue)
+        {
+            query = query.Where(r => r.CreatedAt <= endDate.Value);
+        }
+
+        var rides = await query.ToListAsync();
+
+        return new AmusementRideStats
+        {
+            TotalRides = rides.Count,
+            OperationalRides = rides.Count(r => r.RideStatus == RideStatus.Operating),
+            MaintenanceRides = rides.Count(r => r.RideStatus == RideStatus.Maintenance),
+            ClosedRides = rides.Count(r => r.RideStatus == RideStatus.Closed),
+            TotalCapacity = rides.Sum(r => r.Capacity),
+            AverageCapacity = rides.Any() ? rides.Average(r => r.Capacity) : 0,
+            AverageDuration = rides.Any() ? rides.Average(r => r.Duration) : 0,
+            FirstOpenDate = rides.Where(r => r.OpenDate.HasValue).Min(r => r.OpenDate),
+            LastOpenDate = rides.Where(r => r.OpenDate.HasValue).Max(r => r.OpenDate)
+        };
+    }
     /// <summary>  
     /// Private helper method to apply all filtering conditions.  
     /// </summary>  
