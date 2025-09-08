@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
 using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using static DbApp.Domain.Exceptions;
@@ -105,10 +106,10 @@ app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
     {
-        context.Response.ContentType = "application/json";
+        context.Response.ContentType = "application/problem+json";
         var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
 
-        context.Response.StatusCode = exception switch
+        var statusCode = exception switch
         {
             NotFoundException => StatusCodes.Status404NotFound,
             ForbiddenException => StatusCodes.Status403Forbidden,
@@ -118,8 +119,31 @@ app.UseExceptionHandler(errorApp =>
             _ => StatusCodes.Status500InternalServerError
         };
 
-        var result = new { Error = exception?.Message };
-        await context.Response.WriteAsJsonAsync(result);
+        context.Response.StatusCode = statusCode;
+
+        var statusInfo = new Dictionary<int, (string Type, string Title)>
+        {
+            [StatusCodes.Status404NotFound] = ("https://tools.ietf.org/html/rfc9110#section-15.5.5", "Not Found"),
+            [StatusCodes.Status400BadRequest] = ("https://tools.ietf.org/html/rfc9110#section-15.5.1", "Bad Request"),
+            [StatusCodes.Status403Forbidden] = ("https://tools.ietf.org/html/rfc9110#section-15.5.4", "Forbidden"),
+            [StatusCodes.Status409Conflict] = ("https://tools.ietf.org/html/rfc9110#section-15.5.2", "Conflict"),
+            [StatusCodes.Status401Unauthorized] = ("https://tools.ietf.org/html/rfc9110#section-15.5.3", "Unauthorized"),
+        };
+
+        var (type, title) = statusInfo.TryGetValue(statusCode, out var info)
+            ? info
+            : ("about:blank", "Internal Server Error");
+
+        var problemDetails = new
+        {
+            type,
+            title,
+            status = statusCode,
+            detail = exception?.Message,
+            traceId = context.TraceIdentifier
+        };
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
     });
 });
 
