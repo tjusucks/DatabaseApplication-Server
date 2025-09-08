@@ -91,10 +91,15 @@ public class DatabaseFixture : IAsyncLifetime
         _respawner = await Respawner.CreateAsync(_connection, respawnerOptions);
     }
 
-    public async Task DisposeAsync()
-    {
-        await DbContext.Database.EnsureDeletedAsync();
-        await DbContext.DisposeAsync();
-        await _connection.DisposeAsync();
-    }
+    public async Task DisposeAsync()  
+{  
+    await DbContext.Database.EnsureDeletedAsync();  
+    await DbContext.DisposeAsync();  
+      
+    // 添加 null 检查  
+    if (_connection != null)  
+    {  
+        await _connection.DisposeAsync();  
+    }  
+}
 }

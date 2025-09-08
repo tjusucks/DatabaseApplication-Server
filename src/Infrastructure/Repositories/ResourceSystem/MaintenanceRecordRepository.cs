@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
+using DbApp.Domain.Statistics.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
@@ -121,33 +122,33 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
     /// <summary>  
     /// Get maintenance record statistics for a date range.  
     /// </summary>  
-    public async Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate)
-    {
-        var query = _dbContext.MaintenanceRecords.AsQueryable();
-
-        if (startDate.HasValue)
-        {
-            query = query.Where(r => r.StartTime >= startDate.Value);
-        }
-
-        if (endDate.HasValue)
-        {
-            query = query.Where(r => r.StartTime <= endDate.Value);
-        }
-
-        var records = await query.ToListAsync();
-
-        return new
-        {
-            TotalMaintenances = records.Count,
-            CompletedMaintenances = records.Count(r => r.IsCompleted),
-            AcceptedMaintenances = records.Count(r => r.IsAccepted == true),
-            TotalCost = records.Sum(r => r.Cost),
-            AverageCost = records.Any() ? records.Average(r => r.Cost) : 0,
-            MaintenanceTypeBreakdown = records.GroupBy(r => r.MaintenanceType)
-                .ToDictionary(g => g.Key.ToString(), g => g.Count())
-        };
-    }
+    public async Task<MaintenanceRecordStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)  
+{  
+    var query = _dbContext.MaintenanceRecords.AsQueryable();  
+  
+    if (startDate.HasValue)  
+    {  
+        query = query.Where(r => r.StartTime >= startDate.Value);  
+    }  
+  
+    if (endDate.HasValue)  
+    {  
+        query = query.Where(r => r.StartTime <= endDate.Value);  
+    }  
+  
+    var records = await query.ToListAsync();  
+  
+    return new MaintenanceRecordStats  
+    {  
+        TotalMaintenances = records.Count,  
+        CompletedMaintenances = records.Count(r => r.IsCompleted),  
+        AcceptedMaintenances = records.Count(r => r.IsAccepted == true),  
+        TotalCost = records.Sum(r => r.Cost),  
+        AverageCost = records.Any() ? records.Average(r => r.Cost) : 0,  
+        MaintenanceTypeBreakdown = records.GroupBy(r => r.MaintenanceType)  
+            .ToDictionary(g => g.Key.ToString(), g => g.Count())  
+    };  
+}
 
     /// <summary>  
     /// Private helper method to apply all filtering conditions.  

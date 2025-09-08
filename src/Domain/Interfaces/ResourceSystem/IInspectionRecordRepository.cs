@@ -1,5 +1,6 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
+using DbApp.Domain.Statistics.ResourceSystem;
 
 namespace DbApp.Domain.Interfaces.ResourceSystem;
 
@@ -34,5 +35,5 @@ public interface IInspectionRecordRepository
         DateTime? checkDateTo);
 
     // 统计方法  
-    Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate);
+    Task<InspectionRecordStats> GetStatsAsync(DateTime? startDate, DateTime? endDate);
 }

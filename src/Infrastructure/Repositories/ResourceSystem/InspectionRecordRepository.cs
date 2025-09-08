@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
+using DbApp.Domain.Statistics.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
@@ -103,32 +104,32 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
     /// <summary>  
     /// Get inspection record statistics for a date range.  
     /// </summary>  
-    public async Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate)
-    {
-        var query = _dbContext.InspectionRecords.AsQueryable();
-
-        if (startDate.HasValue)
-        {
-            query = query.Where(r => r.CheckDate >= startDate.Value);
-        }
-
-        if (endDate.HasValue)
-        {
-            query = query.Where(r => r.CheckDate <= endDate.Value);
-        }
-
-        var records = await query.ToListAsync();
-
-        return new
-        {
-            TotalInspections = records.Count,
-            PassedInspections = records.Count(r => r.IsPassed),
-            FailedInspections = records.Count(r => !r.IsPassed),
-            PassRate = records.Any() ? (double)records.Count(r => r.IsPassed) / records.Count * 100 : 0,
-            CheckTypeBreakdown = records.GroupBy(r => r.CheckType)
-                .ToDictionary(g => g.Key.ToString(), g => g.Count())
-        };
-    }
+    public async Task<InspectionRecordStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)  
+{  
+    var query = _dbContext.InspectionRecords.AsQueryable();  
+  
+    if (startDate.HasValue)  
+    {  
+        query = query.Where(r => r.CheckDate >= startDate.Value);  
+    }  
+  
+    if (endDate.HasValue)  
+    {  
+        query = query.Where(r => r.CheckDate <= endDate.Value);  
+    }  
+  
+    var records = await query.ToListAsync();  
+  
+    return new InspectionRecordStats  
+    {  
+        TotalInspections = records.Count,  
+        PassedInspections = records.Count(r => r.IsPassed),  
+        FailedInspections = records.Count(r => !r.IsPassed),  
+        PassRate = records.Any() ? (double)records.Count(r => r.IsPassed) / records.Count * 100 : 0,  
+        CheckTypeBreakdown = records.GroupBy(r => r.CheckType)  
+            .ToDictionary(g => g.Key.ToString(), g => g.Count())  
+    };  
+}
 
     /// <summary>  
     /// Private helper method to apply all filtering conditions.  

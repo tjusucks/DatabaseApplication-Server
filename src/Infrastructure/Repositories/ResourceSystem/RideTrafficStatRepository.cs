@@ -1,5 +1,6 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
+using DbApp.Domain.Statistics.ResourceSystem;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
@@ -112,36 +113,35 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
     /// <summary>  
     /// Get ride traffic statistics for a date range.  
     /// </summary>  
-    public async Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate)
-    {
-        var query = _dbContext.RideTrafficStats.AsQueryable();
-
-        if (startDate.HasValue)
-        {
-            query = query.Where(r => r.RecordTime >= startDate.Value);
-        }
-
-        if (endDate.HasValue)
-        {
-            query = query.Where(r => r.RecordTime <= endDate.Value);
-        }
-
-        var stats = await query.ToListAsync();
-
-        return new
-        {
-            TotalRecords = stats.Count,
-            CrowdedRecords = stats.Count(r => r.IsCrowded == true),
-            AverageVisitorCount = stats.Any() ? stats.Average(r => r.VisitorCount) : 0,
-            AverageQueueLength = stats.Any() ? stats.Average(r => r.QueueLength) : 0,
-            AverageWaitingTime = stats.Any() ? stats.Average(r => r.WaitingTime) : 0,
-            MaxVisitorCount = stats.Any() ? stats.Max(r => r.VisitorCount) : 0,
-            MaxQueueLength = stats.Any() ? stats.Max(r => r.QueueLength) : 0,
-            MaxWaitingTime = stats.Any() ? stats.Max(r => r.WaitingTime) : 0,
-            CrowdedPercentage = stats.Any() ? (double)stats.Count(r => r.IsCrowded == true) / stats.Count * 100 : 0
-        };
-    }
-
+    public async Task<RideTrafficStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)  
+{  
+    var query = _dbContext.RideTrafficStats.AsQueryable();  
+  
+    if (startDate.HasValue)  
+    {  
+        query = query.Where(r => r.RecordTime >= startDate.Value);  
+    }  
+  
+    if (endDate.HasValue)  
+    {  
+        query = query.Where(r => r.RecordTime <= endDate.Value);  
+    }  
+  
+    var stats = await query.ToListAsync();  
+  
+    return new RideTrafficStats  
+    {  
+        TotalRecords = stats.Count,  
+        CrowdedRecords = stats.Count(r => r.IsCrowded == true),  
+        AverageVisitorCount = stats.Any() ? stats.Average(r => r.VisitorCount) : 0,  
+        AverageQueueLength = stats.Any() ? stats.Average(r => r.QueueLength) : 0,  
+        AverageWaitingTime = stats.Any() ? stats.Average(r => r.WaitingTime) : 0,  
+        MaxVisitorCount = stats.Any() ? stats.Max(r => r.VisitorCount) : 0,  
+        MaxQueueLength = stats.Any() ? stats.Max(r => r.QueueLength) : 0,  
+        MaxWaitingTime = stats.Any() ? stats.Max(r => r.WaitingTime) : 0,  
+        CrowdedPercentage = stats.Any() ? (double)stats.Count(r => r.IsCrowded == true) / stats.Count * 100 : 0  
+    };  
+}
     /// <summary>  
     /// Private helper method to apply all filtering conditions.  
     /// </summary>  

@@ -1,4 +1,5 @@
 using DbApp.Domain.Entities.ResourceSystem;
+using DbApp.Domain.Statistics.ResourceSystem;
 
 namespace DbApp.Domain.Interfaces.ResourceSystem;
 
@@ -41,5 +42,5 @@ public interface IRideTrafficStatRepository
         DateTime? recordTimeTo);
 
     // 统计方法  
-    Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate);
+    Task<RideTrafficStats> GetStatsAsync(DateTime? startDate, DateTime? endDate);
 }

@@ -1,5 +1,6 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
+using DbApp.Domain.Statistics.ResourceSystem;
 
 namespace DbApp.Domain.Interfaces.ResourceSystem;
 
@@ -40,5 +41,5 @@ public interface IAmusementRideRepository
         DateTime? openDateTo);
 
     // 统计方法  
-    Task<object> GetStatsAsync(DateTime? startDate, DateTime? endDate);
+    Task<AmusementRideStats> GetStatsAsync(DateTime? startDate, DateTime? endDate);
 }
