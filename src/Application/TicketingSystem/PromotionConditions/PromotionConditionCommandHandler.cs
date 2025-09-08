@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.TicketingSystem.PromotionConditions;
 
@@ -14,8 +15,8 @@ public class PromotionConditionCommandHandler(
 {
     public async Task<int> Handle(CreatePromotionConditionCommand request, CancellationToken cancellationToken)
     {
-        var promotion = await promotionRepository.GetByIdAsync(request.PromotionId);
-        if (promotion == null) return 0;
+        _ = await promotionRepository.GetByIdAsync(request.PromotionId)
+            ?? throw new ValidationException($"Promotion with ID {request.PromotionId} does not exist.");
 
         var condition = new PromotionCondition
         {
@@ -40,8 +41,8 @@ public class PromotionConditionCommandHandler(
 
     public async Task<Unit> Handle(UpdatePromotionConditionCommand request, CancellationToken cancellationToken)
     {
-        var condition = await conditionRepository.GetByIdAsync(request.ConditionId);
-        if (condition == null) return Unit.Value;
+        var condition = await conditionRepository.GetByIdAsync(request.ConditionId)
+            ?? throw new NotFoundException($"Condition with ID {request.ConditionId} does not exist.");
 
         condition.PromotionId = request.PromotionId;
         condition.ConditionName = request.ConditionName;
@@ -63,8 +64,8 @@ public class PromotionConditionCommandHandler(
 
     public async Task<Unit> Handle(DeletePromotionConditionCommand request, CancellationToken cancellationToken)
     {
-        var condition = await conditionRepository.GetByIdAsync(request.ConditionId);
-        if (condition == null) return Unit.Value;
+        var condition = await conditionRepository.GetByIdAsync(request.ConditionId)
+            ?? throw new NotFoundException($"Condition with ID {request.ConditionId} does not exist.");
 
         await conditionRepository.DeleteAsync(condition);
         return Unit.Value;

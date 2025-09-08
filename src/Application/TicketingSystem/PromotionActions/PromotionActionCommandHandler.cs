@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.TicketingSystem.PromotionActions;
 
@@ -16,8 +17,8 @@ public class PromotionActionCommandHandler(
     // Handler for Creating an Action
     public async Task<int> Handle(CreatePromotionActionCommand request, CancellationToken cancellationToken)
     {
-        var promotion = await _promotionRepository.GetByIdAsync(request.PromotionId);
-        if (promotion == null) return 0;
+        _ = await _promotionRepository.GetByIdAsync(request.PromotionId)
+            ?? throw new ValidationException($"Promotion with ID {request.PromotionId} does not exist.");
 
         var action = new PromotionAction
         {
@@ -41,8 +42,8 @@ public class PromotionActionCommandHandler(
     // Handler for Updating an Action
     public async Task<Unit> Handle(UpdatePromotionActionCommand request, CancellationToken cancellationToken)
     {
-        var action = await _actionRepository.GetByIdAsync(request.ActionId);
-        if (action == null) return Unit.Value;
+        var action = await _actionRepository.GetByIdAsync(request.ActionId)
+            ?? throw new NotFoundException($"Action with ID {request.ActionId} does not exist.");
 
         action.PromotionId = request.PromotionId;
         action.ActionName = request.ActionName;
@@ -64,8 +65,8 @@ public class PromotionActionCommandHandler(
     // Handler for Deleting an Action
     public async Task<Unit> Handle(DeletePromotionActionCommand request, CancellationToken cancellationToken)
     {
-        var action = await _actionRepository.GetByIdAsync(request.ActionId);
-        if (action == null) return Unit.Value;
+        var action = await _actionRepository.GetByIdAsync(request.ActionId)
+            ?? throw new NotFoundException($"Action with ID {request.ActionId} does not exist.");
 
         await _actionRepository.DeleteAsync(action);
 

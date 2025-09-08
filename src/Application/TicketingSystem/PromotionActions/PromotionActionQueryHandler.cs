@@ -11,7 +11,7 @@ public class PromotionActionQueryHandler(IPromotionActionRepository actionReposi
     public async Task<PromotionActionDto?> Handle(GetPromotionActionByIdQuery request, CancellationToken cancellationToken)
     {
         var action = await actionRepository.GetByIdAsync(request.ActionId)
-            ?? throw new NotFoundException($"{request.ActionId} could not found");
+            ?? throw new NotFoundException($"{request.ActionId} could not be found");
 
         return new PromotionActionDto
         {
