@@ -18,7 +18,7 @@ public class PromotionActionCommandHandler(
     public async Task<int> Handle(CreatePromotionActionCommand request, CancellationToken cancellationToken)
     {
         _ = await _promotionRepository.GetByIdAsync(request.PromotionId)
-            ?? throw new ValidationException($"Promotion with ID {request.PromotionId} does not exist.");
+            ?? throw new NotFoundException($"Promotion with ID {request.PromotionId} does not exist.");
 
         var action = new PromotionAction
         {
