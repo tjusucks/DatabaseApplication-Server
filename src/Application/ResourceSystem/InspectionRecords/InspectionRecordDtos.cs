@@ -30,7 +30,7 @@ public class InspectionRecordStatsDto
     public int PassedInspections { get; set; }
     public int FailedInspections { get; set; }
     public double PassRate { get; set; }
-    public Dictionary<CheckType, int> InspectionTypeDistribution { get; set; } = new();
+    public Dictionary<CheckType, int> InspectionTypeDistribution { get; set; } = [];
     public DateTime? FirstInspection { get; set; }
     public DateTime? LastInspection { get; set; }
 }

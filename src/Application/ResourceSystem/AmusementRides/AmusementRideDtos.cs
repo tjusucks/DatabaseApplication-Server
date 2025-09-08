@@ -43,7 +43,7 @@ public class AmusementRideStatsDto
 /// </summary>
 public class AmusementRideResult
 {
-    public List<AmusementRideSummaryDto> AmusementRides { get; set; } = new List<AmusementRideSummaryDto>();
+    public List<AmusementRideSummaryDto> AmusementRides { get; set; } = [];
     public int TotalCount { get; set; }
     public int Page { get; set; }
     public int PageSize { get; set; }

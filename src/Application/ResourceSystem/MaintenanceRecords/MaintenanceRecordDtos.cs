@@ -38,7 +38,7 @@ public class MaintenanceRecordStatsDto
     public int AcceptedMaintenances { get; set; }
     public decimal TotalCost { get; set; }
     public decimal AverageCost { get; set; }
-    public Dictionary<MaintenanceType, int> MaintenanceTypeDistribution { get; set; } = new();
+    public Dictionary<MaintenanceType, int> MaintenanceTypeDistribution { get; set; } = [];
     public DateTime? FirstMaintenance { get; set; }
     public DateTime? LastMaintenance { get; set; }
 }

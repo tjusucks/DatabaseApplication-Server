@@ -6,5 +6,5 @@ public class InspectionRecordStats
     public int PassedInspections { get; set; }
     public int FailedInspections { get; set; }
     public double PassRate { get; set; }
-    public Dictionary<string, int> CheckTypeBreakdown { get; set; } = new();
+    public Dictionary<string, int> CheckTypeBreakdown { get; set; } = [];
 }
