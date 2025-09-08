@@ -6,16 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
 
-/// <summary>  
-/// Repository implementation for maintenance record operations with unified search capabilities.  
-/// </summary>  
+/// <summary>
+/// Repository implementation for maintenance record operations with unified search capabilities.
+/// </summary>
 public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMaintenanceRecordRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    /// <summary>  
-    /// Get maintenance record by ID with related entities.  
-    /// </summary>  
+    /// <summary>
+    /// Get maintenance record by ID with related entities.
+    /// </summary>
     public async Task<MaintenanceRecord?> GetByIdAsync(int maintenanceId)
     {
         return await _dbContext.MaintenanceRecords
@@ -26,9 +26,9 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
             .FirstOrDefaultAsync(r => r.MaintenanceId == maintenanceId);
     }
 
-    /// <summary>  
-    /// Add a new maintenance record.  
-    /// </summary>  
+    /// <summary>
+    /// Add a new maintenance record.
+    /// </summary>
     public async Task<MaintenanceRecord> AddAsync(MaintenanceRecord record)
     {
         _dbContext.MaintenanceRecords.Add(record);
@@ -36,29 +36,29 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
         return record;
     }
 
-    /// <summary>  
-    /// Update an existing maintenance record.  
-    /// </summary>  
+    /// <summary>
+    /// Update an existing maintenance record.
+    /// </summary>
     public async Task UpdateAsync(MaintenanceRecord record)
     {
         _dbContext.MaintenanceRecords.Update(record);
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Delete a maintenance record.  
-    /// </summary>  
+    /// <summary>
+    /// Delete a maintenance record.
+    /// </summary>
     public async Task DeleteAsync(MaintenanceRecord record)
     {
         _dbContext.MaintenanceRecords.Remove(record);
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Unified search method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified search method with comprehensive filtering options.
+    /// </summary>
     public async Task<IEnumerable<MaintenanceRecord>> SearchAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         int? managerId,
@@ -81,8 +81,8 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
             .ThenInclude(m => m!.User)
             .AsQueryable();
 
-        // Apply all filtering conditions  
-        query = ApplyFilters(query, searchTerm, rideId, teamId, managerId,
+        // Apply all filtering conditions
+        query = ApplyFilters(query, keyword, rideId, teamId, managerId,
             maintenanceType, isCompleted, isAccepted, startTimeFrom, startTimeTo,
             endTimeFrom, endTimeTo, minCost, maxCost);
 
@@ -92,11 +92,11 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
             .ToListAsync();
     }
 
-    /// <summary>  
-    /// Unified count method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified count method with comprehensive filtering options.
+    /// </summary>
     public async Task<int> CountAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         int? managerId,
@@ -112,16 +112,16 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
     {
         var query = _dbContext.MaintenanceRecords.AsQueryable();
 
-        query = ApplyFilters(query, searchTerm, rideId, teamId, managerId,
+        query = ApplyFilters(query, keyword, rideId, teamId, managerId,
             maintenanceType, isCompleted, isAccepted, startTimeFrom, startTimeTo,
             endTimeFrom, endTimeTo, minCost, maxCost);
 
         return await query.CountAsync();
     }
 
-    /// <summary>  
-    /// Get maintenance record statistics for a date range.  
-    /// </summary>  
+    /// <summary>
+    /// Get maintenance record statistics for a date range.
+    /// </summary>
     public async Task<MaintenanceRecordStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)
     {
         var query = _dbContext.MaintenanceRecords.AsQueryable();
@@ -150,12 +150,12 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
         };
     }
 
-    /// <summary>  
-    /// Private helper method to apply all filtering conditions.  
-    /// </summary>  
+    /// <summary>
+    /// Private helper method to apply all filtering conditions.
+    /// </summary>
     private static IQueryable<MaintenanceRecord> ApplyFilters(
         IQueryable<MaintenanceRecord> query,
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         int? managerId,
@@ -169,13 +169,13 @@ public class MaintenanceRecordRepository(ApplicationDbContext dbContext) : IMain
         decimal? minCost,
         decimal? maxCost)
     {
-        if (!string.IsNullOrEmpty(searchTerm))
+        if (!string.IsNullOrEmpty(keyword))
         {
-            query = query.Where(r => r.Ride.RideName.Contains(searchTerm) ||
-                                   r.Team.TeamName.Contains(searchTerm) ||
-                                   (r.PartsReplaced != null && r.PartsReplaced.Contains(searchTerm)) ||
-                                   (r.MaintenanceDetails != null && r.MaintenanceDetails.Contains(searchTerm)) ||
-                                   (r.AcceptanceComments != null && r.AcceptanceComments.Contains(searchTerm)));
+            query = query.Where(r => r.Ride.RideName.Contains(keyword) ||
+                                   r.Team.TeamName.Contains(keyword) ||
+                                   (r.PartsReplaced != null && r.PartsReplaced.Contains(keyword)) ||
+                                   (r.MaintenanceDetails != null && r.MaintenanceDetails.Contains(keyword)) ||
+                                   (r.AcceptanceComments != null && r.AcceptanceComments.Contains(keyword)));
         }
 
         if (rideId.HasValue)

@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
 
-/// <summary>  
-/// Repository implementation for ride traffic stat operations with unified search capabilities.  
-/// </summary>  
+/// <summary>
+/// Repository implementation for ride traffic stat operations with unified search capabilities.
+/// </summary>
 public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTrafficStatRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    /// <summary>  
-    /// Get ride traffic stat by composite key with related entities.  
-    /// </summary>  
+    /// <summary>
+    /// Get ride traffic stat by composite key with related entities.
+    /// </summary>
     public async Task<RideTrafficStat?> GetByIdAsync(int rideId, DateTime recordTime)
     {
         return await _dbContext.RideTrafficStats
@@ -22,9 +22,9 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
             .FirstOrDefaultAsync(r => r.RideId == rideId && r.RecordTime == recordTime);
     }
 
-    /// <summary>  
-    /// Add a new ride traffic stat.  
-    /// </summary>  
+    /// <summary>
+    /// Add a new ride traffic stat.
+    /// </summary>
     public async Task<RideTrafficStat> AddAsync(RideTrafficStat stat)
     {
         _dbContext.RideTrafficStats.Add(stat);
@@ -32,9 +32,9 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
         return stat;
     }
 
-    /// <summary>  
-    /// Update an existing ride traffic stat.  
-    /// </summary>  
+    /// <summary>
+    /// Update an existing ride traffic stat.
+    /// </summary>
     public async Task UpdateAsync(RideTrafficStat stat)
     {
         stat.UpdatedAt = DateTime.UtcNow;
@@ -42,20 +42,20 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Delete a ride traffic stat.  
-    /// </summary>  
+    /// <summary>
+    /// Delete a ride traffic stat.
+    /// </summary>
     public async Task DeleteAsync(RideTrafficStat stat)
     {
         _dbContext.RideTrafficStats.Remove(stat);
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Unified search method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified search method with comprehensive filtering options.
+    /// </summary>
     public async Task<IEnumerable<RideTrafficStat>> SearchAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         bool? isCrowded,
         int? minVisitorCount,
@@ -73,8 +73,8 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
             .Include(r => r.Ride)
             .AsQueryable();
 
-        // Apply all filtering conditions  
-        query = ApplyFilters(query, searchTerm, rideId, isCrowded,
+        // Apply all filtering conditions
+        query = ApplyFilters(query, keyword, rideId, isCrowded,
             minVisitorCount, maxVisitorCount, minQueueLength, maxQueueLength,
             minWaitingTime, maxWaitingTime, recordTimeFrom, recordTimeTo);
 
@@ -85,11 +85,11 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
             .ToListAsync();
     }
 
-    /// <summary>  
-    /// Unified count method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified count method with comprehensive filtering options.
+    /// </summary>
     public async Task<int> CountAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         bool? isCrowded,
         int? minVisitorCount,
@@ -103,16 +103,16 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
     {
         var query = _dbContext.RideTrafficStats.AsQueryable();
 
-        query = ApplyFilters(query, searchTerm, rideId, isCrowded,
+        query = ApplyFilters(query, keyword, rideId, isCrowded,
             minVisitorCount, maxVisitorCount, minQueueLength, maxQueueLength,
             minWaitingTime, maxWaitingTime, recordTimeFrom, recordTimeTo);
 
         return await query.CountAsync();
     }
 
-    /// <summary>  
-    /// Get ride traffic statistics for a date range.  
-    /// </summary>  
+    /// <summary>
+    /// Get ride traffic statistics for a date range.
+    /// </summary>
     public async Task<RideTrafficStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)
     {
         var query = _dbContext.RideTrafficStats.AsQueryable();
@@ -142,12 +142,12 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
             CrowdedPercentage = stats.Any() ? (double)stats.Count(r => r.IsCrowded == true) / stats.Count * 100 : 0
         };
     }
-    /// <summary>  
-    /// Private helper method to apply all filtering conditions.  
-    /// </summary>  
+    /// <summary>
+    /// Private helper method to apply all filtering conditions.
+    /// </summary>
     private static IQueryable<RideTrafficStat> ApplyFilters(
         IQueryable<RideTrafficStat> query,
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         bool? isCrowded,
         int? minVisitorCount,
@@ -159,10 +159,10 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
         DateTime? recordTimeFrom,
         DateTime? recordTimeTo)
     {
-        if (!string.IsNullOrEmpty(searchTerm))
+        if (!string.IsNullOrEmpty(keyword))
         {
-            query = query.Where(r => r.Ride.RideName.Contains(searchTerm) ||
-                                   r.Ride.Location.Contains(searchTerm));
+            query = query.Where(r => r.Ride.RideName.Contains(keyword) ||
+                                   r.Ride.Location.Contains(keyword));
         }
 
         if (rideId.HasValue)

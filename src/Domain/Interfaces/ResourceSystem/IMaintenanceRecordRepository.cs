@@ -6,15 +6,15 @@ namespace DbApp.Domain.Interfaces.ResourceSystem;
 
 public interface IMaintenanceRecordRepository
 {
-    // 基本CRUD操作  
+    // 基本CRUD操作
     Task<MaintenanceRecord?> GetByIdAsync(int maintenanceId);
     Task<MaintenanceRecord> AddAsync(MaintenanceRecord record);
     Task UpdateAsync(MaintenanceRecord record);
     Task DeleteAsync(MaintenanceRecord record);
 
-    // 统一搜索方法  
+    // 统一搜索方法
     Task<IEnumerable<MaintenanceRecord>> SearchAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         int? managerId,
@@ -30,9 +30,9 @@ public interface IMaintenanceRecordRepository
         int page,
         int pageSize);
 
-    // 统一计数方法  
+    // 统一计数方法
     Task<int> CountAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         int? managerId,
@@ -46,6 +46,6 @@ public interface IMaintenanceRecordRepository
         decimal? minCost,
         decimal? maxCost);
 
-    // 统计方法  
+    // 统计方法
     Task<MaintenanceRecordStats> GetStatsAsync(DateTime? startDate, DateTime? endDate);
 }

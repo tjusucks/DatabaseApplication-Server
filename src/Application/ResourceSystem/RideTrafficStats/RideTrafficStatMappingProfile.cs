@@ -1,12 +1,11 @@
 using AutoMapper;
 using DbApp.Domain.Entities.ResourceSystem;
-using DbApp.Domain.Statistics.ResourceSystem;
 
 namespace DbApp.Application.ResourceSystem.RideTrafficStats;
 
-/// <summary>  
-/// AutoMapper profile for mapping RideTrafficStat and related entities to RideTrafficStat DTOs.  
-/// </summary>  
+/// <summary>
+/// AutoMapper profile for mapping RideTrafficStat and related entities to RideTrafficStat DTOs.
+/// </summary>
 public class RideTrafficStatMappingProfile : Profile
 {
     public RideTrafficStatMappingProfile()

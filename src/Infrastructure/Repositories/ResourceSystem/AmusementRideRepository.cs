@@ -10,9 +10,9 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    /// <summary>  
-    /// Get amusement ride by ID with manager information.  
-    /// </summary>  
+    /// <summary>
+    /// Get amusement ride by ID with manager information.
+    /// </summary>
     public async Task<AmusementRide?> GetByIdAsync(int rideId)
     {
         return await _dbContext.AmusementRides
@@ -21,9 +21,9 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
             .FirstOrDefaultAsync(r => r.RideId == rideId);
     }
 
-    /// <summary>  
-    /// Add a new amusement ride.  
-    /// </summary>  
+    /// <summary>
+    /// Add a new amusement ride.
+    /// </summary>
     public async Task<AmusementRide> AddAsync(AmusementRide ride)
     {
         _dbContext.AmusementRides.Add(ride);
@@ -31,29 +31,29 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
         return ride;
     }
 
-    /// <summary>  
-    /// Update an existing amusement ride.  
-    /// </summary>  
+    /// <summary>
+    /// Update an existing amusement ride.
+    /// </summary>
     public async Task UpdateAsync(AmusementRide ride)
     {
         _dbContext.AmusementRides.Update(ride);
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Delete an amusement ride.  
-    /// </summary>  
+    /// <summary>
+    /// Delete an amusement ride.
+    /// </summary>
     public async Task DeleteAsync(AmusementRide ride)
     {
         _dbContext.AmusementRides.Remove(ride);
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Unified search method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified search method with comprehensive filtering options.
+    /// </summary>
     public async Task<IEnumerable<AmusementRide>> SearchAsync(
-        string? searchTerm,
+        string? keyword,
         RideStatus? status,
         string? location,
         int? managerId,
@@ -71,8 +71,8 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
             .ThenInclude(m => m!.User)
             .AsQueryable();
 
-        // Apply all filtering conditions  
-        query = ApplyFilters(query, searchTerm, status, location, managerId,
+        // Apply all filtering conditions
+        query = ApplyFilters(query, keyword, status, location, managerId,
             minCapacity, maxCapacity, minHeightLimit, maxHeightLimit,
             openDateFrom, openDateTo);
 
@@ -82,11 +82,11 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
             .ToListAsync();
     }
 
-    /// <summary>  
-    /// Unified count method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified count method with comprehensive filtering options.
+    /// </summary>
     public async Task<int> CountAsync(
-        string? searchTerm,
+        string? keyword,
         RideStatus? status,
         string? location,
         int? managerId,
@@ -99,16 +99,16 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
     {
         var query = _dbContext.AmusementRides.AsQueryable();
 
-        query = ApplyFilters(query, searchTerm, status, location, managerId,
+        query = ApplyFilters(query, keyword, status, location, managerId,
             minCapacity, maxCapacity, minHeightLimit, maxHeightLimit,
             openDateFrom, openDateTo);
 
         return await query.CountAsync();
     }
 
-    /// <summary>  
-    /// Get amusement ride statistics for a date range.  
-    /// </summary>  
+    /// <summary>
+    /// Get amusement ride statistics for a date range.
+    /// </summary>
     public async Task<AmusementRideStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)
     {
         var query = _dbContext.AmusementRides.AsQueryable();
@@ -138,12 +138,12 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
             LastOpenDate = rides.Where(r => r.OpenDate.HasValue).Max(r => r.OpenDate)
         };
     }
-    /// <summary>  
-    /// Private helper method to apply all filtering conditions.  
-    /// </summary>  
+    /// <summary>
+    /// Private helper method to apply all filtering conditions.
+    /// </summary>
     private static IQueryable<AmusementRide> ApplyFilters(
         IQueryable<AmusementRide> query,
-        string? searchTerm,
+        string? keyword,
         RideStatus? status,
         string? location,
         int? managerId,
@@ -154,11 +154,11 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
         DateTime? openDateFrom,
         DateTime? openDateTo)
     {
-        if (!string.IsNullOrEmpty(searchTerm))
+        if (!string.IsNullOrEmpty(keyword))
         {
-            query = query.Where(r => r.RideName.Contains(searchTerm) ||
-                                   r.Location.Contains(searchTerm) ||
-                                   (r.Description != null && r.Description.Contains(searchTerm)));
+            query = query.Where(r => r.RideName.Contains(keyword) ||
+                                   r.Location.Contains(keyword) ||
+                                   (r.Description != null && r.Description.Contains(keyword)));
         }
 
         if (status.HasValue)

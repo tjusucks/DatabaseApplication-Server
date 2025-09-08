@@ -6,16 +6,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.ResourceSystem;
 
-/// <summary>  
-/// Repository implementation for inspection record operations with unified search capabilities.  
-/// </summary>  
+/// <summary>
+/// Repository implementation for inspection record operations with unified search capabilities.
+/// </summary>
 public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspectionRecordRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
-    /// <summary>  
-    /// Get inspection record by ID with related entities.  
-    /// </summary>  
+    /// <summary>
+    /// Get inspection record by ID with related entities.
+    /// </summary>
     public async Task<InspectionRecord?> GetByIdAsync(int inspectionId)
     {
         return await _dbContext.InspectionRecords
@@ -24,9 +24,9 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
             .FirstOrDefaultAsync(r => r.InspectionId == inspectionId);
     }
 
-    /// <summary>  
-    /// Add a new inspection record.  
-    /// </summary>  
+    /// <summary>
+    /// Add a new inspection record.
+    /// </summary>
     public async Task<InspectionRecord> AddAsync(InspectionRecord record)
     {
         _dbContext.InspectionRecords.Add(record);
@@ -34,29 +34,29 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
         return record;
     }
 
-    /// <summary>  
-    /// Update an existing inspection record.  
-    /// </summary>  
+    /// <summary>
+    /// Update an existing inspection record.
+    /// </summary>
     public async Task UpdateAsync(InspectionRecord record)
     {
         _dbContext.InspectionRecords.Update(record);
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Delete an inspection record.  
-    /// </summary>  
+    /// <summary>
+    /// Delete an inspection record.
+    /// </summary>
     public async Task DeleteAsync(InspectionRecord record)
     {
         _dbContext.InspectionRecords.Remove(record);
         await _dbContext.SaveChangesAsync();
     }
 
-    /// <summary>  
-    /// Unified search method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified search method with comprehensive filtering options.
+    /// </summary>
     public async Task<IEnumerable<InspectionRecord>> SearchAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         CheckType? checkType,
@@ -71,8 +71,8 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
             .Include(r => r.Team)
             .AsQueryable();
 
-        // Apply all filtering conditions  
-        query = ApplyFilters(query, searchTerm, rideId, teamId, checkType,
+        // Apply all filtering conditions
+        query = ApplyFilters(query, keyword, rideId, teamId, checkType,
             isPassed, checkDateFrom, checkDateTo);
 
         return await query
@@ -81,11 +81,11 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
             .ToListAsync();
     }
 
-    /// <summary>  
-    /// Unified count method with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Unified count method with comprehensive filtering options.
+    /// </summary>
     public async Task<int> CountAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         CheckType? checkType,
@@ -95,15 +95,15 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
     {
         var query = _dbContext.InspectionRecords.AsQueryable();
 
-        query = ApplyFilters(query, searchTerm, rideId, teamId, checkType,
+        query = ApplyFilters(query, keyword, rideId, teamId, checkType,
             isPassed, checkDateFrom, checkDateTo);
 
         return await query.CountAsync();
     }
 
-    /// <summary>  
-    /// Get inspection record statistics for a date range.  
-    /// </summary>  
+    /// <summary>
+    /// Get inspection record statistics for a date range.
+    /// </summary>
     public async Task<InspectionRecordStats> GetStatsAsync(DateTime? startDate, DateTime? endDate)
     {
         var query = _dbContext.InspectionRecords.AsQueryable();
@@ -131,12 +131,12 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
         };
     }
 
-    /// <summary>  
-    /// Private helper method to apply all filtering conditions.  
-    /// </summary>  
+    /// <summary>
+    /// Private helper method to apply all filtering conditions.
+    /// </summary>
     private static IQueryable<InspectionRecord> ApplyFilters(
         IQueryable<InspectionRecord> query,
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         CheckType? checkType,
@@ -144,12 +144,12 @@ public class InspectionRecordRepository(ApplicationDbContext dbContext) : IInspe
         DateTime? checkDateFrom,
         DateTime? checkDateTo)
     {
-        if (!string.IsNullOrEmpty(searchTerm))
+        if (!string.IsNullOrEmpty(keyword))
         {
-            query = query.Where(r => r.Ride.RideName.Contains(searchTerm) ||
-                                   r.Team.TeamName.Contains(searchTerm) ||
-                                   (r.IssuesFound != null && r.IssuesFound.Contains(searchTerm)) ||
-                                   (r.Recommendations != null && r.Recommendations.Contains(searchTerm)));
+            query = query.Where(r => r.Ride.RideName.Contains(keyword) ||
+                                   r.Team.TeamName.Contains(keyword) ||
+                                   (r.IssuesFound != null && r.IssuesFound.Contains(keyword)) ||
+                                   (r.Recommendations != null && r.Recommendations.Contains(keyword)));
         }
 
         if (rideId.HasValue)

@@ -3,16 +3,16 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.AmusementRides;
 
-/// <summary>  
-/// Query to get amusement ride by ID.  
-/// </summary>  
+/// <summary>
+/// Query to get amusement ride by ID.
+/// </summary>
 public record GetAmusementRideByIdQuery(int RideId) : IRequest<AmusementRideSummaryDto?>;
 
-/// <summary>  
-/// Unified query to search amusement rides with comprehensive filtering options.  
-/// </summary>  
+/// <summary>
+/// Unified query to search amusement rides with comprehensive filtering options.
+/// </summary>
 public record SearchAmusementRidesQuery(
-    string? SearchTerm = null,
+    string? Keyword = null,
     RideStatus? Status = null,
     string? Location = null,
     int? ManagerId = null,
@@ -26,17 +26,17 @@ public record SearchAmusementRidesQuery(
     int PageSize = 10
 ) : IRequest<AmusementRideResult>;
 
-/// <summary>  
-/// Query to get amusement ride statistics.  
-/// </summary>  
+/// <summary>
+/// Query to get amusement ride statistics.
+/// </summary>
 public record GetAmusementRideStatsQuery(
     DateTime? StartDate = null,
     DateTime? EndDate = null
 ) : IRequest<AmusementRideStatsDto>;
 
-/// <summary>  
-/// Command to create a new amusement ride.  
-/// </summary>  
+/// <summary>
+/// Command to create a new amusement ride.
+/// </summary>
 public record CreateAmusementRideCommand(
     string RideName,
     string Location,
@@ -50,9 +50,9 @@ public record CreateAmusementRideCommand(
     int? ManagerId
 ) : IRequest<int>;
 
-/// <summary>  
-/// Command to update an existing amusement ride.  
-/// </summary>  
+/// <summary>
+/// Command to update an existing amusement ride.
+/// </summary>
 public record UpdateAmusementRideCommand(
     int RideId,
     string RideName,
@@ -67,7 +67,7 @@ public record UpdateAmusementRideCommand(
     int? ManagerId
 ) : IRequest;
 
-/// <summary>  
-/// Command to delete an amusement ride.  
-/// </summary>  
+/// <summary>
+/// Command to delete an amusement ride.
+/// </summary>
 public record DeleteAmusementRideCommand(int RideId) : IRequest<bool>;

@@ -1,8 +1,8 @@
 namespace DbApp.Application.ResourceSystem.RideTrafficStats;
 
-/// <summary>  
-/// Summary DTO for ride traffic stat search results.  
-/// </summary>  
+/// <summary>
+/// Summary DTO for ride traffic stat search results.
+/// </summary>
 public class RideTrafficStatSummaryDto
 {
     public int RideId { get; set; }
@@ -16,9 +16,9 @@ public class RideTrafficStatSummaryDto
     public DateTime UpdatedAt { get; set; }
 }
 
-/// <summary>  
-/// Ride traffic statistics DTO.  
-/// </summary>  
+/// <summary>
+/// Ride traffic statistics DTO.
+/// </summary>
 public class RideTrafficStatsDto
 {
     public int TotalRecords { get; set; }
@@ -33,9 +33,9 @@ public class RideTrafficStatsDto
     public DateTime? LastRecord { get; set; }
 }
 
-/// <summary>  
-/// Search result containing ride traffic stats and pagination info.  
-/// </summary>  
+/// <summary>
+/// Search result containing ride traffic stats and pagination info.
+/// </summary>
 public class RideTrafficStatResult
 {
     public List<RideTrafficStatSummaryDto> RideTrafficStats { get; set; } = [];

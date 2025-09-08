@@ -4,9 +4,9 @@ using DbApp.Domain.Statistics.ResourceSystem;
 
 namespace DbApp.Application.ResourceSystem.InspectionRecords;
 
-/// <summary>  
-/// AutoMapper profile for mapping InspectionRecord and related entities to InspectionRecord DTOs.  
-/// </summary>  
+/// <summary>
+/// AutoMapper profile for mapping InspectionRecord and related entities to InspectionRecord DTOs.
+/// </summary>
 public class InspectionRecordMappingProfile : Profile
 {
     public InspectionRecordMappingProfile()

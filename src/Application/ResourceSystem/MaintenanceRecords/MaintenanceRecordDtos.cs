@@ -2,9 +2,9 @@ using DbApp.Domain.Enums.ResourceSystem;
 
 namespace DbApp.Application.ResourceSystem.MaintenanceRecords;
 
-/// <summary>  
-/// Summary DTO for maintenance record search results.  
-/// </summary>  
+/// <summary>
+/// Summary DTO for maintenance record search results.
+/// </summary>
 public class MaintenanceRecordSummaryDto
 {
     public int MaintenanceId { get; set; }
@@ -28,9 +28,9 @@ public class MaintenanceRecordSummaryDto
     public DateTime UpdatedAt { get; set; }
 }
 
-/// <summary>  
-/// Maintenance record statistics DTO.  
-/// </summary>  
+/// <summary>
+/// Maintenance record statistics DTO.
+/// </summary>
 public class MaintenanceRecordStatsDto
 {
     public int TotalMaintenances { get; set; }
@@ -43,9 +43,9 @@ public class MaintenanceRecordStatsDto
     public DateTime? LastMaintenance { get; set; }
 }
 
-/// <summary>  
-/// Search result containing maintenance records and pagination info.  
-/// </summary>  
+/// <summary>
+/// Search result containing maintenance records and pagination info.
+/// </summary>
 public class MaintenanceRecordResult
 {
     public List<MaintenanceRecordSummaryDto> MaintenanceRecords { get; set; } = [];

@@ -4,9 +4,9 @@ using DbApp.Domain.Statistics.ResourceSystem;
 
 namespace DbApp.Application.ResourceSystem.MaintenanceRecords;
 
-/// <summary>  
-/// AutoMapper profile for mapping MaintenanceRecord and related entities to MaintenanceRecord DTOs.  
-/// </summary>  
+/// <summary>
+/// AutoMapper profile for mapping MaintenanceRecord and related entities to MaintenanceRecord DTOs.
+/// </summary>
 public class MaintenanceRecordMappingProfile : Profile
 {
     public MaintenanceRecordMappingProfile()

@@ -48,7 +48,7 @@ public interface IEntryRecordRepository
     Task<List<EntryRecord>> SearchAsync(PaginatedSpec<EntryRecordSpec> spec);
 
     /// <summary>
-    /// Get overall entry record statistics with filtering. 
+    /// Get overall entry record statistics with filtering.
     /// </summary>
     Task<EntryRecordStats> GetStatsAsync(EntryRecordSpec spec);
 

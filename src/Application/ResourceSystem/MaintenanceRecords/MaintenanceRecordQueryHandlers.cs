@@ -4,10 +4,10 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.MaintenanceRecords;
 
-/// <summary>  
-/// Combined handler for all maintenance record search and statistics queries.  
-/// </summary>  
-public class MaintenanceRecordQueryHandler(
+/// <summary>
+/// Combined handler for all maintenance record search and statistics queries.
+/// </summary>
+public class MaintenanceRecordQueryHandlers(
     IMaintenanceRecordRepository maintenanceRecordRepository,
     IMapper mapper) :
     IRequestHandler<GetMaintenanceRecordByIdQuery, MaintenanceRecordSummaryDto?>,
@@ -20,9 +20,9 @@ public class MaintenanceRecordQueryHandler(
     private readonly IMaintenanceRecordRepository _maintenanceRecordRepository = maintenanceRecordRepository;
     private readonly IMapper _mapper = mapper;
 
-    /// <summary>  
-    /// Handle getting maintenance record by ID.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting maintenance record by ID.
+    /// </summary>
     public async Task<MaintenanceRecordSummaryDto?> Handle(
         GetMaintenanceRecordByIdQuery request,
         CancellationToken cancellationToken)
@@ -31,15 +31,15 @@ public class MaintenanceRecordQueryHandler(
         return record == null ? null : _mapper.Map<MaintenanceRecordSummaryDto>(record);
     }
 
-    /// <summary>  
-    /// Handle searching maintenance records with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Handle searching maintenance records with comprehensive filtering options.
+    /// </summary>
     public async Task<MaintenanceRecordResult> Handle(
         SearchMaintenanceRecordsQuery request,
         CancellationToken cancellationToken)
     {
         var records = await _maintenanceRecordRepository.SearchAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.RideId,
             request.TeamId,
             request.ManagerId,
@@ -56,7 +56,7 @@ public class MaintenanceRecordQueryHandler(
             request.PageSize);
 
         var totalCount = await _maintenanceRecordRepository.CountAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.RideId,
             request.TeamId,
             request.ManagerId,
@@ -81,9 +81,9 @@ public class MaintenanceRecordQueryHandler(
         };
     }
 
-    /// <summary>  
-    /// Handle getting maintenance record statistics.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting maintenance record statistics.
+    /// </summary>
     public async Task<MaintenanceRecordStatsDto> Handle(
         GetMaintenanceRecordStatsQuery request,
         CancellationToken cancellationToken)
@@ -92,9 +92,9 @@ public class MaintenanceRecordQueryHandler(
         return _mapper.Map<MaintenanceRecordStatsDto>(stats);
     }
 
-    /// <summary>  
-    /// Handle creating a new maintenance record.  
-    /// </summary>  
+    /// <summary>
+    /// Handle creating a new maintenance record.
+    /// </summary>
     public async Task<int> Handle(
         CreateMaintenanceRecordCommand request,
         CancellationToken cancellationToken)
@@ -122,9 +122,9 @@ public class MaintenanceRecordQueryHandler(
         return record.MaintenanceId;
     }
 
-    /// <summary>  
-    /// Handle updating an existing maintenance record.  
-    /// </summary>  
+    /// <summary>
+    /// Handle updating an existing maintenance record.
+    /// </summary>
     public async Task Handle(
         UpdateMaintenanceRecordCommand request,
         CancellationToken cancellationToken)
@@ -154,9 +154,9 @@ public class MaintenanceRecordQueryHandler(
         await _maintenanceRecordRepository.UpdateAsync(record);
     }
 
-    /// <summary>  
-    /// Handle deleting a maintenance record.  
-    /// </summary>  
+    /// <summary>
+    /// Handle deleting a maintenance record.
+    /// </summary>
     public async Task<bool> Handle(
         DeleteMaintenanceRecordCommand request,
         CancellationToken cancellationToken)

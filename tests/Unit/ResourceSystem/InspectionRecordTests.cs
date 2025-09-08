@@ -1,15 +1,15 @@
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
-using Xunit;
 
 namespace DbApp.Tests.Unit.ResourceSystem;
+
 [Trait("Category", "Unit")]
 public class InspectionRecordTests
 {
     [Fact]
     public void InspectionRecord_WithValidData_ShouldCreateSuccessfully()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new InspectionRecord
         {
             RideId = 1,
@@ -21,7 +21,7 @@ public class InspectionRecordTests
             Recommendations = "Continue regular maintenance schedule"
         };
 
-        // Assert  
+        // Assert
         Assert.Equal(1, record.RideId);
         Assert.Equal(1, record.TeamId);
         Assert.Equal(CheckType.Daily, record.CheckType);
@@ -37,7 +37,7 @@ public class InspectionRecordTests
     [InlineData(CheckType.Special)]
     public void InspectionRecord_WithValidCheckType_ShouldAcceptAllEnumValues(CheckType checkType)
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new InspectionRecord
         {
             RideId = 1,
@@ -47,14 +47,14 @@ public class InspectionRecordTests
             IsPassed = true
         };
 
-        // Assert  
+        // Assert
         Assert.Equal(checkType, record.CheckType);
     }
 
     [Fact]
     public void InspectionRecord_FailedInspection_ShouldRecordIssuesAndRecommendations()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new InspectionRecord
         {
             RideId = 1,
@@ -66,7 +66,7 @@ public class InspectionRecordTests
             Recommendations = "Replace brake system immediately and retest"
         };
 
-        // Assert  
+        // Assert
         Assert.False(record.IsPassed);
         Assert.Equal("Brake response time exceeds safety threshold", record.IssuesFound);
         Assert.Equal("Replace brake system immediately and retest", record.Recommendations);
@@ -75,7 +75,7 @@ public class InspectionRecordTests
     [Fact]
     public void InspectionRecord_PassedInspection_ShouldHaveNoIssues()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new InspectionRecord
         {
             RideId = 1,
@@ -87,7 +87,7 @@ public class InspectionRecordTests
             Recommendations = "All systems operating within normal parameters"
         };
 
-        // Assert  
+        // Assert
         Assert.True(record.IsPassed);
         Assert.Null(record.IssuesFound);
         Assert.Equal("All systems operating within normal parameters", record.Recommendations);
@@ -96,15 +96,15 @@ public class InspectionRecordTests
     [Fact]
     public void InspectionRecord_DefaultValues_ShouldBeSetCorrectly()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new InspectionRecord();
 
-        // Assert  
+        // Assert
         Assert.True(record.CreatedAt <= DateTime.UtcNow);
         Assert.True(record.CreatedAt > DateTime.UtcNow.AddMinutes(-1));
         Assert.Equal(default(DateTime), record.UpdatedAt);
         Assert.Equal(0, record.InspectionId);
-        Assert.False(record.IsPassed); // Default boolean value  
+        Assert.False(record.IsPassed); // Default boolean value
     }
 
     [Theory]
@@ -115,7 +115,7 @@ public class InspectionRecordTests
     public void InspectionRecord_WithVariousScenarios_ShouldHandleAllCases(
         CheckType checkType, bool isPassed, string? issuesFound, string? recommendations)
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new InspectionRecord
         {
             RideId = 1,
@@ -127,7 +127,7 @@ public class InspectionRecordTests
             Recommendations = recommendations
         };
 
-        // Assert  
+        // Assert
         Assert.Equal(checkType, record.CheckType);
         Assert.Equal(isPassed, record.IsPassed);
         Assert.Equal(issuesFound, record.IssuesFound);
@@ -137,7 +137,7 @@ public class InspectionRecordTests
     [Fact]
     public void InspectionRecord_WithNullableProperties_ShouldHandleNullValues()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new InspectionRecord
         {
             RideId = 1,
@@ -149,7 +149,7 @@ public class InspectionRecordTests
             Recommendations = null
         };
 
-        // Assert  
+        // Assert
         Assert.Null(record.IssuesFound);
         Assert.Null(record.Recommendations);
     }
@@ -157,11 +157,11 @@ public class InspectionRecordTests
     [Fact]
     public void InspectionRecord_CheckDateValidation_ShouldAcceptValidDates()
     {
-        // Arrange  
+        // Arrange
         var pastDate = DateTime.UtcNow.AddDays(-30);
         var futureDate = DateTime.UtcNow.AddDays(7);
 
-        // Act & Assert - Past date  
+        // Act & Assert - Past date
         var pastRecord = new InspectionRecord
         {
             RideId = 1,
@@ -172,7 +172,7 @@ public class InspectionRecordTests
         };
         Assert.Equal(pastDate, pastRecord.CheckDate);
 
-        // Act & Assert - Future date  
+        // Act & Assert - Future date
         var futureRecord = new InspectionRecord
         {
             RideId = 1,
@@ -187,7 +187,7 @@ public class InspectionRecordTests
     [Fact]
     public void InspectionRecord_BusinessLogic_FailedInspectionShouldHaveIssues()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var failedRecord = new InspectionRecord
         {
             RideId = 1,
@@ -199,7 +199,7 @@ public class InspectionRecordTests
             Recommendations = "Immediate shutdown required"
         };
 
-        // Assert  
+        // Assert
         Assert.False(failedRecord.IsPassed);
         Assert.NotNull(failedRecord.IssuesFound);
         Assert.NotEmpty(failedRecord.IssuesFound);
@@ -210,10 +210,10 @@ public class InspectionRecordTests
     [Fact]
     public void InspectionRecord_TimestampProperties_ShouldBeSetCorrectly()
     {
-        // Arrange  
+        // Arrange
         var beforeCreation = DateTime.UtcNow;
 
-        // Act  
+        // Act
         var record = new InspectionRecord
         {
             RideId = 1,
@@ -225,7 +225,7 @@ public class InspectionRecordTests
 
         var afterCreation = DateTime.UtcNow;
 
-        // Assert  
+        // Assert
         Assert.True(record.CreatedAt >= beforeCreation);
         Assert.True(record.CreatedAt <= afterCreation);
         Assert.Equal(default(DateTime), record.UpdatedAt);

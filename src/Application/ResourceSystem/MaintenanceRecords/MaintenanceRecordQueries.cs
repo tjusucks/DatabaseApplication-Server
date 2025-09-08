@@ -3,16 +3,16 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.MaintenanceRecords;
 
-/// <summary>  
-/// Query to get maintenance record by ID.  
-/// </summary>  
+/// <summary>
+/// Query to get maintenance record by ID.
+/// </summary>
 public record GetMaintenanceRecordByIdQuery(int MaintenanceId) : IRequest<MaintenanceRecordSummaryDto?>;
 
-/// <summary>  
-/// Unified query to search maintenance records with comprehensive filtering options.  
-/// </summary>  
+/// <summary>
+/// Unified query to search maintenance records with comprehensive filtering options.
+/// </summary>
 public record SearchMaintenanceRecordsQuery(
-    string? SearchTerm = null,
+    string? Keyword = null,
     int? RideId = null,
     int? TeamId = null,
     int? ManagerId = null,
@@ -29,18 +29,18 @@ public record SearchMaintenanceRecordsQuery(
     int PageSize = 10
 ) : IRequest<MaintenanceRecordResult>;
 
-/// <summary>  
-/// Query to get maintenance record statistics.  
-/// </summary>  
+/// <summary>
+/// Query to get maintenance record statistics.
+/// </summary>
 public record GetMaintenanceRecordStatsQuery(
     DateTime? StartDate = null,
     DateTime? EndDate = null,
     int? RideId = null
 ) : IRequest<MaintenanceRecordStatsDto>;
 
-/// <summary>  
-/// Command to create a new maintenance record.  
-/// </summary>  
+/// <summary>
+/// Command to create a new maintenance record.
+/// </summary>
 public record CreateMaintenanceRecordCommand(
     int RideId,
     int TeamId,
@@ -57,9 +57,9 @@ public record CreateMaintenanceRecordCommand(
     string? AcceptanceComments
 ) : IRequest<int>;
 
-/// <summary>  
-/// Command to update an existing maintenance record.  
-/// </summary>  
+/// <summary>
+/// Command to update an existing maintenance record.
+/// </summary>
 public record UpdateMaintenanceRecordCommand(
     int MaintenanceId,
     int RideId,
@@ -77,7 +77,7 @@ public record UpdateMaintenanceRecordCommand(
     string? AcceptanceComments
 ) : IRequest;
 
-/// <summary>  
-/// Command to delete a maintenance record.  
-/// </summary>  
+/// <summary>
+/// Command to delete a maintenance record.
+/// </summary>
 public record DeleteMaintenanceRecordCommand(int MaintenanceId) : IRequest<bool>;

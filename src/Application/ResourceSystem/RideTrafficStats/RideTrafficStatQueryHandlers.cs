@@ -4,10 +4,10 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.RideTrafficStats;
 
-/// <summary>  
-/// Combined handler for all ride traffic stat queries.  
-/// </summary>  
-public class RideTrafficStatQueryHandler(
+/// <summary>
+/// Combined handler for all ride traffic stat queries.
+/// </summary>
+public class RideTrafficStatQueryHandlers(
     IRideTrafficStatRepository rideTrafficStatRepository,
     IMapper mapper) :
     IRequestHandler<GetRideTrafficStatByIdQuery, RideTrafficStatSummaryDto?>,
@@ -17,9 +17,9 @@ public class RideTrafficStatQueryHandler(
     private readonly IRideTrafficStatRepository _rideTrafficStatRepository = rideTrafficStatRepository;
     private readonly IMapper _mapper = mapper;
 
-    /// <summary>  
-    /// Handle getting ride traffic stat by composite key.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting ride traffic stat by composite key.
+    /// </summary>
     public async Task<RideTrafficStatSummaryDto?> Handle(
         GetRideTrafficStatByIdQuery request,
         CancellationToken cancellationToken)
@@ -28,15 +28,15 @@ public class RideTrafficStatQueryHandler(
         return stat == null ? null : _mapper.Map<RideTrafficStatSummaryDto>(stat);
     }
 
-    /// <summary>  
-    /// Handle searching ride traffic stats with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Handle searching ride traffic stats with comprehensive filtering options.
+    /// </summary>
     public async Task<RideTrafficStatResult> Handle(
         SearchRideTrafficStatsQuery request,
         CancellationToken cancellationToken)
     {
         var stats = await _rideTrafficStatRepository.SearchAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.RideId,
             request.IsCrowded,
             request.MinVisitorCount,
@@ -51,7 +51,7 @@ public class RideTrafficStatQueryHandler(
             request.PageSize);
 
         var totalCount = await _rideTrafficStatRepository.CountAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.RideId,
             request.IsCrowded,
             request.MinVisitorCount,
@@ -74,9 +74,9 @@ public class RideTrafficStatQueryHandler(
         };
     }
 
-    /// <summary>  
-    /// Handle getting ride traffic statistics.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting ride traffic statistics.
+    /// </summary>
     public async Task<RideTrafficStatsDto> Handle(
         GetRideTrafficStatsQuery request,
         CancellationToken cancellationToken)

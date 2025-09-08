@@ -4,9 +4,9 @@ using DbApp.Domain.Statistics.ResourceSystem;
 
 namespace DbApp.Application.ResourceSystem.AmusementRides;
 
-/// <summary>  
-/// AutoMapper profile for mapping AmusementRide and related entities to AmusementRide DTOs.  
-/// </summary>  
+/// <summary>
+/// AutoMapper profile for mapping AmusementRide and related entities to AmusementRide DTOs.
+/// </summary>
 public class AmusementRideMappingProfile : Profile
 {
     public AmusementRideMappingProfile()

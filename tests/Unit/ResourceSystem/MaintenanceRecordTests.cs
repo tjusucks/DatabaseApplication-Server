@@ -1,16 +1,16 @@
 using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
-using Xunit;
 
 namespace DbApp.Tests.Unit.ResourceSystem;
+
 [Trait("Category", "Unit")]
 public class MaintenanceRecordTests
 {
     [Fact]
     public void MaintenanceRecord_WithValidData_ShouldCreateSuccessfully()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new MaintenanceRecord
         {
             RideId = 1,
@@ -28,7 +28,7 @@ public class MaintenanceRecordTests
             AcceptanceComments = "Work completed to standard"
         };
 
-        // Assert  
+        // Assert
         Assert.Equal(1, record.RideId);
         Assert.Equal(1, record.TeamId);
         Assert.Equal(1, record.ManagerId);
@@ -48,7 +48,7 @@ public class MaintenanceRecordTests
     [InlineData(MaintenanceType.SoftwareUpdate)]
     public void MaintenanceRecord_WithValidMaintenanceType_ShouldAcceptAllEnumValues(MaintenanceType type)
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new MaintenanceRecord
         {
             RideId = 1,
@@ -59,30 +59,30 @@ public class MaintenanceRecordTests
             IsCompleted = false
         };
 
-        // Assert  
+        // Assert
         Assert.Equal(type, record.MaintenanceType);
     }
 
     [Fact]
     public void MaintenanceRecord_CostValidation_ShouldEnforceRangeAttribute()
     {
-        // Arrange  
+        // Arrange
         var record = new MaintenanceRecord
         {
             RideId = 1,
             TeamId = 1,
             MaintenanceType = MaintenanceType.Preventive,
             StartTime = DateTime.UtcNow,
-            Cost = -50.00m, // Invalid negative cost  
+            Cost = -50.00m, // Invalid negative cost
             IsCompleted = false
         };
 
-        // Act  
+        // Act
         var validationContext = new ValidationContext(record);
         var validationResults = new List<ValidationResult>();
         var isValid = Validator.TryValidateObject(record, validationContext, validationResults, true);
 
-        // Assert  
+        // Assert
         Assert.False(isValid);
         Assert.Contains(validationResults, vr => vr.MemberNames.Contains(nameof(MaintenanceRecord.Cost)));
     }
@@ -90,10 +90,10 @@ public class MaintenanceRecordTests
     [Fact]
     public void MaintenanceRecord_DefaultValues_ShouldBeSetCorrectly()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new MaintenanceRecord();
 
-        // Assert  
+        // Assert
         Assert.True(record.CreatedAt <= DateTime.UtcNow);
         Assert.True(record.CreatedAt > DateTime.UtcNow.AddMinutes(-1));
         Assert.Equal(default(DateTime), record.UpdatedAt);
@@ -105,7 +105,7 @@ public class MaintenanceRecordTests
     [Fact]
     public void MaintenanceRecord_WorkflowStates_ShouldHandleCompletionFlow()
     {
-        // Arrange  
+        // Arrange
         var record = new MaintenanceRecord
         {
             RideId = 1,
@@ -116,17 +116,17 @@ public class MaintenanceRecordTests
             IsCompleted = false
         };
 
-        // Act - Complete the work  
+        // Act - Complete the work
         record.IsCompleted = true;
         record.EndTime = DateTime.UtcNow.AddHours(3);
         record.MaintenanceDetails = "All systems checked and functioning";
 
-        // Act - Accept the work  
+        // Act - Accept the work
         record.IsAccepted = true;
         record.AcceptanceDate = DateTime.UtcNow;
         record.AcceptanceComments = "Quality work completed";
 
-        // Assert  
+        // Assert
         Assert.True(record.IsCompleted);
         Assert.True(record.IsAccepted);
         Assert.NotNull(record.EndTime);
@@ -137,7 +137,7 @@ public class MaintenanceRecordTests
     [Fact]
     public void MaintenanceRecord_WithNullableProperties_ShouldHandleNullValues()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var record = new MaintenanceRecord
         {
             RideId = 1,
@@ -155,7 +155,7 @@ public class MaintenanceRecordTests
             AcceptanceComments = null
         };
 
-        // Assert  
+        // Assert
         Assert.Null(record.ManagerId);
         Assert.Null(record.EndTime);
         Assert.Null(record.PartsReplaced);

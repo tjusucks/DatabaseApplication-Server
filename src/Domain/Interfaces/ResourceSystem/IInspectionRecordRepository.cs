@@ -6,15 +6,15 @@ namespace DbApp.Domain.Interfaces.ResourceSystem;
 
 public interface IInspectionRecordRepository
 {
-    // 基本CRUD操作  
+    // 基本CRUD操作
     Task<InspectionRecord?> GetByIdAsync(int inspectionId);
     Task<InspectionRecord> AddAsync(InspectionRecord record);
     Task UpdateAsync(InspectionRecord record);
     Task DeleteAsync(InspectionRecord record);
 
-    // 统一搜索方法  
+    // 统一搜索方法
     Task<IEnumerable<InspectionRecord>> SearchAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         CheckType? checkType,
@@ -24,9 +24,9 @@ public interface IInspectionRecordRepository
         int page,
         int pageSize);
 
-    // 统一计数方法  
+    // 统一计数方法
     Task<int> CountAsync(
-        string? searchTerm,
+        string? keyword,
         int? rideId,
         int? teamId,
         CheckType? checkType,
@@ -34,6 +34,6 @@ public interface IInspectionRecordRepository
         DateTime? checkDateFrom,
         DateTime? checkDateTo);
 
-    // 统计方法  
+    // 统计方法
     Task<InspectionRecordStats> GetStatsAsync(DateTime? startDate, DateTime? endDate);
 }

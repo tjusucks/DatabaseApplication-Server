@@ -4,10 +4,10 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.InspectionRecords;
 
-/// <summary>  
-/// Combined handler for all inspection record search and statistics queries.  
-/// </summary>  
-public class InspectionRecordQueryHandler(
+/// <summary>
+/// Combined handler for all inspection record search and statistics queries.
+/// </summary>
+public class InspectionRecordQueryHandlers(
     IInspectionRecordRepository inspectionRecordRepository,
     IMapper mapper) :
     IRequestHandler<GetInspectionRecordByIdQuery, InspectionRecordSummaryDto?>,
@@ -20,9 +20,9 @@ public class InspectionRecordQueryHandler(
     private readonly IInspectionRecordRepository _inspectionRecordRepository = inspectionRecordRepository;
     private readonly IMapper _mapper = mapper;
 
-    /// <summary>  
-    /// Handle getting inspection record by ID.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting inspection record by ID.
+    /// </summary>
     public async Task<InspectionRecordSummaryDto?> Handle(
         GetInspectionRecordByIdQuery request,
         CancellationToken cancellationToken)
@@ -31,15 +31,15 @@ public class InspectionRecordQueryHandler(
         return record == null ? null : _mapper.Map<InspectionRecordSummaryDto>(record);
     }
 
-    /// <summary>  
-    /// Handle searching inspection records with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Handle searching inspection records with comprehensive filtering options.
+    /// </summary>
     public async Task<InspectionRecordResult> Handle(
         SearchInspectionRecordsQuery request,
         CancellationToken cancellationToken)
     {
         var records = await _inspectionRecordRepository.SearchAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.RideId,
             request.TeamId,
             request.CheckType,
@@ -50,7 +50,7 @@ public class InspectionRecordQueryHandler(
             request.PageSize);
 
         var totalCount = await _inspectionRecordRepository.CountAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.RideId,
             request.TeamId,
             request.CheckType,
@@ -69,9 +69,9 @@ public class InspectionRecordQueryHandler(
         };
     }
 
-    /// <summary>  
-    /// Handle getting inspection record statistics.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting inspection record statistics.
+    /// </summary>
     public async Task<InspectionRecordStatsDto> Handle(
         GetInspectionRecordStatsQuery request,
         CancellationToken cancellationToken)
@@ -80,9 +80,9 @@ public class InspectionRecordQueryHandler(
         return _mapper.Map<InspectionRecordStatsDto>(stats);
     }
 
-    /// <summary>  
-    /// Handle creating a new inspection record.  
-    /// </summary>  
+    /// <summary>
+    /// Handle creating a new inspection record.
+    /// </summary>
     public async Task<int> Handle(
         CreateInspectionRecordCommand request,
         CancellationToken cancellationToken)
@@ -104,9 +104,9 @@ public class InspectionRecordQueryHandler(
         return record.InspectionId;
     }
 
-    /// <summary>  
-    /// Handle updating an existing inspection record.  
-    /// </summary>  
+    /// <summary>
+    /// Handle updating an existing inspection record.
+    /// </summary>
     public async Task Handle(
         UpdateInspectionRecordCommand request,
         CancellationToken cancellationToken)
@@ -130,9 +130,9 @@ public class InspectionRecordQueryHandler(
         await _inspectionRecordRepository.UpdateAsync(record);
     }
 
-    /// <summary>  
-    /// Handle deleting an inspection record.  
-    /// </summary>  
+    /// <summary>
+    /// Handle deleting an inspection record.
+    /// </summary>
     public async Task<bool> Handle(
         DeleteInspectionRecordCommand request,
         CancellationToken cancellationToken)

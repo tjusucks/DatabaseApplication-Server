@@ -4,10 +4,10 @@ using MediatR;
 
 namespace DbApp.Application.ResourceSystem.AmusementRides;
 
-/// <summary>  
-/// Combined handler for all amusement ride search and statistics queries.  
-/// </summary>  
-public class AmusementRideQueryHandler(
+/// <summary>
+/// Combined handler for all amusement ride search and statistics queries.
+/// </summary>
+public class AmusementRideQueryHandlers(
     IAmusementRideRepository amusementRideRepository,
     IMapper mapper) :
     IRequestHandler<GetAmusementRideByIdQuery, AmusementRideSummaryDto?>,
@@ -20,9 +20,9 @@ public class AmusementRideQueryHandler(
     private readonly IAmusementRideRepository _amusementRideRepository = amusementRideRepository;
     private readonly IMapper _mapper = mapper;
 
-    /// <summary>  
-    /// Handle getting amusement ride by ID.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting amusement ride by ID.
+    /// </summary>
     public async Task<AmusementRideSummaryDto?> Handle(
         GetAmusementRideByIdQuery request,
         CancellationToken cancellationToken)
@@ -31,15 +31,15 @@ public class AmusementRideQueryHandler(
         return ride == null ? null : _mapper.Map<AmusementRideSummaryDto>(ride);
     }
 
-    /// <summary>  
-    /// Handle searching amusement rides with comprehensive filtering options.  
-    /// </summary>  
+    /// <summary>
+    /// Handle searching amusement rides with comprehensive filtering options.
+    /// </summary>
     public async Task<AmusementRideResult> Handle(
         SearchAmusementRidesQuery request,
         CancellationToken cancellationToken)
     {
         var rides = await _amusementRideRepository.SearchAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.Status,
             request.Location,
             request.ManagerId,
@@ -53,7 +53,7 @@ public class AmusementRideQueryHandler(
             request.PageSize);
 
         var totalCount = await _amusementRideRepository.CountAsync(
-            request.SearchTerm,
+            request.Keyword,
             request.Status,
             request.Location,
             request.ManagerId,
@@ -75,9 +75,9 @@ public class AmusementRideQueryHandler(
         };
     }
 
-    /// <summary>  
-    /// Handle getting amusement ride statistics.  
-    /// </summary>  
+    /// <summary>
+    /// Handle getting amusement ride statistics.
+    /// </summary>
     public async Task<AmusementRideStatsDto> Handle(
         GetAmusementRideStatsQuery request,
         CancellationToken cancellationToken)
@@ -89,9 +89,9 @@ public class AmusementRideQueryHandler(
         return _mapper.Map<AmusementRideStatsDto>(stats);
     }
 
-    /// <summary>  
-    /// Handle creating a new amusement ride.  
-    /// </summary>  
+    /// <summary>
+    /// Handle creating a new amusement ride.
+    /// </summary>
     public async Task<int> Handle(
         CreateAmusementRideCommand request,
         CancellationToken cancellationToken)
@@ -116,9 +116,9 @@ public class AmusementRideQueryHandler(
         return ride.RideId;
     }
 
-    /// <summary>  
-    /// Handle updating an existing amusement ride.  
-    /// </summary>  
+    /// <summary>
+    /// Handle updating an existing amusement ride.
+    /// </summary>
     public async Task Handle(
         UpdateAmusementRideCommand request,
         CancellationToken cancellationToken)
@@ -145,9 +145,9 @@ public class AmusementRideQueryHandler(
         await _amusementRideRepository.UpdateAsync(ride);
     }
 
-    /// <summary>  
-    /// Handle deleting an amusement ride.  
-    /// </summary>  
+    /// <summary>
+    /// Handle deleting an amusement ride.
+    /// </summary>
     public async Task<bool> Handle(
         DeleteAmusementRideCommand request,
         CancellationToken cancellationToken)

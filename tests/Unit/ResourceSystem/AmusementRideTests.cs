@@ -1,16 +1,15 @@
-using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
-using Xunit;
 
 namespace DbApp.Tests.Unit.ResourceSystem;
+
 [Trait("Category", "Unit")]
 public class AmusementRideTests
 {
     [Fact]
     public void AmusementRide_WithValidData_ShouldCreateSuccessfully()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var ride = new AmusementRide
         {
             RideName = "Thunder Mountain",
@@ -24,7 +23,7 @@ public class AmusementRideTests
             OpenDate = new DateTime(2023, 6, 15, 0, 0, 0, DateTimeKind.Utc)
         };
 
-        // Assert  
+        // Assert
         Assert.Equal("Thunder Mountain", ride.RideName);
         Assert.Equal("Adventure Land", ride.Location);
         Assert.Equal(RideStatus.Operating, ride.RideStatus);
@@ -43,7 +42,7 @@ public class AmusementRideTests
     [InlineData(RideStatus.Testing)]
     public void AmusementRide_WithValidRideStatus_ShouldAcceptAllEnumValues(RideStatus status)
     {
-        // Arrange & Act  
+        // Arrange & Act
         var ride = new AmusementRide
         {
             RideName = "Test Ride",
@@ -55,17 +54,17 @@ public class AmusementRideTests
             HeightLimitMax = 200
         };
 
-        // Assert  
+        // Assert
         Assert.Equal(status, ride.RideStatus);
     }
 
     [Fact]
     public void AmusementRide_DefaultValues_ShouldBeSetCorrectly()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var ride = new AmusementRide();
 
-        // Assert  
+        // Assert
         Assert.True(ride.CreatedAt <= DateTime.UtcNow);
         Assert.True(ride.CreatedAt > DateTime.UtcNow.AddMinutes(-1));
         Assert.Equal(default(DateTime), ride.UpdatedAt);
@@ -79,7 +78,7 @@ public class AmusementRideTests
     public void AmusementRide_WithValidCapacityAndHeightLimits_ShouldAcceptValues(
         int capacity, int duration, int minHeight, int maxHeight)
     {
-        // Arrange & Act  
+        // Arrange & Act
         var ride = new AmusementRide
         {
             RideName = "Test Ride",
@@ -91,7 +90,7 @@ public class AmusementRideTests
             HeightLimitMax = maxHeight
         };
 
-        // Assert  
+        // Assert
         Assert.Equal(capacity, ride.Capacity);
         Assert.Equal(duration, ride.Duration);
         Assert.Equal(minHeight, ride.HeightLimitMin);
@@ -101,7 +100,7 @@ public class AmusementRideTests
     [Fact]
     public void AmusementRide_WithNullableProperties_ShouldHandleNullValues()
     {
-        // Arrange & Act  
+        // Arrange & Act
         var ride = new AmusementRide
         {
             RideName = "Test Ride",
@@ -116,7 +115,7 @@ public class AmusementRideTests
             OpenDate = null
         };
 
-        // Assert  
+        // Assert
         Assert.Null(ride.ManagerId);
         Assert.Null(ride.Description);
         Assert.Null(ride.OpenDate);
