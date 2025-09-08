@@ -34,7 +34,7 @@ public class PriceRuleQueryHandlers(IPriceRuleRepository priceRuleRepository) :
         var rule = await priceRuleRepository.GetByIdAsync(request.PriceRuleId);
         if (rule == null || rule.TicketTypeId != request.TicketTypeId)
         {
-           throw new NotFoundException($"无法找到 ID 为 {request.PriceRuleId} 的价格规则。");
+            throw new NotFoundException($"{request.PriceRuleId} could not found");
         }
 
         return new PriceRuleDto
