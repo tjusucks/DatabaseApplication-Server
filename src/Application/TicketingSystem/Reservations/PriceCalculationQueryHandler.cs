@@ -42,7 +42,7 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                     TicketTypeName = ticketType.TypeName,
                     Quantity = item.Quantity,
                     UnitPrice = unitPrice,
-                    DiscountAmount = 0, // 暂时不实现折扣
+                    DiscountAmount = 0, 
                     TotalAmount = subtotal
                 };
 
@@ -50,22 +50,10 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                 result.SubtotalAmount += subtotal;
             }
 
-            // 3. 应用促销折扣（如果有）
-            if (request.PromotionId.HasValue)
-            {
-                var promotion = await _context.Promotions
-                    .Where(p => p.PromotionId == request.PromotionId.Value && p.IsActive)
-                    .FirstOrDefaultAsync(cancellationToken);
-
-                if (promotion != null)
-                {
-                    // 简化处理：假设是固定折扣
-                    result.DiscountAmount = result.SubtotalAmount * 0.1m; // 10%折扣
-                }
-            }
-
+            // 3. TODO: 折扣
+            
             // 4. 计算最终总价
-            result.TotalAmount = result.SubtotalAmount - result.DiscountAmount;
+            result.TotalAmount = result.SubtotalAmount;
 
             return result;
         }

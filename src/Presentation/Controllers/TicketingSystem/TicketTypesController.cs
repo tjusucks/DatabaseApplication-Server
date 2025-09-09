@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using DbApp.Application.TicketingSystem.Reservations;
 
-namespace DbApp.Presentation.Controllers;
+namespace DbApp.Presentation.Controllers.TicketingSystem;
 
 /// <summary>
 /// 票种管理API控制器

@@ -12,7 +12,6 @@ namespace DbApp.Application.TicketingSystem.Reservations;
 public class ReservationCommandHandler(
     IReservationRepository reservationRepository,
     ITicketTypeRepository ticketTypeRepository,
-    IPromotionRepository promotionRepository,
     IMapper mapper) :
     IRequestHandler<CreateReservationCommand, CreateReservationResponseDto>,
     IRequestHandler<UpdateReservationStatusCommand, ReservationDto>,
@@ -21,7 +20,6 @@ public class ReservationCommandHandler(
 {
     private readonly IReservationRepository _reservationRepository = reservationRepository;
     private readonly ITicketTypeRepository _ticketTypeRepository = ticketTypeRepository;
-    private readonly IPromotionRepository _promotionRepository = promotionRepository;
     private readonly IMapper _mapper = mapper;
 
     /// <summary>
@@ -48,14 +46,7 @@ public class ReservationCommandHandler(
             ticketTypes[item.TicketTypeId] = ticketType;
         }
 
-        // 2. 验证优惠活动（如果有）
-        Promotion? promotion = null;
-        if (request.PromotionId.HasValue)
-        {
-            promotion = await _promotionRepository.GetByIdAsync(request.PromotionId.Value);
-            if (promotion == null || !promotion.IsActive || promotion.StartDatetime > DateTime.UtcNow || promotion.EndDatetime < DateTime.UtcNow)
-                throw new ArgumentException($"Promotion {request.PromotionId.Value} is not valid or active");
-        }
+        // 2. TODO: 促销验证
 
         // 3. 创建预订
         var reservation = new Reservation
@@ -63,15 +54,14 @@ public class ReservationCommandHandler(
             VisitorId = request.VisitorId,
             ReservationTime = DateTime.UtcNow,
             VisitDate = request.VisitDate,
-            PromotionId = request.PromotionId,
+            PromotionId = request.PromotionId, 
             SpecialRequests = request.SpecialRequests,
             PaymentStatus = PaymentStatus.Pending,
             Status = ReservationStatus.Pending
         };
 
-        // 4. 创建预订项目并计算价格
+        // 4. 创建预订项目并计算基础价格
         decimal totalAmount = 0;
-        decimal totalDiscount = 0;
 
         foreach (var item in request.Items)
         {
@@ -86,21 +76,17 @@ public class ReservationCommandHandler(
                 TicketTypeId = item.TicketTypeId,
                 Quantity = item.Quantity,
                 UnitPrice = unitPrice,
-                DiscountAmount = 0, // 暂时设为0，后续可以添加折扣逻辑
+                DiscountAmount = 0, 
                 TotalAmount = itemTotal
             };
 
             reservation.ReservationItems.Add(reservationItem);
         }
 
-        // 5. 应用优惠折扣
-        if (promotion != null)
-        {
-            // 优惠计算逻辑待实现
-        }
-
-        reservation.DiscountAmount = totalDiscount;
-        reservation.TotalAmount = totalAmount - totalDiscount;
+        // 5. TODO: 折扣计算
+        
+        reservation.DiscountAmount = 0; // 暂时无折扣
+        reservation.TotalAmount = totalAmount;
 
         // 6. 保存预订
         var savedReservation = await _reservationRepository.AddAsync(reservation);

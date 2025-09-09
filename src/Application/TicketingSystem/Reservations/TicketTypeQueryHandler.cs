@@ -17,12 +17,6 @@ public class TicketTypeQueryHandler(ApplicationDbContext context) :
     {
         var query = _context.TicketTypes.AsQueryable();
 
-        // 如果指定了日期，可以根据日期过滤（例如季节性票种）
-        if (request.ForDate.HasValue)
-        {
-            // 基于日期的过滤逻辑待实现
-        }
-
         var ticketTypes = await query
             .Select(tt => new TicketTypeDto
             {
@@ -33,7 +27,7 @@ public class TicketTypeQueryHandler(ApplicationDbContext context) :
                 RulesText = tt.RulesText,
                 MaxSaleLimit = tt.MaxSaleLimit,
                 ApplicableCrowd = tt.ApplicableCrowd,
-                IsAvailable = true, // 简化处理，后续可添加库存检查逻辑
+                IsAvailable = true, 
                 RemainingQuantity = tt.MaxSaleLimit ?? int.MaxValue
             })
             .ToListAsync(cancellationToken);
