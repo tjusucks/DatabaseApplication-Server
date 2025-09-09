@@ -6,13 +6,15 @@ namespace DbApp.Presentation.Controllers.TicketingSystem;
 
 [ApiController]
 [Route("api/ticketing/promotions/{promotionId:int}/conditions")]
-public class PromotionConditionController : ControllerBase
+public class PromotionConditionController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
+    private readonly IMediator _mediator = mediator;
 
-    public PromotionConditionController(IMediator mediator)
+    [HttpPost]
+    public async Task<ActionResult<int>> Create([FromBody] CreatePromotionConditionCommand command)
     {
-        _mediator = mediator;
+        var newConditionId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetConditionById), new { promotionId = command.PromotionId, conditionId = newConditionId }, null);
     }
 
     [HttpGet]
@@ -27,13 +29,6 @@ public class PromotionConditionController : ControllerBase
     {
         var result = await _mediator.Send(new GetPromotionConditionByIdQuery(promotionId, conditionId));
         return Ok(result);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<int>> Create([FromBody] CreatePromotionConditionCommand command)
-    {
-        var newConditionId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetConditionById), new { promotionId = command.PromotionId, conditionId = newConditionId }, null);
     }
 
     [HttpPut("{conditionId:int}")]

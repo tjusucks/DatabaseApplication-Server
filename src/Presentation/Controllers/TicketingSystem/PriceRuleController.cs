@@ -10,6 +10,13 @@ public class PriceRuleController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
+    [HttpPost]
+    public async Task<ActionResult<int>> Create([FromBody] CreatePriceRuleCommand command)
+    {
+        var newRuleId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetRuleById), new { ticketTypeId = command.TicketTypeId, ruleId = newRuleId }, null);
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<PriceRuleDto>>> GetRules(int ticketTypeId)
     {
@@ -26,13 +33,6 @@ public class PriceRuleController(IMediator mediator) : ControllerBase
             return NotFound($"Price rule with ID {ruleId} not found.");
         }
         return Ok(rule);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<int>> Create([FromBody] CreatePriceRuleCommand command)
-    {
-        var newRuleId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetRuleById), new { ticketTypeId = command.TicketTypeId, ruleId = newRuleId }, null);
     }
 
     [HttpPut("{ruleId:int}")]
