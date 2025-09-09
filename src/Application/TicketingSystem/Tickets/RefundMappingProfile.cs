@@ -23,7 +23,7 @@ public class RefundMappingProfile : Profile
                 src.Ticket.ReservationItem != null ?
                     src.Ticket.ReservationItem.UnitPrice - src.RefundAmount : 0))
             .ForMember(dest => dest.ProcessorName, opt => opt.MapFrom(src =>
-                src.Processor != null && src.Processor.User != null ? src.Processor.User.DisplayName : null));
+                src.Processor != null ? src.Processor.User.DisplayName : null));
 
         // RefundStatistics -> RefundStatsDto
         CreateMap<RefundStatistics, RefundStatsDto>()
