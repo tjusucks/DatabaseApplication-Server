@@ -26,7 +26,7 @@ public class PriceCalculationQueryHandler(ITicketTypeRepository ticketTypeReposi
                 var ticketType = ticketTypes.FirstOrDefault(tt => tt.TicketTypeId == item.TicketTypeId);
                 if (ticketType == null)
                 {
-                    throw new InvalidOperationException($"票种ID {item.TicketTypeId} 不存在");
+                    throw new InvalidOperationException($"Ticket type ID {item.TicketTypeId} not found");
                 }
 
                 // 基础价格计算

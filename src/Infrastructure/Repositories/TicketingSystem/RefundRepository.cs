@@ -196,7 +196,7 @@ public class RefundRepository(ApplicationDbContext dbContext) : IRefundRepositor
                 rr.Ticket.SerialNumber.Contains(keyword) ||
                 (rr.Visitor.User != null && (
                     rr.Visitor.User.Username.Contains(keyword) ||
-                    rr.Visitor.User.Email.Contains(keyword) ||
+                    (rr.Visitor.User.Email != null && rr.Visitor.User.Email.Contains(keyword)) ||
                     rr.Visitor.User.DisplayName.Contains(keyword)
                 )) ||
                 rr.Ticket.TicketType.TypeName.Contains(keyword) ||
