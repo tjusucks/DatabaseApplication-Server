@@ -1,12 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
-using DbApp.Tests.Fixtures;
-using DbApp.Application.TicketingSystem.Tickets;
 using DbApp.Application.TicketingSystem.Reservations;
+using DbApp.Application.TicketingSystem.Tickets;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Enums.UserSystem;
+using DbApp.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Tests.Integrations.TicketingSystem.Tickets;
@@ -27,7 +27,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         // Arrange
         var (ticketId, visitorId) = await SeedBasicTestDataAsync();
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -44,7 +44,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<RefundResultDto>();
         Assert.NotNull(result);
         Assert.True(result.IsSuccess);
@@ -57,7 +57,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         // Arrange
         var (ticketId, _) = await SeedBasicTestDataAsync();
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -75,7 +75,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<RefundResultDto>();
         Assert.NotNull(result);
         Assert.False(result.IsSuccess);
@@ -88,7 +88,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
         // Arrange
         var (ticketId, visitorId) = await SeedBasicTestDataAsync();
         await CreateTestRefundAsync(ticketId, visitorId);
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -106,7 +106,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<RefundResultDto>();
         Assert.NotNull(result);
         Assert.False(result.IsSuccess);
@@ -118,7 +118,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         // Arrange
         var (ticketId, visitorId) = await SeedBasicTestDataAsync();
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -137,7 +137,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<RefundResultDto>();
         Assert.NotNull(result);
         Assert.True(result.IsSuccess);
@@ -156,7 +156,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         // Arrange
         var (ticketId, visitorId) = await SeedBasicTestDataAsync();
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -187,7 +187,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, processResponse.StatusCode);
-        
+
         var processResult = await processResponse.Content.ReadFromJsonAsync<RefundResultDto>();
         Assert.NotNull(processResult);
         Assert.True(processResult.IsSuccess);
@@ -206,7 +206,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
         // Arrange
         var (ticketId, visitorId) = await SeedBasicTestDataAsync();
         await CreateTestRefundAsync(ticketId, visitorId);
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -215,7 +215,7 @@ public class RefundIntegrationTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<RefundDetailsDto>();
         Assert.NotNull(result);
         Assert.Equal(ticketId, result.TicketId);

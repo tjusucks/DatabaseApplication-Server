@@ -33,10 +33,10 @@ public class ReservationController(IMediator mediator) : ControllerBase
     {
         var query = new GetReservationByIdQuery(id);
         var result = await _mediator.Send(query);
-        
+
         if (result == null)
             return NotFound($"Reservation {id} not found");
-            
+
         return Ok(result);
     }
 
@@ -85,10 +85,10 @@ public class ReservationController(IMediator mediator) : ControllerBase
     {
         var commandWithId = command with { ReservationId = id };
         var result = await _mediator.Send(commandWithId);
-        
+
         if (!result)
             return NotFound($"Reservation {id} not found or cannot be cancelled");
-            
+
         return NoContent();
     }
 

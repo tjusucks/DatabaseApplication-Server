@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Interfaces.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
+using DbApp.Domain.Interfaces.TicketingSystem;
 using DbApp.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.TicketingSystem;
 
@@ -92,7 +92,7 @@ public class RefundRepository(ApplicationDbContext dbContext) : IRefundRepositor
             .Include(rr => rr.Processor)
             .AsQueryable();
 
-        query = ApplyFilters(query, keyword, startDate, endDate, visitorId, 
+        query = ApplyFilters(query, keyword, startDate, endDate, visitorId,
             ticketTypeId, status, minAmount, maxAmount);
 
         query = ApplySorting(query, sortBy, descending);
@@ -120,7 +120,7 @@ public class RefundRepository(ApplicationDbContext dbContext) : IRefundRepositor
                 .ThenInclude(v => v.User)
             .AsQueryable();
 
-        query = ApplyFilters(query, keyword, startDate, endDate, visitorId, 
+        query = ApplyFilters(query, keyword, startDate, endDate, visitorId,
             ticketTypeId, status, minAmount, maxAmount);
 
         return await query.CountAsync();
@@ -137,7 +137,7 @@ public class RefundRepository(ApplicationDbContext dbContext) : IRefundRepositor
                 .ThenInclude(t => t.TicketType)
             .AsQueryable();
 
-        query = ApplyFilters(query, null, startDate, endDate, null, 
+        query = ApplyFilters(query, null, startDate, endDate, null,
             ticketTypeId, status, null, null);
 
         var stats = new RefundStatistics

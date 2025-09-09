@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
-using MediatR;
 using DbApp.Application.TicketingSystem.Tickets;
 using DbApp.Domain.Enums.TicketingSystem;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DbApp.Presentation.Controllers.TicketingSystem;
 
@@ -24,10 +24,10 @@ public class RefundController(IMediator mediator) : ControllerBase
         [FromBody] RequestRefundCommand command)
     {
         var result = await _mediator.Send(command);
-        
+
         if (!result.IsSuccess)
             return BadRequest(result);
-            
+
         return Ok(result);
     }
 
@@ -44,10 +44,10 @@ public class RefundController(IMediator mediator) : ControllerBase
     {
         var commandWithId = command with { RefundId = refundId };
         var result = await _mediator.Send(commandWithId);
-        
+
         if (!result.IsSuccess)
             return BadRequest(result);
-            
+
         return Ok(result);
     }
 
@@ -87,10 +87,10 @@ public class RefundController(IMediator mediator) : ControllerBase
     {
         var query = new GetRefundByIdQuery(id);
         var result = await _mediator.Send(query);
-        
+
         if (result == null)
             return NotFound($"Refund record {id} not found");
-            
+
         return Ok(result);
     }
 
@@ -104,10 +104,10 @@ public class RefundController(IMediator mediator) : ControllerBase
     {
         var query = new GetRefundByTicketIdQuery(ticketId);
         var result = await _mediator.Send(query);
-        
+
         if (result == null)
             return NotFound($"No refund record found for ticket {ticketId}");
-            
+
         return Ok(result);
     }
 

@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using MediatR;
 using DbApp.Application.TicketingSystem.Reservations;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DbApp.Presentation.Controllers.TicketingSystem;
 
@@ -50,7 +50,7 @@ public class TicketTypesController(IMediator mediator, ILogger<TicketTypesContro
         {
             var query = new GetTicketTypeByIdQuery(id);
             var result = await _mediator.Send(query);
-            
+
             if (result == null)
             {
                 return NotFound($"票种ID {id} 不存在");

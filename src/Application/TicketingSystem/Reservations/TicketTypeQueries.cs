@@ -7,7 +7,7 @@ namespace DbApp.Application.TicketingSystem.Reservations;
 /// </summary>
 public record GetAvailableTicketTypesQuery : IRequest<List<TicketTypeDto>>
 {
-    public DateTime? ForDate { get; init; } = null; 
+    public DateTime? ForDate { get; init; } = null;
 }
 
 /// <summary>

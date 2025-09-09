@@ -1,11 +1,11 @@
 using System.Net;
 using System.Net.Http.Json;
-using DbApp.Tests.Fixtures;
 using DbApp.Application.TicketingSystem.Reservations;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Enums.UserSystem;
+using DbApp.Tests.Fixtures;
 
 namespace DbApp.Tests.Integrations.TicketingSystem.Reservations;
 
@@ -23,7 +23,7 @@ public class BasicTicketTypeTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         // Arrange
         await SeedBasicTestDataAsync();
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -32,7 +32,7 @@ public class BasicTicketTypeTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<List<TicketTypeDto>>();
         Assert.NotNull(result);
         Assert.NotEmpty(result);
@@ -43,7 +43,7 @@ public class BasicTicketTypeTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         // Arrange
         await SeedBasicTestDataAsync();
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -61,7 +61,7 @@ public class BasicTicketTypeTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<ReservationPriceCalculationDto>();
         Assert.NotNull(result);
         Assert.True(result.TotalAmount > 0);
@@ -72,7 +72,7 @@ public class BasicTicketTypeTests(DatabaseFixture fixture) : IAsyncLifetime
     {
         // Arrange
         await SeedBasicTestDataAsync();
-        
+
         using var factory = new TestApiFactory(fixture);
         using var client = factory.CreateClient();
 
@@ -92,7 +92,7 @@ public class BasicTicketTypeTests(DatabaseFixture fixture) : IAsyncLifetime
 
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        
+
         var result = await response.Content.ReadFromJsonAsync<ReservationDto>();
         Assert.NotNull(result);
         Assert.Equal(1001, result.VisitorId);

@@ -99,7 +99,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
     {
         reservation.CreatedAt = DateTime.UtcNow;
         reservation.UpdatedAt = DateTime.UtcNow;
-        
+
         _dbContext.Reservations.Add(reservation);
         await _dbContext.SaveChangesAsync();
         return reservation;
@@ -108,7 +108,7 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
     public async Task<Reservation> UpdateAsync(Reservation reservation)
     {
         reservation.UpdatedAt = DateTime.UtcNow;
-        
+
         _dbContext.Reservations.Update(reservation);
         await _dbContext.SaveChangesAsync();
         return reservation;

@@ -34,7 +34,7 @@ public class ReservationCommandHandler(
             var ticketType = await _ticketTypeRepository.GetByIdAsync(item.TicketTypeId);
             if (ticketType == null)
                 throw new ArgumentException($"Ticket type {item.TicketTypeId} not found");
-                
+
             // 检查库存限制
             if (ticketType.MaxSaleLimit.HasValue)
             {
@@ -42,7 +42,7 @@ public class ReservationCommandHandler(
                 if (soldCount + item.Quantity > ticketType.MaxSaleLimit.Value)
                     throw new InvalidOperationException($"Insufficient stock for ticket type {ticketType.TypeName}");
             }
-            
+
             ticketTypes[item.TicketTypeId] = ticketType;
         }
 
@@ -52,7 +52,7 @@ public class ReservationCommandHandler(
             VisitorId = request.VisitorId,
             ReservationTime = DateTime.UtcNow,
             VisitDate = request.VisitDate,
-            PromotionId = request.PromotionId, 
+            PromotionId = request.PromotionId,
             SpecialRequests = request.SpecialRequests,
             PaymentStatus = PaymentStatus.Pending,
             Status = ReservationStatus.Pending
@@ -65,7 +65,7 @@ public class ReservationCommandHandler(
         {
             var ticketType = ticketTypes[item.TicketTypeId];
             var unitPrice = ticketType.BasePrice;
-            
+
             var itemTotal = unitPrice * item.Quantity;
             totalAmount += itemTotal;
 
@@ -74,14 +74,14 @@ public class ReservationCommandHandler(
                 TicketTypeId = item.TicketTypeId,
                 Quantity = item.Quantity,
                 UnitPrice = unitPrice,
-                DiscountAmount = 0, 
+                DiscountAmount = 0,
                 TotalAmount = itemTotal
             };
 
             reservation.ReservationItems.Add(reservationItem);
         }
-        
-        reservation.DiscountAmount = 0; 
+
+        reservation.DiscountAmount = 0;
         reservation.TotalAmount = totalAmount;
 
         // 保存预订
@@ -129,7 +129,7 @@ public class ReservationCommandHandler(
         if (request.PaymentStatus == PaymentStatus.Paid)
         {
             reservation.Status = ReservationStatus.Confirmed;
-            
+
             // 生成电子票
             await GenerateTicketsAsync(reservation);
         }
@@ -180,7 +180,7 @@ public class ReservationCommandHandler(
                 item.Tickets.Add(ticket);
             }
         }
-        
+
         return Task.CompletedTask;
     }
 

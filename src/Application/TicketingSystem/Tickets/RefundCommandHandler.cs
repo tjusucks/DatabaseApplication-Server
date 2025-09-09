@@ -1,11 +1,11 @@
 using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using DbApp.Infrastructure;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace DbApp.Application.TicketingSystem.Tickets;
 
@@ -32,10 +32,10 @@ public class RefundCommandHandler(
     public async Task<RefundResultDto> Handle(RequestRefundCommand request, CancellationToken cancellationToken)
     {
         using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-        
+
         try
         {
-            _logger.LogInformation("Processing refund request for ticket {TicketId} by visitor {VisitorId}", 
+            _logger.LogInformation("Processing refund request for ticket {TicketId} by visitor {VisitorId}",
                 request.TicketId, request.RequestingVisitorId);
 
             // 获取票据信息
@@ -80,7 +80,7 @@ public class RefundCommandHandler(
             }
 
             // 计算退款金额
-            var refundAmount = ticket.TicketType?.BasePrice ?? 0; 
+            var refundAmount = ticket.TicketType?.BasePrice ?? 0;
 
             // 创建退款记录
             var refundRecord = new RefundRecord
@@ -110,7 +110,7 @@ public class RefundCommandHandler(
 
             await transaction.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("Refund request created successfully. RefundId: {RefundId}, Amount: {Amount}", 
+            _logger.LogInformation("Refund request created successfully. RefundId: {RefundId}, Amount: {Amount}",
                 savedRefund.RefundId, refundAmount);
 
             return new RefundResultDto
@@ -143,10 +143,10 @@ public class RefundCommandHandler(
     public async Task<RefundResultDto> Handle(ProcessRefundCommand request, CancellationToken cancellationToken)
     {
         using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-        
+
         try
         {
-            _logger.LogInformation("Processing refund decision {Decision} for refund {RefundId} by processor {ProcessorId}", 
+            _logger.LogInformation("Processing refund decision {Decision} for refund {RefundId} by processor {ProcessorId}",
                 request.Decision, request.RefundId, request.ProcessorId);
 
             // 获取退款记录
@@ -192,7 +192,7 @@ public class RefundCommandHandler(
             await _refundRepository.UpdateAsync(refundRecord);
             await transaction.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("Refund {RefundId} processed successfully with decision {Decision}", 
+            _logger.LogInformation("Refund {RefundId} processed successfully with decision {Decision}",
                 request.RefundId, request.Decision);
 
             return new RefundResultDto
@@ -230,10 +230,10 @@ public class RefundCommandHandler(
         };
 
         using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-        
+
         try
         {
-            _logger.LogInformation("Processing batch refund for {Count} tickets by processor {ProcessorId}", 
+            _logger.LogInformation("Processing batch refund for {Count} tickets by processor {ProcessorId}",
                 request.TicketIds.Count, request.ProcessorId);
 
             foreach (var ticketId in request.TicketIds)
@@ -250,9 +250,9 @@ public class RefundCommandHandler(
                     };
 
                     var refundResult = await Handle(refundCommand, cancellationToken);
-                    
+
                     result.Results.Add(refundResult);
-                    
+
                     if (refundResult.IsSuccess)
                     {
                         result.SuccessfulRefunds++;
@@ -274,7 +274,7 @@ public class RefundCommandHandler(
 
             await transaction.CommitAsync(cancellationToken);
 
-            _logger.LogInformation("Batch refund completed. Success: {Success}, Failed: {Failed}, Total Amount: {Amount}", 
+            _logger.LogInformation("Batch refund completed. Success: {Success}, Failed: {Failed}, Total Amount: {Amount}",
                 result.SuccessfulRefunds, result.FailedRefunds, result.TotalRefundAmount);
 
             return result;

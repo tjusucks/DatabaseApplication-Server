@@ -1,10 +1,10 @@
+using DbApp.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using DbApp.Infrastructure;
 
 namespace DbApp.Application.TicketingSystem.Reservations;
 
-public class TicketTypeQueryHandler(ApplicationDbContext context) : 
+public class TicketTypeQueryHandler(ApplicationDbContext context) :
     IRequestHandler<GetAvailableTicketTypesQuery, List<TicketTypeDto>>,
     IRequestHandler<GetTicketTypeByIdQuery, TicketTypeDto?>
 {
@@ -27,7 +27,7 @@ public class TicketTypeQueryHandler(ApplicationDbContext context) :
                 RulesText = tt.RulesText,
                 MaxSaleLimit = tt.MaxSaleLimit,
                 ApplicableCrowd = tt.ApplicableCrowd,
-                IsAvailable = true, 
+                IsAvailable = true,
                 RemainingQuantity = tt.MaxSaleLimit ?? int.MaxValue
             })
             .ToListAsync(cancellationToken);

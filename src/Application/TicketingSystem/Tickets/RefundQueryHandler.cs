@@ -1,7 +1,7 @@
 using AutoMapper;
+using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using DbApp.Domain.Interfaces.TicketingSystem;
 
 namespace DbApp.Application.TicketingSystem.Tickets;
 

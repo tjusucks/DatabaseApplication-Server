@@ -1,5 +1,5 @@
-using MediatR;
 using DbApp.Domain.Enums.TicketingSystem;
+using MediatR;
 
 namespace DbApp.Application.TicketingSystem.Reservations;
 

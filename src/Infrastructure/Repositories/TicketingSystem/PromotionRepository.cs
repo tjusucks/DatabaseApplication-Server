@@ -49,7 +49,7 @@ public class PromotionRepository(ApplicationDbContext dbContext) : IPromotionRep
         _dbContext.Promotions.Remove(promotion);
         await _dbContext.SaveChangesAsync();
     }
-    
+
     public async Task<List<Promotion>> GetActivePromotionsAsync()
     {
         var now = DateTime.UtcNow;
@@ -57,8 +57,8 @@ public class PromotionRepository(ApplicationDbContext dbContext) : IPromotionRep
             .Include(p => p.PromotionActions)
             .Include(p => p.PromotionConditions)
             .Include(p => p.PromotionTicketTypes)
-            .Where(p => p.IsActive && 
-                       p.StartDatetime <= now && 
+            .Where(p => p.IsActive &&
+                       p.StartDatetime <= now &&
                        p.EndDatetime >= now)
             .OrderBy(p => p.DisplayPriority)
             .ToListAsync();

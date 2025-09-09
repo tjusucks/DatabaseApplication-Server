@@ -1,11 +1,11 @@
+using DbApp.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using DbApp.Infrastructure;
 
 namespace DbApp.Application.TicketingSystem.Reservations;
 
-public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<PriceCalculationQueryHandler> logger) 
+public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<PriceCalculationQueryHandler> logger)
     : IRequestHandler<CalculateReservationPriceQuery, ReservationPriceCalculationDto>
 {
     private readonly ApplicationDbContext _context = context;
@@ -42,14 +42,14 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                     TicketTypeName = ticketType.TypeName,
                     Quantity = item.Quantity,
                     UnitPrice = unitPrice,
-                    DiscountAmount = 0, 
+                    DiscountAmount = 0,
                     TotalAmount = subtotal
                 };
 
                 result.Items.Add(itemPriceDto);
                 result.SubtotalAmount += subtotal;
             }
-            
+
             result.TotalAmount = result.SubtotalAmount;
 
             return result;
