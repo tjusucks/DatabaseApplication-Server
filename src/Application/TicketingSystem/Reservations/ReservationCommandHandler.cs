@@ -27,7 +27,7 @@ public class ReservationCommandHandler(
     /// </summary>
     public async Task<CreateReservationResponseDto> Handle(CreateReservationCommand request, CancellationToken cancellationToken)
     {
-        // 1. 验证票型存在性和库存
+        // 验证票型存在性和库存
         var ticketTypes = new Dictionary<int, TicketType>();
         foreach (var item in request.Items)
         {
@@ -46,9 +46,7 @@ public class ReservationCommandHandler(
             ticketTypes[item.TicketTypeId] = ticketType;
         }
 
-        // 2. TODO: 促销验证
-
-        // 3. 创建预订
+        // 创建预订
         var reservation = new Reservation
         {
             VisitorId = request.VisitorId,
@@ -60,7 +58,7 @@ public class ReservationCommandHandler(
             Status = ReservationStatus.Pending
         };
 
-        // 4. 创建预订项目并计算基础价格
+        // 创建预订项目并计算基础价格
         decimal totalAmount = 0;
 
         foreach (var item in request.Items)
@@ -82,16 +80,14 @@ public class ReservationCommandHandler(
 
             reservation.ReservationItems.Add(reservationItem);
         }
-
-        // 5. TODO: 折扣计算
         
-        reservation.DiscountAmount = 0; // 暂时无折扣
+        reservation.DiscountAmount = 0; 
         reservation.TotalAmount = totalAmount;
 
-        // 6. 保存预订
+        // 保存预订
         var savedReservation = await _reservationRepository.AddAsync(reservation);
 
-        // 7. 返回DTO
+        // 返回DTO
         return new CreateReservationResponseDto
         {
             ReservationId = savedReservation.ReservationId,

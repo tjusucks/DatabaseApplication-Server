@@ -38,7 +38,7 @@ public class RefundCommandHandler(
             _logger.LogInformation("Processing refund request for ticket {TicketId} by visitor {VisitorId}", 
                 request.TicketId, request.RequestingVisitorId);
 
-            // 1. 获取票据信息
+            // 获取票据信息
             var ticket = await _ticketRepository.GetByIdAsync(request.TicketId);
             if (ticket == null)
             {
@@ -49,7 +49,7 @@ public class RefundCommandHandler(
                 };
             }
 
-            // 2. 验证访客权限（非管理员请求需要验证）
+            // 验证访客权限（非管理员请求需要验证）
             if (!request.IsAdminRequest && ticket.VisitorId != request.RequestingVisitorId)
             {
                 return new RefundResultDto
@@ -59,7 +59,7 @@ public class RefundCommandHandler(
                 };
             }
 
-            // 3. 检查是否可以退票
+            // 检查是否可以退票
             if (!await _ticketRepository.CanRefundAsync(request.TicketId))
             {
                 return new RefundResultDto
@@ -69,7 +69,7 @@ public class RefundCommandHandler(
                 };
             }
 
-            // 4. 检查是否已经退票
+            // 检查是否已经退票
             if (await _refundRepository.IsTicketRefundedAsync(request.TicketId))
             {
                 return new RefundResultDto
@@ -79,10 +79,10 @@ public class RefundCommandHandler(
                 };
             }
 
-            // 5. 计算退款金额
-            var refundAmount = CalculateRefundAmount(ticket);
+            // 计算退款金额
+            var refundAmount = ticket.Price; // 全额退款
 
-            // 6. 创建退款记录
+            // 创建退款记录
             var refundRecord = new RefundRecord
             {
                 TicketId = request.TicketId,
@@ -96,7 +96,7 @@ public class RefundCommandHandler(
 
             var savedRefund = await _refundRepository.AddAsync(refundRecord);
 
-            // 7. 如果是管理员直接批准，更新票据状态
+            // 如果是管理员直接批准，更新票据状态
             if (request.IsAdminRequest)
             {
                 ticket.Status = TicketStatus.Refunded;
@@ -149,7 +149,7 @@ public class RefundCommandHandler(
             _logger.LogInformation("Processing refund decision {Decision} for refund {RefundId} by processor {ProcessorId}", 
                 request.Decision, request.RefundId, request.ProcessorId);
 
-            // 1. 获取退款记录
+            // 获取退款记录
             var refundRecord = await _refundRepository.GetByIdAsync(request.RefundId);
             if (refundRecord == null)
             {
@@ -160,7 +160,7 @@ public class RefundCommandHandler(
                 };
             }
 
-            // 2. 检查状态是否可以处理
+            // 检查状态是否可以处理
             if (refundRecord.RefundStatus != RefundStatus.Pending)
             {
                 return new RefundResultDto
@@ -170,12 +170,12 @@ public class RefundCommandHandler(
                 };
             }
 
-            // 3. 更新退款记录
+            // 更新退款记录
             refundRecord.RefundStatus = request.Decision;
             refundRecord.ProcessorId = request.ProcessorId;
             refundRecord.ProcessingNotes = request.ProcessingNotes;
 
-            // 4. 如果批准，更新票据状态
+            // 如果批准，更新票据状态
             if (request.Decision == RefundStatus.Approved)
             {
                 var ticket = refundRecord.Ticket ?? await _ticketRepository.GetByIdAsync(refundRecord.TicketId);
@@ -287,38 +287,6 @@ public class RefundCommandHandler(
             result.Errors.Add("An error occurred during batch processing");
             return result;
         }
-    }
-
-    /// <summary>
-    /// 计算退款金额
-    /// </summary>
-    private static decimal CalculateRefundAmount(Ticket ticket)
-    {
-        if (ticket.ReservationItem == null)
-            return 0;
-
-        var originalAmount = ticket.ReservationItem.UnitPrice;
-        
-        // 根据业务规则计算退款金额
-        var refundRate = ticket.Status switch
-        {
-            TicketStatus.Issued => 0.95m, // 未使用：95%退款
-            TicketStatus.Used => 0.80m,   // 已使用：80%退款
-            _ => 0m
-        };
-
-        // 检查退款时间对费率的影响
-        var now = DateTime.UtcNow;
-        if (ticket.Status == TicketStatus.Issued)
-        {
-            var daysUntilUse = (ticket.ValidFrom - now).Days;
-            if (daysUntilUse < 1) // 当天退款
-                refundRate = 0.50m;
-            else if (daysUntilUse < 3) // 3天内退款
-                refundRate = 0.80m;
-        }
-
-        return Math.Round(originalAmount * refundRate, 2);
     }
 
     /// <summary>

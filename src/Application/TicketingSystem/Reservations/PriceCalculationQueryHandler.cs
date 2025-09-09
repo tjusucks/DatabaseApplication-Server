@@ -17,13 +17,13 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
 
         try
         {
-            // 1. 获取所有票种信息
+            // 获取所有票种信息
             var ticketTypeIds = request.Items.Select(item => item.TicketTypeId).ToList();
             var ticketTypes = await _context.TicketTypes
                 .Where(tt => ticketTypeIds.Contains(tt.TicketTypeId))
                 .ToListAsync(cancellationToken);
 
-            // 2. 计算每个项目的价格
+            // 计算每个项目的价格
             foreach (var item in request.Items)
             {
                 var ticketType = ticketTypes.FirstOrDefault(tt => tt.TicketTypeId == item.TicketTypeId);
@@ -49,10 +49,7 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
                 result.Items.Add(itemPriceDto);
                 result.SubtotalAmount += subtotal;
             }
-
-            // 3. TODO: 折扣
             
-            // 4. 计算最终总价
             result.TotalAmount = result.SubtotalAmount;
 
             return result;

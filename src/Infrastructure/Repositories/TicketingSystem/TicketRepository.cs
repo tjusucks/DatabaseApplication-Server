@@ -261,28 +261,13 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
         if (ticket == null) return false;
 
         // 业务规则检查
-        // 1. 票据状态必须是已发放或已使用
+        // 票据状态必须是已发放或已使用
         if (ticket.Status != TicketStatus.Issued && ticket.Status != TicketStatus.Used)
             return false;
 
-        // 2. 不能已经退款
+        // 不能已经退款
         if (ticket.RefundRecord != null)
             return false;
-
-        // 3. 检查是否在退款期限内（例如：使用前7天或使用后24小时）
-        var now = DateTime.UtcNow;
-        if (ticket.Status == TicketStatus.Issued)
-        {
-            // 未使用的票，检查是否在使用日期前
-            if (ticket.ValidTo < now.AddDays(-7)) // 7天退款期限
-                return false;
-        }
-        else if (ticket.Status == TicketStatus.Used && ticket.UsedTime.HasValue && 
-                 now.Subtract(ticket.UsedTime.Value).TotalHours > 24)
-        {
-            // 已使用的票，检查是否在使用后24小时内
-            return false;
-        }
 
         return true;
     }
