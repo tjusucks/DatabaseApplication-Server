@@ -80,7 +80,7 @@ public class RefundCommandHandler(
             }
 
             // 计算退款金额
-            var refundAmount = ticket.Price; // 全额退款
+            var refundAmount = ticket.TicketType?.BasePrice ?? 0; 
 
             // 创建退款记录
             var refundRecord = new RefundRecord
