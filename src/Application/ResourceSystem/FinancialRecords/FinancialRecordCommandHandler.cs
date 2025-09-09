@@ -25,6 +25,7 @@ public class FinancialRecordCommandHandler(
             PaymentMethod = request.PaymentMethod,
             ResponsibleEmployeeId = request.ResponsibleEmployeeId,
             ApprovedById = request.ApprovedById,
+            Description = request.Description,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
@@ -51,6 +52,7 @@ public class FinancialRecordCommandHandler(
         existingRecord.PaymentMethod = request.PaymentMethod;
         existingRecord.ResponsibleEmployeeId = request.ResponsibleEmployeeId;
         existingRecord.ApprovedById = request.ApprovedById;
+        existingRecord.Description = request.Description;
         existingRecord.UpdatedAt = DateTime.UtcNow;
 
         var updatedRecord = await _financialRecordRepository.UpdateAsync(existingRecord);
