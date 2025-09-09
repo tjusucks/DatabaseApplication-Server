@@ -1,38 +1,36 @@
-using DbApp.Infrastructure;
+using DbApp.Application.TicketingSystem.TicketTypes;
+using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Application.TicketingSystem.Reservations;
 
-public class TicketTypeQueryHandler(ApplicationDbContext context) :
+public class TicketTypeQueryHandler(ITicketTypeRepository ticketTypeRepository) :
     IRequestHandler<GetAvailableTicketTypesQuery, List<TicketTypeDto>>,
     IRequestHandler<GetTicketTypeByIdQuery, TicketTypeDto?>
 {
-    private readonly ApplicationDbContext _context = context;
+    private readonly ITicketTypeRepository _ticketTypeRepository = ticketTypeRepository;
 
     /// <summary>
     /// 获取所有可用票种
     /// </summary>
     public async Task<List<TicketTypeDto>> Handle(GetAvailableTicketTypesQuery request, CancellationToken cancellationToken)
     {
-        var query = _context.TicketTypes.AsQueryable();
+        var ticketTypes = await _ticketTypeRepository.GetActiveTicketTypesAsync();
 
-        var ticketTypes = await query
-            .Select(tt => new TicketTypeDto
-            {
-                TicketTypeId = tt.TicketTypeId,
-                TypeName = tt.TypeName,
-                Description = tt.Description,
-                BasePrice = tt.BasePrice,
-                RulesText = tt.RulesText,
-                MaxSaleLimit = tt.MaxSaleLimit,
-                ApplicableCrowd = tt.ApplicableCrowd,
-                IsAvailable = true,
-                RemainingQuantity = tt.MaxSaleLimit ?? int.MaxValue
-            })
-            .ToListAsync(cancellationToken);
+        var ticketTypeDtos = ticketTypes.Select(tt => new TicketTypeDto
+        {
+            TicketTypeId = tt.TicketTypeId,
+            TypeName = tt.TypeName,
+            Description = tt.Description,
+            BasePrice = tt.BasePrice,
+            RulesText = tt.RulesText,
+            MaxSaleLimit = tt.MaxSaleLimit,
+            ApplicableCrowd = tt.ApplicableCrowd,
+            IsAvailable = true,
+            RemainingQuantity = tt.MaxSaleLimit ?? int.MaxValue
+        }).ToList();
 
-        return ticketTypes;
+        return ticketTypeDtos;
     }
 
     /// <summary>
@@ -40,22 +38,24 @@ public class TicketTypeQueryHandler(ApplicationDbContext context) :
     /// </summary>
     public async Task<TicketTypeDto?> Handle(GetTicketTypeByIdQuery request, CancellationToken cancellationToken)
     {
-        var ticketType = await _context.TicketTypes
-            .Where(tt => tt.TicketTypeId == request.TicketTypeId)
-            .Select(tt => new TicketTypeDto
-            {
-                TicketTypeId = tt.TicketTypeId,
-                TypeName = tt.TypeName,
-                Description = tt.Description,
-                BasePrice = tt.BasePrice,
-                RulesText = tt.RulesText,
-                MaxSaleLimit = tt.MaxSaleLimit,
-                ApplicableCrowd = tt.ApplicableCrowd,
-                IsAvailable = true,
-                RemainingQuantity = tt.MaxSaleLimit ?? int.MaxValue
-            })
-            .FirstOrDefaultAsync(cancellationToken);
+        var ticketType = await _ticketTypeRepository.GetByIdAsync(request.TicketTypeId);
 
-        return ticketType;
+        if (ticketType == null)
+        {
+            return null;
+        }
+
+        return new TicketTypeDto
+        {
+            TicketTypeId = ticketType.TicketTypeId,
+            TypeName = ticketType.TypeName,
+            Description = ticketType.Description,
+            BasePrice = ticketType.BasePrice,
+            RulesText = ticketType.RulesText,
+            MaxSaleLimit = ticketType.MaxSaleLimit,
+            ApplicableCrowd = ticketType.ApplicableCrowd,
+            IsAvailable = true,
+            RemainingQuantity = ticketType.MaxSaleLimit ?? int.MaxValue
+        };
     }
 }

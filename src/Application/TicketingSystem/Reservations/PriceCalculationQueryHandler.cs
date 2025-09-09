@@ -1,14 +1,13 @@
-using DbApp.Infrastructure;
+using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DbApp.Application.TicketingSystem.Reservations;
 
-public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<PriceCalculationQueryHandler> logger)
+public class PriceCalculationQueryHandler(ITicketTypeRepository ticketTypeRepository, ILogger<PriceCalculationQueryHandler> logger)
     : IRequestHandler<CalculateReservationPriceQuery, ReservationPriceCalculationDto>
 {
-    private readonly ApplicationDbContext _context = context;
+    private readonly ITicketTypeRepository _ticketTypeRepository = ticketTypeRepository;
     private readonly ILogger<PriceCalculationQueryHandler> _logger = logger;
 
     public async Task<ReservationPriceCalculationDto> Handle(CalculateReservationPriceQuery request, CancellationToken cancellationToken)
@@ -19,9 +18,7 @@ public class PriceCalculationQueryHandler(ApplicationDbContext context, ILogger<
         {
             // 获取所有票种信息
             var ticketTypeIds = request.Items.Select(item => item.TicketTypeId).ToList();
-            var ticketTypes = await _context.TicketTypes
-                .Where(tt => ticketTypeIds.Contains(tt.TicketTypeId))
-                .ToListAsync(cancellationToken);
+            var ticketTypes = await _ticketTypeRepository.GetByIdsAsync(ticketTypeIds);
 
             // 计算每个项目的价格
             foreach (var item in request.Items)

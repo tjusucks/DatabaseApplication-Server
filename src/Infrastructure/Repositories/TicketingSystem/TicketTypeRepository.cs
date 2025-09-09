@@ -18,6 +18,13 @@ public class TicketTypeRepository(ApplicationDbContext dbContext) : ITicketTypeR
         return await _dbContext.TicketTypes.ToListAsync();
     }
 
+    public async Task<List<TicketType>> GetByIdsAsync(IEnumerable<int> ticketTypeIds)
+    {
+        return await _dbContext.TicketTypes
+            .Where(tt => ticketTypeIds.Contains(tt.TicketTypeId))
+            .ToListAsync();
+    }
+
     public async Task<int> CreateAsync(TicketType ticketType)
     {
         await _dbContext.TicketTypes.AddAsync(ticketType);

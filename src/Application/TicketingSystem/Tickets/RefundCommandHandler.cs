@@ -2,9 +2,7 @@ using AutoMapper;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
-using DbApp.Infrastructure;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DbApp.Application.TicketingSystem.Tickets;
@@ -15,7 +13,7 @@ namespace DbApp.Application.TicketingSystem.Tickets;
 public class RefundCommandHandler(
     ITicketRepository ticketRepository,
     IRefundRepository refundRepository,
-    ApplicationDbContext dbContext,
+    ITransactionManagerService transactionManagerService,
     ILogger<RefundCommandHandler> logger) :
     IRequestHandler<RequestRefundCommand, RefundResultDto>,
     IRequestHandler<ProcessRefundCommand, RefundResultDto>,
@@ -23,7 +21,7 @@ public class RefundCommandHandler(
 {
     private readonly ITicketRepository _ticketRepository = ticketRepository;
     private readonly IRefundRepository _refundRepository = refundRepository;
-    private readonly ApplicationDbContext _dbContext = dbContext;
+    private readonly ITransactionManagerService _transactionManagerService = transactionManagerService;
     private readonly ILogger<RefundCommandHandler> _logger = logger;
 
     /// <summary>
@@ -31,9 +29,7 @@ public class RefundCommandHandler(
     /// </summary>
     public async Task<RefundResultDto> Handle(RequestRefundCommand request, CancellationToken cancellationToken)
     {
-        using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
+        return await _transactionManagerService.ExecuteInTransactionAsync(async () =>
         {
             _logger.LogInformation("Processing refund request for ticket {TicketId} by visitor {VisitorId}",
                 request.TicketId, request.RequestingVisitorId);
@@ -108,8 +104,6 @@ public class RefundCommandHandler(
                 await _refundRepository.UpdateAsync(savedRefund);
             }
 
-            await transaction.CommitAsync(cancellationToken);
-
             _logger.LogInformation("Refund request created successfully. RefundId: {RefundId}, Amount: {Amount}",
                 savedRefund.RefundId, refundAmount);
 
@@ -123,18 +117,7 @@ public class RefundCommandHandler(
                 ProcessedAt = request.IsAdminRequest ? DateTime.UtcNow : null,
                 RefundReference = GenerateRefundReference(savedRefund.RefundId)
             };
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            _logger.LogError(ex, "Error processing refund request for ticket {TicketId}", request.TicketId);
-
-            return new RefundResultDto
-            {
-                IsSuccess = false,
-                Message = "An error occurred while processing the refund request"
-            };
-        }
+        }, cancellationToken);
     }
 
     /// <summary>
@@ -142,9 +125,7 @@ public class RefundCommandHandler(
     /// </summary>
     public async Task<RefundResultDto> Handle(ProcessRefundCommand request, CancellationToken cancellationToken)
     {
-        using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
+        return await _transactionManagerService.ExecuteInTransactionAsync(async () =>
         {
             _logger.LogInformation("Processing refund decision {Decision} for refund {RefundId} by processor {ProcessorId}",
                 request.Decision, request.RefundId, request.ProcessorId);
@@ -190,7 +171,6 @@ public class RefundCommandHandler(
             }
 
             await _refundRepository.UpdateAsync(refundRecord);
-            await transaction.CommitAsync(cancellationToken);
 
             _logger.LogInformation("Refund {RefundId} processed successfully with decision {Decision}",
                 request.RefundId, request.Decision);
@@ -205,18 +185,7 @@ public class RefundCommandHandler(
                 ProcessedAt = DateTime.UtcNow,
                 RefundReference = request.Decision == RefundStatus.Approved ? GenerateRefundReference(refundRecord.RefundId) : null
             };
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            _logger.LogError(ex, "Error processing refund decision for refund {RefundId}", request.RefundId);
-
-            return new RefundResultDto
-            {
-                IsSuccess = false,
-                Message = "An error occurred while processing the refund decision"
-            };
-        }
+        }, cancellationToken);
     }
 
     /// <summary>
@@ -229,9 +198,7 @@ public class RefundCommandHandler(
             TotalRequested = request.TicketIds.Count
         };
 
-        using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
-
-        try
+        return await _transactionManagerService.ExecuteInTransactionAsync(async () =>
         {
             _logger.LogInformation("Processing batch refund for {Count} tickets by processor {ProcessorId}",
                 request.TicketIds.Count, request.ProcessorId);
@@ -272,21 +239,11 @@ public class RefundCommandHandler(
                 }
             }
 
-            await transaction.CommitAsync(cancellationToken);
-
             _logger.LogInformation("Batch refund completed. Success: {Success}, Failed: {Failed}, Total Amount: {Amount}",
                 result.SuccessfulRefunds, result.FailedRefunds, result.TotalRefundAmount);
 
             return result;
-        }
-        catch (Exception ex)
-        {
-            await transaction.RollbackAsync(cancellationToken);
-            _logger.LogError(ex, "Error processing batch refund");
-
-            result.Errors.Add("An error occurred during batch processing");
-            return result;
-        }
+        }, cancellationToken);
     }
 
     /// <summary>

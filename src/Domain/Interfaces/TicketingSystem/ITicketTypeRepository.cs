@@ -6,6 +6,7 @@ public interface ITicketTypeRepository
 {
     Task<TicketType?> GetByIdAsync(int ticketTypeId);
     Task<List<TicketType>> GetAllAsync();
+    Task<List<TicketType>> GetByIdsAsync(IEnumerable<int> ticketTypeIds);
     Task<int> CreateAsync(TicketType ticketType);
     Task UpdateAsync(TicketType ticketType);
     Task DeleteAsync(TicketType ticketType);
