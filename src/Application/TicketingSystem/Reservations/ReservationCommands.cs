@@ -46,6 +46,11 @@ public record CancelReservationCommand : IRequest<bool>
 }
 
 /// <summary>
+/// Deletes a reservation.
+/// </summary>
+public record DeleteReservationCommand(int ReservationId) : IRequest<bool>;
+
+/// <summary>
 /// 处理支付响应DTO
 /// </summary>
 public class ProcessPaymentResponseDto

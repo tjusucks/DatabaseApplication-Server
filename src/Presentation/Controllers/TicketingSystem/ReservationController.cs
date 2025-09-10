@@ -78,7 +78,7 @@ public class ReservationController(IMediator mediator) : ControllerBase
     /// <param name="id">Reservation ID.</param>
     /// <param name="command">Cancellation parameters.</param>
     /// <returns>Cancellation result.</returns>
-    [HttpDelete("{id}")]
+    [HttpPost("{id}/cancel")]
     public async Task<ActionResult> CancelReservation(
         int id,
         [FromBody] CancelReservationCommand command)
@@ -88,6 +88,23 @@ public class ReservationController(IMediator mediator) : ControllerBase
 
         if (!result)
             return NotFound($"Reservation {id} not found or cannot be cancelled");
+
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Delete a reservation directly.
+    /// </summary>
+    /// <param name="id">Reservation ID.</param>
+    /// <returns>Deletion result.</returns>
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteReservation(int id)
+    {
+        var command = new DeleteReservationCommand(id);
+        var result = await _mediator.Send(command);
+
+        if (!result)
+            return NotFound($"Reservation {id} not found");
 
         return NoContent();
     }

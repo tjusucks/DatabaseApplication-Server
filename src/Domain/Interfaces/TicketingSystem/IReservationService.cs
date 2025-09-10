@@ -9,6 +9,7 @@ namespace DbApp.Domain.Interfaces.TicketingSystem
         Task<Reservation> CreateReservationAsync(int visitorId, DateTime visitDate, List<ReservationItem> items, int? promotionId, string? specialRequests);
         Task<Reservation> UpdateReservationStatusAsync(int reservationId, ReservationStatus status, string? reason);
         Task<bool> CancelReservationAsync(int reservationId, string reason, int? requestingVisitorId);
+        Task<bool> DeleteReservationAsync(int reservationId);
         Task GenerateTicketsAsync(Reservation reservation);
     }
 }

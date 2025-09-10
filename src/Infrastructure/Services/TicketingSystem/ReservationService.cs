@@ -147,6 +147,18 @@ public class ReservationService(
         }
     }
 
+    public async Task<bool> DeleteReservationAsync(int reservationId)
+    {
+        var reservation = await _reservationRepository.GetByIdAsync(reservationId);
+        if (reservation == null)
+        {
+            return false;
+        }
+
+        await _reservationRepository.DeleteAsync(reservation.ReservationId);
+        return true;
+    }
+
     public Task GenerateTicketsAsync(Reservation reservation)
     {
         foreach (var item in reservation.ReservationItems)

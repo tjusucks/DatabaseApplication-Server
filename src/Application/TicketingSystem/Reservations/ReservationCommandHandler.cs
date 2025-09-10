@@ -15,7 +15,8 @@ public class ReservationCommandHandler(
     IRequestHandler<CreateReservationCommand, CreateReservationResponseDto>,
     IRequestHandler<UpdateReservationStatusCommand, ReservationDto>,
     IRequestHandler<ProcessPaymentCommand, ReservationDto>,
-    IRequestHandler<CancelReservationCommand, bool>
+    IRequestHandler<CancelReservationCommand, bool>,
+    IRequestHandler<DeleteReservationCommand, bool>
 {
     private readonly IReservationService _reservationService = reservationService;
     private readonly IPaymentService _paymentService = paymentService;
@@ -72,6 +73,14 @@ public class ReservationCommandHandler(
     {
         // 假设取消操作由用户自己发起，传入 VisitorId 以进行权限验证
         // 在实际应用中，你可能需要从当前用户上下文中获取此 ID
-        return await _reservationService.CancelReservationAsync(request.ReservationId, "Cancelled by user", null);
+        return await _reservationService.CancelReservationAsync(request.ReservationId, request.CancellationReason, request.RequestingVisitorId);
+    }
+
+    /// <summary>
+    /// Handle deleting a reservation.
+    /// </summary>
+    public async Task<bool> Handle(DeleteReservationCommand request, CancellationToken cancellationToken)
+    {
+        return await _reservationService.DeleteReservationAsync(request.ReservationId);
     }
 }

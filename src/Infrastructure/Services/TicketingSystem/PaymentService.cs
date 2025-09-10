@@ -4,17 +4,32 @@ using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Infrastructure.Services.TicketingSystem
 {
-    public class PaymentService(ApplicationDbContext dbContext) : IPaymentService
+    public class PaymentService : IPaymentService
     {
-        private readonly ApplicationDbContext _dbContext = dbContext;
+        private readonly ApplicationDbContext _dbContext;
+
+        public PaymentService(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+
+        private async Task<IDbContextTransaction?> BeginTransactionIfNeededAsync()
+        {
+            if (_dbContext.Database.CurrentTransaction == null)
+            {
+                return await _dbContext.Database.BeginTransactionAsync();
+            }
+            return null;
+        }
 
         public async Task Pay(int reservationId, string paymentMethod)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            await using var transaction = await BeginTransactionIfNeededAsync();
             try
             {
                 var reservation = await _dbContext.Reservations
@@ -43,18 +58,19 @@ namespace DbApp.Infrastructure.Services.TicketingSystem
                 _dbContext.FinancialRecords.Add(financialRecord);
                 await _dbContext.SaveChangesAsync();
 
-                await transaction.CommitAsync();
+                if (transaction != null) await transaction.CommitAsync();
             }
             catch
             {
-                await transaction.RollbackAsync();
+                // No need to rollback if we are part of another transaction
+                if (transaction != null) await transaction.RollbackAsync();
                 throw;
             }
         }
 
         public async Task Refund(int reservationId, string reason)
         {
-            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            await using var transaction = await BeginTransactionIfNeededAsync();
             try
             {
                 var reservation = await _dbContext.Reservations
@@ -102,16 +118,16 @@ namespace DbApp.Infrastructure.Services.TicketingSystem
                 _dbContext.FinancialRecords.Add(financialRecord);
 
                 await _dbContext.SaveChangesAsync();
-                await transaction.CommitAsync();
+                if (transaction != null) await transaction.CommitAsync();
             }
             catch
             {
-                await transaction.RollbackAsync();
+                if (transaction != null) await transaction.RollbackAsync();
                 throw;
             }
         }
 
-        private static void GenerateTickets(Reservation reservation)
+        private void GenerateTickets(Reservation reservation)
         {
             foreach (var item in reservation.ReservationItems)
             {
