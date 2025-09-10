@@ -89,7 +89,7 @@ public class ReservationController(IMediator mediator) : ControllerBase
         if (!result)
             return NotFound($"Reservation {id} not found or cannot be cancelled");
 
-        return NoContent();
+        return Ok(new { message = "Reservation cancelled successfully" });
     }
 
     /// <summary>
