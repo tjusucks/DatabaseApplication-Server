@@ -1,25 +1,16 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
-using DbApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Infrastructure.Services.TicketingSystem
 {
-    public class PaymentService : IPaymentService
+    public class PaymentService(ApplicationDbContext dbContext) : IPaymentService
     {
-        private readonly ApplicationDbContext _dbContext;
-
-        public PaymentService(ApplicationDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly ApplicationDbContext _dbContext = dbContext;
 
         public async Task Pay(int reservationId, string paymentMethod)
         {
@@ -29,12 +20,8 @@ namespace DbApp.Infrastructure.Services.TicketingSystem
                 var reservation = await _dbContext.Reservations
                     .Include(r => r.ReservationItems)
                     .ThenInclude(ri => ri.Tickets)
-                    .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
-
-                if (reservation == null)
-                {
-                    throw new NotFoundException($"Reservation with ID {reservationId} not found.");
-                }
+                    .FirstOrDefaultAsync(r => r.ReservationId == reservationId)
+                    ?? throw new NotFoundException($"Reservation with ID {reservationId} not found.");
 
                 reservation.PaymentStatus = PaymentStatus.Paid;
                 reservation.PaymentMethod = paymentMethod;
@@ -73,13 +60,7 @@ namespace DbApp.Infrastructure.Services.TicketingSystem
                 var reservation = await _dbContext.Reservations
                     .Include(r => r.ReservationItems)
                     .ThenInclude(ri => ri.Tickets)
-                    .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
-
-                if (reservation == null)
-                {
-                    throw new NotFoundException($"Reservation with ID {reservationId} not found.");
-                }
-
+                    .FirstOrDefaultAsync(r => r.ReservationId == reservationId) ?? throw new NotFoundException($"Reservation with ID {reservationId} not found.");
                 reservation.PaymentStatus = PaymentStatus.Refunded;
                 reservation.UpdatedAt = DateTime.UtcNow;
 
@@ -130,7 +111,7 @@ namespace DbApp.Infrastructure.Services.TicketingSystem
             }
         }
 
-        private void GenerateTickets(Reservation reservation)
+        private static void GenerateTickets(Reservation reservation)
         {
             foreach (var item in reservation.ReservationItems)
             {

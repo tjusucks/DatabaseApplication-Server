@@ -1,6 +1,7 @@
 using AutoMapper;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.ResourceSystem.InspectionRecords;
 
@@ -111,13 +112,8 @@ public class InspectionRecordQueryHandlers(
         UpdateInspectionRecordCommand request,
         CancellationToken cancellationToken)
     {
-        var record = await _inspectionRecordRepository.GetByIdAsync(request.InspectionId);
-
-        if (record == null)
-        {
-            throw new InvalidOperationException("Inspection record not found");
-        }
-
+        var record = await _inspectionRecordRepository.GetByIdAsync(request.InspectionId)
+            ?? throw new NotFoundException("Inspection record not found");
         record.RideId = request.RideId;
         record.TeamId = request.TeamId;
         record.CheckDate = request.CheckDate;

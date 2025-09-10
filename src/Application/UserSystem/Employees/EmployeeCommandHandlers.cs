@@ -20,11 +20,8 @@ public class CreateEmployeeCommandHandler(IEmployeeRepository employeeRepository
         };
 
         // Get the role ID based on role name
-        var roleId = await _employeeRepository.GetRoleIdByNameAsync(roleName);
-        if (roleId == null)
-        {
-            throw new ValidationException($"Role '{roleName}' not found in the system.");
-        }
+        var roleId = await _employeeRepository.GetRoleIdByNameAsync(roleName)
+            ?? throw new ValidationException($"Role '{roleName}' not found in the system.");
 
         // First create the User
         var user = new User
@@ -35,7 +32,7 @@ public class CreateEmployeeCommandHandler(IEmployeeRepository employeeRepository
             DisplayName = request.DisplayName,
             PhoneNumber = request.PhoneNumber,
             BirthDate = request.BirthDate,
-            RoleId = roleId.Value,
+            RoleId = roleId,
             CreatedAt = DateTime.UtcNow,
             RegisterTime = DateTime.UtcNow
         };
@@ -78,11 +75,8 @@ public class UpdateEmployeeCommandHandler(IEmployeeRepository employeeRepository
 
     public async Task<Unit> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var employee = await _employeeRepository.GetByIdAsync(request.EmployeeId);
-        if (employee == null)
-        {
-            throw new KeyNotFoundException($"Employee with ID {request.EmployeeId} not found.");
-        }
+        var employee = await _employeeRepository.GetByIdAsync(request.EmployeeId)
+            ?? throw new KeyNotFoundException($"Employee with ID {request.EmployeeId} not found.");
 
         // Update employee properties
         employee.StaffNumber = request.StaffNumber;
@@ -104,12 +98,8 @@ public class DeleteEmployeeCommandHandler(IEmployeeRepository employeeRepository
 
     public async Task<Unit> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var employee = await _employeeRepository.GetByIdAsync(request.EmployeeId);
-        if (employee == null)
-        {
-            throw new KeyNotFoundException($"Employee with ID {request.EmployeeId} not found.");
-        }
-
+        var employee = await _employeeRepository.GetByIdAsync(request.EmployeeId)
+            ?? throw new KeyNotFoundException($"Employee with ID {request.EmployeeId} not found.");
         await _employeeRepository.DeleteAsync(employee);
         return Unit.Value;
     }

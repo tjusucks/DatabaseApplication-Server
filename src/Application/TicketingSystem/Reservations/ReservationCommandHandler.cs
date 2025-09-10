@@ -1,7 +1,5 @@
 using AutoMapper;
-using DbApp.Domain;
 using DbApp.Domain.Entities.TicketingSystem;
-using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
 

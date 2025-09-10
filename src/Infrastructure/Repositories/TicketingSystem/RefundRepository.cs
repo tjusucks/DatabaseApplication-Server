@@ -1,7 +1,6 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
-using DbApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure.Repositories.TicketingSystem;

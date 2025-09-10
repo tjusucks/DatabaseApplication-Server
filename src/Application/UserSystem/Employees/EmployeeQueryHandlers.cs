@@ -49,7 +49,7 @@ public class GetAllEmployeesQueryHandler(IEmployeeRepository employeeRepository)
         };
     }
 
-    private EmployeeSimpleDto MapToSimpleDto(Employee employee)
+    private static EmployeeSimpleDto MapToSimpleDto(Employee employee)
     {
         return new EmployeeSimpleDto
         {
@@ -107,7 +107,7 @@ public class GetEmployeeByIdQueryHandler(IEmployeeRepository employeeRepository)
         };
     }
 
-    private EmployeeSimpleDto MapToSimpleDto(Employee employee)
+    private static EmployeeSimpleDto MapToSimpleDto(Employee employee)
     {
         return new EmployeeSimpleDto
         {
@@ -166,7 +166,7 @@ public class GetEmployeesByDepartmentQueryHandler(IEmployeeRepository employeeRe
         };
     }
 
-    private EmployeeSimpleDto MapToSimpleDto(Employee employee)
+    private static EmployeeSimpleDto MapToSimpleDto(Employee employee)
     {
         return new EmployeeSimpleDto
         {
@@ -224,7 +224,7 @@ public class SearchEmployeesQueryHandler(IEmployeeRepository employeeRepository)
         };
     }
 
-    private EmployeeSimpleDto MapToSimpleDto(Employee employee)
+    private static EmployeeSimpleDto MapToSimpleDto(Employee employee)
     {
         return new EmployeeSimpleDto
         {
@@ -282,7 +282,7 @@ public class GetEmployeesByStaffTypeQueryHandler(IEmployeeRepository employeeRep
         };
     }
 
-    private EmployeeSimpleDto MapToSimpleDto(Employee employee)
+    private static EmployeeSimpleDto MapToSimpleDto(Employee employee)
     {
         return new EmployeeSimpleDto
         {

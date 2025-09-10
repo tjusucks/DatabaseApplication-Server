@@ -129,13 +129,8 @@ public class MaintenanceRecordQueryHandlers(
         UpdateMaintenanceRecordCommand request,
         CancellationToken cancellationToken)
     {
-        var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId);
-
-        if (record == null)
-        {
-            throw new InvalidOperationException("Maintenance record not found");
-        }
-
+        var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId)
+            ?? throw new InvalidOperationException("Maintenance record not found");
         record.RideId = request.RideId;
         record.TeamId = request.TeamId;
         record.ManagerId = request.ManagerId;

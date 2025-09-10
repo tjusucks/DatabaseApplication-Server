@@ -32,12 +32,8 @@ public class UpdateEmployeeReviewCommandHandler(IEmployeeReviewRepository employ
 
     public async Task Handle(UpdateEmployeeReviewCommand request, CancellationToken cancellationToken)
     {
-        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId);
-        if (review == null)
-        {
-            throw new InvalidOperationException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
-        }
-
+        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId)
+            ?? throw new InvalidOperationException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
         review.Score = request.Score;
         review.EvaluationLevel = request.EvaluationLevel;
         review.EvaluatorId = request.EvaluatorId;
@@ -53,12 +49,8 @@ public class DeleteEmployeeReviewCommandHandler(IEmployeeReviewRepository employ
 
     public async Task Handle(DeleteEmployeeReviewCommand request, CancellationToken cancellationToken)
     {
-        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId);
-        if (review == null)
-        {
-            throw new InvalidOperationException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
-        }
-
+        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId)
+            ?? throw new InvalidOperationException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
         await _employeeReviewRepository.DeleteAsync(review);
     }
 }

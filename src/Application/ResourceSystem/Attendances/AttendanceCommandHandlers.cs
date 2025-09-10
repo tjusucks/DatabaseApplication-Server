@@ -44,12 +44,8 @@ public class UpdateAttendanceCommandHandler(IAttendanceRepository attendanceRepo
 
     public async Task Handle(UpdateAttendanceCommand request, CancellationToken cancellationToken)
     {
-        var attendance = await _attendanceRepository.GetByIdAsync(request.AttendanceId);
-        if (attendance == null)
-        {
-            throw new KeyNotFoundException(
-                $"考勤记录 ID {request.AttendanceId} 不存在");
-        }
+        var attendance = await _attendanceRepository.GetByIdAsync(request.AttendanceId)
+            ?? throw new KeyNotFoundException($"考勤记录 ID {request.AttendanceId} 不存在");
 
         // 更新考勤记录
         if (request.CheckInTime.HasValue) attendance.CheckInTime = (DateTime)request.CheckInTime;

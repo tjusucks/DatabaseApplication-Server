@@ -1,5 +1,4 @@
 using DbApp.Application.TicketingSystem.Refunds;
-using DbApp.Domain.Entities.TicketingSystem;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

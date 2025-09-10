@@ -1,4 +1,3 @@
-using DbApp.Application.TicketingSystem.TicketTypes;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
 
