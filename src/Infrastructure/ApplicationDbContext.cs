@@ -17,6 +17,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<StaffTeam> StaffTeams { get; set; }
     public DbSet<TeamMember> TeamMembers { get; set; }
     public DbSet<EntryRecord> EntryRecords { get; set; }
+    public DbSet<RideEntryRecord> RideEntryRecords { get; set; }
 
     // Ticketing System.
     public DbSet<Ticket> Tickets { get; set; }
