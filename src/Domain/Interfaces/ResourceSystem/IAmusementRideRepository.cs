@@ -42,4 +42,5 @@ public interface IAmusementRideRepository
 
     // 统计方法
     Task<AmusementRideStats> GetStatsAsync(DateTime? startDate, DateTime? endDate);
+
 }
