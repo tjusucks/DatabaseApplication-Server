@@ -1,6 +1,7 @@
 using AutoMapper;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.ResourceSystem.MaintenanceRecords;
 
@@ -130,7 +131,7 @@ public class MaintenanceRecordQueryHandlers(
         CancellationToken cancellationToken)
     {
         var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId)
-            ?? throw new InvalidOperationException("Maintenance record not found");
+            ?? throw new NotFoundException("Maintenance record not found");
         record.RideId = request.RideId;
         record.TeamId = request.TeamId;
         record.ManagerId = request.ManagerId;

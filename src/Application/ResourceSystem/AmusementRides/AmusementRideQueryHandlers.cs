@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
@@ -125,7 +126,7 @@ public class AmusementRideQueryHandlers(
         CancellationToken cancellationToken)
     {
         var ride = await _amusementRideRepository.GetByIdAsync(request.RideId)
-            ?? throw new InvalidOperationException("Amusement ride not found");
+            ?? throw new ValidationException("Amusement ride not found");
         ride.RideName = request.RideName;
         ride.Location = request.Location;
         ride.Description = request.Description;

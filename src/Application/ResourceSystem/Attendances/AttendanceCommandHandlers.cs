@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
@@ -17,7 +18,7 @@ public class CreateAttendanceCommandHandler(IAttendanceRepository attendanceRepo
 
         if (existing != null)
         {
-            throw new InvalidOperationException(
+            throw new ValidationException(
                 $"该员工在 {request.AttendanceDate:yyyy-MM-dd} 已有考勤记录");
         }
         var checkInTime = request.CheckInTime ?? request.AttendanceDate.Date;

@@ -126,7 +126,7 @@ public class ReservationService(
 
             // 业务规则检查
             if (reservation.Status == ReservationStatus.Completed || reservation.Status == ReservationStatus.Cancelled)
-                throw new InvalidOperationException($"Cannot cancel a reservation with status '{reservation.Status}'");
+                throw new ValidationException($"Cannot cancel a reservation with status '{reservation.Status}'");
 
             // 如果已支付，则触发退款流程
             if (reservation.PaymentStatus == PaymentStatus.Paid)

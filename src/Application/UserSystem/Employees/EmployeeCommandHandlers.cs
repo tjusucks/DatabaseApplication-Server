@@ -1,7 +1,7 @@
-using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.UserSystem.Employees;
 
@@ -76,7 +76,7 @@ public class UpdateEmployeeCommandHandler(IEmployeeRepository employeeRepository
     public async Task<Unit> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employee = await _employeeRepository.GetByIdAsync(request.EmployeeId)
-            ?? throw new KeyNotFoundException($"Employee with ID {request.EmployeeId} not found.");
+            ?? throw new NotFoundException($"Employee with ID {request.EmployeeId} not found.");
 
         // Update employee properties
         employee.StaffNumber = request.StaffNumber;
@@ -99,7 +99,7 @@ public class DeleteEmployeeCommandHandler(IEmployeeRepository employeeRepository
     public async Task<Unit> Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
     {
         var employee = await _employeeRepository.GetByIdAsync(request.EmployeeId)
-            ?? throw new KeyNotFoundException($"Employee with ID {request.EmployeeId} not found.");
+            ?? throw new NotFoundException($"Employee with ID {request.EmployeeId} not found.");
         await _employeeRepository.DeleteAsync(employee);
         return Unit.Value;
     }
