@@ -1,7 +1,7 @@
-using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Entities.ResourceSystem;
-using DbApp.Domain.Enums.UserSystem;
+using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.ResourceSystem;
+using DbApp.Domain.Enums.UserSystem;
 using Microsoft.EntityFrameworkCore;
 
 namespace DbApp.Infrastructure;
