@@ -104,10 +104,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .IsUnique();
 
         builder.HasIndex(u => u.Email)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("\"email\" IS NOT NULL");
 
         builder.HasIndex(u => u.PhoneNumber)
-            .IsUnique();
+            .IsUnique()
+            .HasFilter("\"phone_number\" IS NOT NULL");
 
         builder.HasIndex(u => u.CreatedAt);
 

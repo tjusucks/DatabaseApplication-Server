@@ -56,6 +56,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnection"));
 
+// Configure CORS for frontend development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 // Register repository implementations for dependency injection.
 builder.Services.Scan(scan => scan
     .FromAssemblies(typeof(ApplicationDbContext).Assembly)
@@ -99,6 +110,9 @@ if (app.Environment.IsDevelopment())
 
 // Force HTTPS redirection for security.
 app.UseHttpsRedirection();
+
+// Enable CORS for frontend development
+app.UseCors("AllowFrontend");
 
 // Register exception handling middleware.
 app.UseExceptionHandler(errorApp =>
