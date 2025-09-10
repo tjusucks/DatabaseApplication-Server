@@ -51,6 +51,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         await DataSeeding.SeedDataAsync(context);
     });
 });
+builder.Services.AddScoped<DbApp.Domain.Interfaces.IAppDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
 // Configure Redis caching.
 builder.Services.AddStackExchangeRedisCache(options =>

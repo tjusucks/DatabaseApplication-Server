@@ -47,5 +47,8 @@ public class ReservationMappingProfile : Profile
                 opt.MapFrom(src => src.TicketType != null ? src.TicketType.TypeName : string.Empty));
 
         CreateMap<ReservationStats, ReservationStatsDto>();
+
+        // CreateReservationItemDto to ReservationItem mapping
+        CreateMap<CreateReservationItemDto, ReservationItem>();
     }
 }

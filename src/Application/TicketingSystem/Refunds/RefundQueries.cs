@@ -1,7 +1,7 @@
 using DbApp.Domain.Enums.TicketingSystem;
 using MediatR;
 
-namespace DbApp.Application.TicketingSystem.Tickets;
+namespace DbApp.Application.TicketingSystem.Refunds;
 
 /// <summary>
 /// 查询退票记录

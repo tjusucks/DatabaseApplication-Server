@@ -2,7 +2,7 @@ using AutoMapper;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 
-namespace DbApp.Application.TicketingSystem.Tickets;
+namespace DbApp.Application.TicketingSystem.Refunds;
 
 /// <summary>
 /// 退票功能的AutoMapper配置

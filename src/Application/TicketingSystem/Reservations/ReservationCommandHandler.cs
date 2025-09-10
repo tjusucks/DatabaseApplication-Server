@@ -1,4 +1,5 @@
 using AutoMapper;
+using DbApp.Domain;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
@@ -10,16 +11,16 @@ namespace DbApp.Application.TicketingSystem.Reservations;
 /// Handler for reservation command operations.
 /// </summary>
 public class ReservationCommandHandler(
-    IReservationRepository reservationRepository,
-    ITicketTypeRepository ticketTypeRepository,
+    IReservationService reservationService,
+    IPaymentService paymentService,
     IMapper mapper) :
     IRequestHandler<CreateReservationCommand, CreateReservationResponseDto>,
     IRequestHandler<UpdateReservationStatusCommand, ReservationDto>,
     IRequestHandler<ProcessPaymentCommand, ReservationDto>,
     IRequestHandler<CancelReservationCommand, bool>
 {
-    private readonly IReservationRepository _reservationRepository = reservationRepository;
-    private readonly ITicketTypeRepository _ticketTypeRepository = ticketTypeRepository;
+    private readonly IReservationService _reservationService = reservationService;
+    private readonly IPaymentService _paymentService = paymentService;
     private readonly IMapper _mapper = mapper;
 
     /// <summary>
@@ -27,67 +28,16 @@ public class ReservationCommandHandler(
     /// </summary>
     public async Task<CreateReservationResponseDto> Handle(CreateReservationCommand request, CancellationToken cancellationToken)
     {
-        // 验证票型存在性和库存
-        var ticketTypes = new Dictionary<int, TicketType>();
-        foreach (var item in request.Items)
-        {
-            var ticketType = await _ticketTypeRepository.GetByIdAsync(item.TicketTypeId);
-            if (ticketType == null)
-                throw new ArgumentException($"Ticket type {item.TicketTypeId} not found");
+        var reservationItems = _mapper.Map<List<ReservationItem>>(request.Items);
 
-            // 检查库存限制
-            if (ticketType.MaxSaleLimit.HasValue)
-            {
-                var soldCount = await _ticketTypeRepository.GetSoldCountAsync(item.TicketTypeId, request.VisitDate);
-                if (soldCount + item.Quantity > ticketType.MaxSaleLimit.Value)
-                    throw new InvalidOperationException($"Insufficient stock for ticket type {ticketType.TypeName}");
-            }
+        var savedReservation = await _reservationService.CreateReservationAsync(
+            request.VisitorId,
+            request.VisitDate,
+            reservationItems,
+            request.PromotionId,
+            request.SpecialRequests
+        );
 
-            ticketTypes[item.TicketTypeId] = ticketType;
-        }
-
-        // 创建预订
-        var reservation = new Reservation
-        {
-            VisitorId = request.VisitorId,
-            ReservationTime = DateTime.UtcNow,
-            VisitDate = request.VisitDate,
-            PromotionId = request.PromotionId,
-            SpecialRequests = request.SpecialRequests,
-            PaymentStatus = PaymentStatus.Pending,
-            Status = ReservationStatus.Pending
-        };
-
-        // 创建预订项目并计算基础价格
-        decimal totalAmount = 0;
-
-        foreach (var item in request.Items)
-        {
-            var ticketType = ticketTypes[item.TicketTypeId];
-            var unitPrice = ticketType.BasePrice;
-
-            var itemTotal = unitPrice * item.Quantity;
-            totalAmount += itemTotal;
-
-            var reservationItem = new ReservationItem
-            {
-                TicketTypeId = item.TicketTypeId,
-                Quantity = item.Quantity,
-                UnitPrice = unitPrice,
-                DiscountAmount = 0,
-                TotalAmount = itemTotal
-            };
-
-            reservation.ReservationItems.Add(reservationItem);
-        }
-
-        reservation.DiscountAmount = 0;
-        reservation.TotalAmount = totalAmount;
-
-        // 保存预订
-        var savedReservation = await _reservationRepository.AddAsync(reservation);
-
-        // 返回DTO
         return new CreateReservationResponseDto
         {
             ReservationId = savedReservation.ReservationId,
@@ -103,92 +53,27 @@ public class ReservationCommandHandler(
     /// </summary>
     public async Task<ReservationDto> Handle(UpdateReservationStatusCommand request, CancellationToken cancellationToken)
     {
-        var reservation = await _reservationRepository.GetByIdAsync(request.ReservationId);
-        if (reservation == null)
-            throw new ArgumentException($"Reservation {request.ReservationId} not found");
-
-        reservation.Status = request.Status;
-        var updatedReservation = await _reservationRepository.UpdateAsync(reservation);
-
+        var updatedReservation = await _reservationService.UpdateReservationStatusAsync(request.ReservationId, request.Status, null);
         return _mapper.Map<ReservationDto>(updatedReservation);
     }
 
     /// <summary>
-    /// Handle payment processing.
+    /// Handle processing a payment for a reservation.
     /// </summary>
     public async Task<ReservationDto> Handle(ProcessPaymentCommand request, CancellationToken cancellationToken)
     {
-        var reservation = await _reservationRepository.GetByIdAsync(request.ReservationId);
-        if (reservation == null)
-            throw new ArgumentException($"Reservation {request.ReservationId} not found");
-
-        reservation.PaymentStatus = request.PaymentStatus;
-        reservation.PaymentMethod = request.PaymentMethod;
-
-        // 如果支付成功，更新预订状态为已确认
-        if (request.PaymentStatus == PaymentStatus.Paid)
-        {
-            reservation.Status = ReservationStatus.Confirmed;
-
-            // 生成电子票
-            await GenerateTicketsAsync(reservation);
-        }
-
-        var updatedReservation = await _reservationRepository.UpdateAsync(reservation);
-        return _mapper.Map<ReservationDto>(updatedReservation);
+        await _paymentService.Pay(request.ReservationId, request.PaymentMethod);
+        var reservation = await _reservationService.GetReservationByIdAsync(request.ReservationId);
+        return _mapper.Map<ReservationDto>(reservation);
     }
 
     /// <summary>
-    /// Handle reservation cancellation.
+    /// Handle cancelling a reservation.
     /// </summary>
     public async Task<bool> Handle(CancelReservationCommand request, CancellationToken cancellationToken)
     {
-        var reservation = await _reservationRepository.GetByIdAsync(request.ReservationId);
-        if (reservation == null)
-            return false;
-
-        // 检查是否可以取消
-        if (reservation.Status == ReservationStatus.Completed)
-            throw new InvalidOperationException("Cannot cancel a completed reservation");
-
-        reservation.Status = ReservationStatus.Cancelled;
-        await _reservationRepository.UpdateAsync(reservation);
-
-        return true;
-    }
-
-    /// <summary>
-    /// Generate tickets for confirmed reservation.
-    /// </summary>
-    private Task GenerateTicketsAsync(Reservation reservation)
-    {
-        foreach (var item in reservation.ReservationItems)
-        {
-            for (int i = 0; i < item.Quantity; i++)
-            {
-                var ticket = new Ticket
-                {
-                    ReservationItemId = item.ItemId,
-                    TicketTypeId = item.TicketTypeId,
-                    VisitorId = reservation.VisitorId,
-                    SerialNumber = GenerateTicketSerialNumber(),
-                    ValidFrom = reservation.VisitDate.Date,
-                    ValidTo = reservation.VisitDate.Date.AddDays(1),
-                    Status = TicketStatus.Issued
-                };
-
-                item.Tickets.Add(ticket);
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Generate unique ticket serial number.
-    /// </summary>
-    private static string GenerateTicketSerialNumber()
-    {
-        return $"TKT{DateTime.UtcNow:yyyyMMdd}{Guid.NewGuid().ToString("N")[..8].ToUpper()}";
+        // 假设取消操作由用户自己发起，传入 VisitorId 以进行权限验证
+        // 在实际应用中，你可能需要从当前用户上下文中获取此 ID
+        return await _reservationService.CancelReservationAsync(request.ReservationId, "Cancelled by user", null);
     }
 }

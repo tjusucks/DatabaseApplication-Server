@@ -1,33 +1,49 @@
+using DbApp.Application.TicketingSystem.TicketTypes;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
-using static DbApp.Domain.Exceptions;
+
 namespace DbApp.Application.TicketingSystem.TicketTypes;
 
 public class TicketTypeQueryHandler(ITicketTypeRepository ticketTypeRepository) :
-    IRequestHandler<GetAllTicketTypesQuery, List<TicketTypeDto>>,
+    IRequestHandler<GetAvailableTicketTypesQuery, List<TicketTypeDto>>,
     IRequestHandler<GetTicketTypeByIdQuery, TicketTypeDto?>
 {
-    public async Task<List<TicketTypeDto>> Handle(GetAllTicketTypesQuery request, CancellationToken cancellationToken)
+    private readonly ITicketTypeRepository _ticketTypeRepository = ticketTypeRepository;
+
+    /// <summary>
+    /// 获取所有可用票种
+    /// </summary>
+    public async Task<List<TicketTypeDto>> Handle(GetAvailableTicketTypesQuery request, CancellationToken cancellationToken)
     {
-        var types = await ticketTypeRepository.GetAllAsync();
-        return [.. types.Select(t => new TicketTypeDto
+        var ticketTypes = await _ticketTypeRepository.GetActiveTicketTypesAsync();
+
+        var ticketTypeDtos = ticketTypes.Select(tt => new TicketTypeDto
         {
-            TicketTypeId = t.TicketTypeId,
-            TypeName = t.TypeName,
-            Description = t.Description,
-            BasePrice = t.BasePrice,
-            RulesText = t.RulesText,
-            MaxSaleLimit = t.MaxSaleLimit,
-            CreatedAt = t.CreatedAt,
-            UpdatedAt = t.UpdatedAt,
-            ApplicableCrowd = t.ApplicableCrowd
-        })];
+            TicketTypeId = tt.TicketTypeId,
+            TypeName = tt.TypeName,
+            Description = tt.Description,
+            BasePrice = tt.BasePrice,
+            RulesText = tt.RulesText,
+            MaxSaleLimit = tt.MaxSaleLimit,
+            ApplicableCrowd = tt.ApplicableCrowd,
+            IsAvailable = true,
+            RemainingQuantity = tt.MaxSaleLimit ?? int.MaxValue
+        }).ToList();
+
+        return ticketTypeDtos;
     }
 
+    /// <summary>
+    /// 根据ID获取特定票种
+    /// </summary>
     public async Task<TicketTypeDto?> Handle(GetTicketTypeByIdQuery request, CancellationToken cancellationToken)
     {
-        var ticketType = await ticketTypeRepository.GetByIdAsync(request.TicketTypeId)
-            ?? throw new NotFoundException($"{request.TicketTypeId} could not be found");
+        var ticketType = await _ticketTypeRepository.GetByIdAsync(request.TicketTypeId);
+
+        if (ticketType == null)
+        {
+            return null;
+        }
 
         return new TicketTypeDto
         {
@@ -37,9 +53,9 @@ public class TicketTypeQueryHandler(ITicketTypeRepository ticketTypeRepository) 
             BasePrice = ticketType.BasePrice,
             RulesText = ticketType.RulesText,
             MaxSaleLimit = ticketType.MaxSaleLimit,
-            CreatedAt = ticketType.CreatedAt,
-            UpdatedAt = ticketType.UpdatedAt,
-            ApplicableCrowd = ticketType.ApplicableCrowd
+            ApplicableCrowd = ticketType.ApplicableCrowd,
+            IsAvailable = true,
+            RemainingQuantity = ticketType.MaxSaleLimit ?? int.MaxValue
         };
     }
 }

@@ -13,7 +13,7 @@ public class TicketTypeController(IMediator mediator) : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<TicketTypeDto>>> GetAll()
     {
-        var result = await _mediator.Send(new GetAllTicketTypesQuery());
+        var result = await _mediator.Send(new GetAvailableTicketTypesQuery());
         return Ok(result);
     }
 

@@ -93,13 +93,29 @@ public class ReservationDto
 public class CreateReservationRequestDto
 {
     public int VisitorId { get; set; }
-    public List<ReservationItemRequestDto> Items { get; set; } = [];
+    public List<CreateReservationItemDto> Items { get; set; } = [];
     public string? PromotionCode { get; set; }
     public int? PromotionId { get; set; }
     public DateTime? VisitDate { get; set; }
     public string? SpecialRequests { get; set; }
-    public string ContactPhone { get; set; } = string.Empty;
-    public string ContactEmail { get; set; } = string.Empty;
+}
+
+public class CreateReservationItemDto
+{
+    public int TicketTypeId { get; set; }
+    public int Quantity { get; set; }
+}
+
+/// <summary>
+/// DTO for creating a reservation response.
+/// </summary>
+public class CreateReservationResponseDto
+{
+    public int ReservationId { get; set; }
+    public decimal TotalAmount { get; set; }
+    public PaymentStatus PaymentStatus { get; set; }
+    public ReservationStatus Status { get; set; }
+    public string Message { get; set; } = string.Empty;
 }
 
 /// <summary>

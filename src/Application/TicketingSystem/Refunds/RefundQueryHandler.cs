@@ -3,7 +3,7 @@ using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace DbApp.Application.TicketingSystem.Tickets;
+namespace DbApp.Application.TicketingSystem.Refunds;
 
 /// <summary>
 /// 退票查询处理器
