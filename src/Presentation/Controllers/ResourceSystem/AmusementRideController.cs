@@ -72,6 +72,10 @@ public class AmusementRidesController(IMediator mediator) : ControllerBase
     /// <param name="managerId">Manager ID filter.</param>
     /// <param name="minCapacity">Minimum capacity filter.</param>
     /// <param name="maxCapacity">Maximum capacity filter.</param>
+    /// <param name="minHeightLimit">Minimum height limit filter.</param>
+    /// <param name="maxHeightLimit">Maximum height limit filter.</param>
+    /// <param name="openDateFrom">Open date from filter.</param>
+    /// <param name="openDateTo">Open date to filter.</param>
     /// <param name="page">Page number.</param>
     /// <param name="pageSize">Page size.</param>
     /// <returns>Paginated amusement ride results.</returns>
@@ -83,11 +87,16 @@ public class AmusementRidesController(IMediator mediator) : ControllerBase
         [FromQuery] int? managerId = null,
         [FromQuery] int? minCapacity = null,
         [FromQuery] int? maxCapacity = null,
+        [FromQuery] int? minHeightLimit = null,
+        [FromQuery] int? maxHeightLimit = null,
+        [FromQuery] DateTime? openDateFrom = null,
+        [FromQuery] DateTime? openDateTo = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10)
     {
         var result = await _mediator.Send(new SearchAmusementRidesQuery(
-            keyword, status, location, managerId, minCapacity, maxCapacity, page, pageSize));
+            keyword, status, location, managerId, minCapacity, maxCapacity,
+            minHeightLimit, maxHeightLimit, openDateFrom, openDateTo, page, pageSize));
         return Ok(result);
     }
 

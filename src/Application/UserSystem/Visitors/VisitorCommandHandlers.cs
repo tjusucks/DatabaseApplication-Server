@@ -30,6 +30,18 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
 
     public async Task<int> Handle(CreateVisitorCommand request, CancellationToken cancellationToken)
     {
+        // Validate member type requirements
+        if (request.VisitorType == Domain.Enums.UserSystem.VisitorType.Member)
+        {
+            var hasEmail = !string.IsNullOrWhiteSpace(request.Email);
+            var hasPhone = !string.IsNullOrWhiteSpace(request.PhoneNumber);
+
+            if (!hasEmail && !hasPhone)
+            {
+                throw new ValidationException("会员账户必须提供邮箱或电话号码中的至少一项");
+            }
+        }
+
         // Visitors can be created without email or phone number
         // Contact information is only required for member upgrade
         var visitor = new Visitor
