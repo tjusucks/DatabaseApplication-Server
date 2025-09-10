@@ -2,6 +2,7 @@ using System.Globalization;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.ResourceSystem.EmployeeReviews;
 
@@ -32,12 +33,8 @@ public class UpdateEmployeeReviewCommandHandler(IEmployeeReviewRepository employ
 
     public async Task Handle(UpdateEmployeeReviewCommand request, CancellationToken cancellationToken)
     {
-        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId);
-        if (review == null)
-        {
-            throw new InvalidOperationException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
-        }
-
+        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId)
+            ?? throw new NotFoundException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
         review.Score = request.Score;
         review.EvaluationLevel = request.EvaluationLevel;
         review.EvaluatorId = request.EvaluatorId;
@@ -53,12 +50,8 @@ public class DeleteEmployeeReviewCommandHandler(IEmployeeReviewRepository employ
 
     public async Task Handle(DeleteEmployeeReviewCommand request, CancellationToken cancellationToken)
     {
-        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId);
-        if (review == null)
-        {
-            throw new InvalidOperationException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
-        }
-
+        var review = await _employeeReviewRepository.GetByIdAsync(request.ReviewId)
+            ?? throw new NotFoundException($"未找到ID为 {request.ReviewId} 的员工绩效记录");
         await _employeeReviewRepository.DeleteAsync(review);
     }
 }
@@ -87,7 +80,7 @@ public class CreateAttendanceDeductionCommandHandler(
         // 如果员工全勤，则不需要创建扣分记录
         if (lateDays == 0 && absentDays == 0)
         {
-            throw new InvalidOperationException("员工在该周期内全勤，无需创建考勤扣分记录");
+            throw new ValidationException("员工在该周期内全勤，无需创建考勤扣分记录");
         }
 
         // 计算扣分值 - 可以根据迟到/缺勤次数计算

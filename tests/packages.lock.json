@@ -1740,6 +1740,8 @@
         "dependencies": {
           "AutoMapper": "[15.0.1, )",
           "Domain": "[1.0.0, )",
+          "Microsoft.EntityFrameworkCore": "[9.0.8, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[9.0.8, )",
           "mediatr": "[13.0.0, )"
         }
       },

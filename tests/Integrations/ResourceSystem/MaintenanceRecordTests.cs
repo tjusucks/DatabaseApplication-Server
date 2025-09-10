@@ -110,7 +110,7 @@ public class MaintenanceRecordConstraintIntegrationTests(DatabaseFixture fixture
         );
     }
 
-    private async Task<AmusementRide> CreateTestRideAsync(ApplicationDbContext context)
+    private static async Task<AmusementRide> CreateTestRideAsync(ApplicationDbContext context)
     {
         var ride = new AmusementRide
         {
@@ -145,7 +145,7 @@ public class MaintenanceRecordConstraintIntegrationTests(DatabaseFixture fixture
         return team;
     }
 
-    private async Task<Role> CreateTestRoleAsync(ApplicationDbContext context)
+    private static async Task<Role> CreateTestRoleAsync(ApplicationDbContext context)
     {
         var role = new Role
         {
@@ -158,7 +158,7 @@ public class MaintenanceRecordConstraintIntegrationTests(DatabaseFixture fixture
         return role;
     }
 
-    private async Task<User> CreateTestUserAsync(ApplicationDbContext context, int roleId)
+    private static async Task<User> CreateTestUserAsync(ApplicationDbContext context, int roleId)
     {
         var user = new User
         {
@@ -173,7 +173,7 @@ public class MaintenanceRecordConstraintIntegrationTests(DatabaseFixture fixture
         return user;
     }
 
-    private async Task<Employee> CreateTestEmployeeAsync(ApplicationDbContext context, int userId)
+    private static async Task<Employee> CreateTestEmployeeAsync(ApplicationDbContext context, int userId)
     {
         var employee = new Employee
         {

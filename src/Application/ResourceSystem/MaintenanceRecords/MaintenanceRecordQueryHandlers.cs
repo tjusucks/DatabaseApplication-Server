@@ -1,6 +1,7 @@
 using AutoMapper;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.ResourceSystem.MaintenanceRecords;
 
@@ -129,13 +130,8 @@ public class MaintenanceRecordQueryHandlers(
         UpdateMaintenanceRecordCommand request,
         CancellationToken cancellationToken)
     {
-        var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId);
-
-        if (record == null)
-        {
-            throw new InvalidOperationException("Maintenance record not found");
-        }
-
+        var record = await _maintenanceRecordRepository.GetByIdAsync(request.MaintenanceId)
+            ?? throw new NotFoundException("Maintenance record not found");
         record.RideId = request.RideId;
         record.TeamId = request.TeamId;
         record.ManagerId = request.ManagerId;

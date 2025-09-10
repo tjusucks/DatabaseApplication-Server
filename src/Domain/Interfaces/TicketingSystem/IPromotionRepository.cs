@@ -10,4 +10,6 @@ public interface IPromotionRepository
     Task<int> CreateAsync(Promotion promotion);
     Task UpdateAsync(Promotion promotion);
     Task DeleteAsync(Promotion promotion);
+    Task<List<Promotion>> GetActivePromotionsAsync();
+    Task<bool> IsValidForTicketTypesAsync(int promotionId, List<int> ticketTypeIds, DateTime visitDate);
 }

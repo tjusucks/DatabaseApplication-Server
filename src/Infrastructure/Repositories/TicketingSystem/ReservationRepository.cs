@@ -94,6 +94,49 @@ public class ReservationRepository(ApplicationDbContext dbContext) : IReservatio
         };
     }
 
+    // 基础CRUD操作
+    public async Task<Reservation> AddAsync(Reservation reservation)
+    {
+        reservation.CreatedAt = DateTime.UtcNow;
+        reservation.UpdatedAt = DateTime.UtcNow;
+
+        _dbContext.Reservations.Add(reservation);
+        await _dbContext.SaveChangesAsync();
+        return reservation;
+    }
+
+    public async Task<Reservation> UpdateAsync(Reservation reservation)
+    {
+        reservation.UpdatedAt = DateTime.UtcNow;
+
+        _dbContext.Reservations.Update(reservation);
+        await _dbContext.SaveChangesAsync();
+        return reservation;
+    }
+
+    public async Task<Reservation?> GetByIdAsync(int reservationId)
+    {
+        return await _dbContext.Reservations
+            .Include(r => r.Visitor)
+                .ThenInclude(v => v.User)
+            .Include(r => r.Promotion)
+            .Include(r => r.ReservationItems)
+                .ThenInclude(ri => ri.TicketType)
+            .Include(r => r.ReservationItems)
+                .ThenInclude(ri => ri.Tickets)
+            .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+    }
+
+    public async Task<bool> DeleteAsync(int reservationId)
+    {
+        var reservation = await _dbContext.Reservations.FindAsync(reservationId);
+        if (reservation == null) return false;
+
+        _dbContext.Reservations.Remove(reservation);
+        await _dbContext.SaveChangesAsync();
+        return true;
+    }
+
     private static IQueryable<Reservation> ApplyFilters(
         IQueryable<Reservation> query,
         int? visitorId,

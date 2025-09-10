@@ -2,11 +2,11 @@ using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Entities.UserSystem;
 using Microsoft.EntityFrameworkCore;
+
 namespace DbApp.Infrastructure;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-
     // DbSet properties for each entity.
     // User System.
     public DbSet<User> Users { get; set; }

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Enums.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
@@ -17,7 +18,7 @@ public class CreateAttendanceCommandHandler(IAttendanceRepository attendanceRepo
 
         if (existing != null)
         {
-            throw new InvalidOperationException(
+            throw new ValidationException(
                 $"该员工在 {request.AttendanceDate:yyyy-MM-dd} 已有考勤记录");
         }
         var checkInTime = request.CheckInTime ?? request.AttendanceDate.Date;
@@ -44,12 +45,8 @@ public class UpdateAttendanceCommandHandler(IAttendanceRepository attendanceRepo
 
     public async Task Handle(UpdateAttendanceCommand request, CancellationToken cancellationToken)
     {
-        var attendance = await _attendanceRepository.GetByIdAsync(request.AttendanceId);
-        if (attendance == null)
-        {
-            throw new KeyNotFoundException(
-                $"考勤记录 ID {request.AttendanceId} 不存在");
-        }
+        var attendance = await _attendanceRepository.GetByIdAsync(request.AttendanceId)
+            ?? throw new KeyNotFoundException($"考勤记录 ID {request.AttendanceId} 不存在");
 
         // 更新考勤记录
         if (request.CheckInTime.HasValue) attendance.CheckInTime = (DateTime)request.CheckInTime;

@@ -25,4 +25,39 @@ public interface ITicketRepository
     /// Get grouped ticket sale statistics by specified dimension with filtering.
     /// </summary>
     Task<List<GroupedTicketSaleStats>> GetGroupedStatsAsync(TicketSaleGroupedStatsSpec spec);
+
+    /// <summary>
+    /// Add a new ticket to the repository.
+    /// </summary>
+    Task<Ticket> AddAsync(Ticket ticket);
+
+    /// <summary>
+    /// Update an existing ticket.
+    /// </summary>
+    Task<Ticket> UpdateAsync(Ticket ticket);
+
+    /// <summary>
+    /// Get ticket by ID.
+    /// </summary>
+    Task<Ticket?> GetByIdAsync(int ticketId);
+
+    /// <summary>
+    /// Get tickets by serial number.
+    /// </summary>
+    Task<Ticket?> GetBySerialNumberAsync(string serialNumber);
+
+    /// <summary>
+    /// Get tickets by reservation item ID.
+    /// </summary>
+    Task<List<Ticket>> GetByReservationItemIdAsync(int reservationItemId);
+
+    /// <summary>
+    /// Delete a ticket by ID.
+    /// </summary>
+    Task<bool> DeleteAsync(int ticketId);
+
+    /// <summary>
+    /// Check if ticket can be refunded (business rules).
+    /// </summary>
+    Task<bool> CanRefundAsync(int ticketId);
 }

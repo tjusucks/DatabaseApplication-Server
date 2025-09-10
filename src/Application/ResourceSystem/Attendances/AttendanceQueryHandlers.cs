@@ -196,9 +196,8 @@ namespace DbApp.Application.ResourceSystem.Attendances
 
         public async Task Handle(UpdateAttendanceStatusCommand request, CancellationToken cancellationToken)
         {
-            var attendance = await _attendanceRepository.GetByIdAsync(request.AttendanceId);
-            if (attendance == null) throw new KeyNotFoundException("考勤记录不存在");
-
+            var attendance = await _attendanceRepository.GetByIdAsync(request.AttendanceId)
+                ?? throw new KeyNotFoundException("考勤记录不存在");
             attendance.AttendanceStatus = request.Status;
             await _attendanceRepository.UpdateAsync(attendance);
         }

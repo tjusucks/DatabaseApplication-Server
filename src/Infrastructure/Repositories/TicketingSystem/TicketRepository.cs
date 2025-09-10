@@ -191,6 +191,87 @@ public class TicketRepository(ApplicationDbContext dbContext) : ITicketRepositor
         return ApplyGroupedSorting(results, spec.SortBy, spec.Descending);
     }
 
+    public async Task<Ticket> AddAsync(Ticket ticket)
+    {
+        ticket.CreatedAt = DateTime.UtcNow;
+        ticket.UpdatedAt = DateTime.UtcNow;
+
+        _dbContext.Tickets.Add(ticket);
+        await _dbContext.SaveChangesAsync();
+        return ticket;
+    }
+
+    public async Task<Ticket> UpdateAsync(Ticket ticket)
+    {
+        ticket.UpdatedAt = DateTime.UtcNow;
+
+        _dbContext.Tickets.Update(ticket);
+        await _dbContext.SaveChangesAsync();
+        return ticket;
+    }
+
+    public async Task<Ticket?> GetByIdAsync(int ticketId)
+    {
+        return await _dbContext.Tickets
+            .Include(t => t.TicketType)
+            .Include(t => t.Visitor)
+                .ThenInclude(v => v.User)
+            .Include(t => t.ReservationItem)
+                .ThenInclude(ri => ri.Reservation)
+            .Include(t => t.RefundRecord)
+            .FirstOrDefaultAsync(t => t.TicketId == ticketId);
+    }
+
+    public async Task<Ticket?> GetBySerialNumberAsync(string serialNumber)
+    {
+        return await _dbContext.Tickets
+            .Include(t => t.TicketType)
+            .Include(t => t.Visitor)
+                .ThenInclude(v => v.User)
+            .Include(t => t.ReservationItem)
+                .ThenInclude(ri => ri.Reservation)
+            .Include(t => t.RefundRecord)
+            .FirstOrDefaultAsync(t => t.SerialNumber == serialNumber);
+    }
+
+    public async Task<List<Ticket>> GetByReservationItemIdAsync(int reservationItemId)
+    {
+        return await _dbContext.Tickets
+            .Include(t => t.TicketType)
+            .Include(t => t.Visitor)
+                .ThenInclude(v => v.User)
+            .Include(t => t.RefundRecord)
+            .Where(t => t.ReservationItemId == reservationItemId)
+            .ToListAsync();
+    }
+
+    public async Task<bool> DeleteAsync(int ticketId)
+    {
+        var ticket = await _dbContext.Tickets.FindAsync(ticketId);
+        if (ticket == null) return false;
+
+        _dbContext.Tickets.Remove(ticket);
+        await _dbContext.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> CanRefundAsync(int ticketId)
+    {
+        var ticket = await GetByIdAsync(ticketId);
+        if (ticket == null) return false;
+
+        // 业务规则检查
+        // 票据状态必须是已发放或已使用
+        if (ticket.Status != TicketStatus.Issued && ticket.Status != TicketStatus.Used)
+            return false;
+
+        // 不能已经退款
+        if (ticket.RefundRecord != null)
+            return false;
+
+        return true;
+    }
+
     private static IQueryable<Ticket> ApplyFilters(
         IQueryable<Ticket> query,
         string? keyword,

@@ -1,6 +1,8 @@
 using DbApp.Domain.Constants.UserSystem;
 using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Interfaces.UserSystem;
+using DbApp.Domain.Specifications.Common;
+using DbApp.Domain.Specifications.UserSystem;
 using MediatR;
 using static DbApp.Domain.Exceptions;
 
@@ -205,10 +207,10 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(AddPointsToVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new InvalidOperationException("Visitor not found.");
+            ?? throw new NotFoundException("Visitor not found.");
 
         if (visitor.VisitorType != Domain.Enums.UserSystem.VisitorType.Member)
-            throw new InvalidOperationException("Only members can earn points.");
+            throw new ValidationException("Only members can earn points.");
 
         await _membershipService.AddPointsAsync(request.VisitorId, request.Points);
         return Unit.Value;
@@ -217,10 +219,10 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(DeductPointsFromVisitorCommand request, CancellationToken cancellationToken)
     {
         var visitor = await _visitorRepo.GetByIdAsync(request.VisitorId)
-            ?? throw new InvalidOperationException("Visitor not found.");
+            ?? throw new NotFoundException("Visitor not found.");
 
         if (visitor.VisitorType != Domain.Enums.UserSystem.VisitorType.Member)
-            throw new InvalidOperationException("Only members can have points deducted.");
+            throw new ValidationException("Only members can have points deducted.");
 
         await _membershipService.DeductPointsAsync(request.VisitorId, request.Points);
         return Unit.Value;
@@ -229,12 +231,12 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(AddPointsByContactCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Email) && string.IsNullOrWhiteSpace(request.PhoneNumber))
-            throw new ArgumentException("Either email or phone number must be provided.");
+            throw new ValidationException("Either email or phone number must be provided.");
 
         var visitor = await FindVisitorByContactAsync(request.Email, request.PhoneNumber);
 
         if (visitor.VisitorType != Domain.Enums.UserSystem.VisitorType.Member)
-            throw new InvalidOperationException("Only members can earn points.");
+            throw new ValidationException("Only members can earn points.");
 
         await _membershipService.AddPointsAsync(visitor.VisitorId, request.Points);
         return Unit.Value;
@@ -243,12 +245,12 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
     public async Task<Unit> Handle(DeductPointsByContactCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Email) && string.IsNullOrWhiteSpace(request.PhoneNumber))
-            throw new ArgumentException("Either email or phone number must be provided.");
+            throw new ValidationException("Either email or phone number must be provided.");
 
         var visitor = await FindVisitorByContactAsync(request.Email, request.PhoneNumber);
 
         if (visitor.VisitorType != Domain.Enums.UserSystem.VisitorType.Member)
-            throw new InvalidOperationException("Only members can have points deducted.");
+            throw new ValidationException("Only members can have points deducted.");
 
         await _membershipService.DeductPointsAsync(visitor.VisitorId, request.Points);
         return Unit.Value;
@@ -260,9 +262,9 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
 
         if (!string.IsNullOrWhiteSpace(email))
         {
-            var spec = new Domain.Specifications.Common.PaginatedSpec<Domain.Specifications.UserSystem.VisitorSpec>
+            var spec = new PaginatedSpec<VisitorSpec>
             {
-                InnerSpec = new Domain.Specifications.UserSystem.VisitorSpec { Email = email },
+                InnerSpec = new VisitorSpec { Email = email },
                 Page = 1,
                 PageSize = 1
             };
@@ -272,9 +274,9 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
 
         if (visitor == null && !string.IsNullOrWhiteSpace(phoneNumber))
         {
-            var spec = new Domain.Specifications.Common.PaginatedSpec<Domain.Specifications.UserSystem.VisitorSpec>
+            var spec = new PaginatedSpec<VisitorSpec>
             {
-                InnerSpec = new Domain.Specifications.UserSystem.VisitorSpec { PhoneNumber = phoneNumber },
+                InnerSpec = new VisitorSpec { PhoneNumber = phoneNumber },
                 Page = 1,
                 PageSize = 1
             };
@@ -282,6 +284,6 @@ public class VisitorCommandHandlers(IVisitorRepository visitorRepo, IMembershipS
             visitor = visitors.FirstOrDefault();
         }
 
-        return visitor ?? throw new InvalidOperationException("Visitor not found with the provided contact information.");
+        return visitor ?? throw new NotFoundException("Visitor not found with the provided contact information.");
     }
 }

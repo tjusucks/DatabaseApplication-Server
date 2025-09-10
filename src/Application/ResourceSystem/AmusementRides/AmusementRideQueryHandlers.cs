@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using AutoMapper;
+using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using MediatR;
 
@@ -96,7 +98,7 @@ public class AmusementRideQueryHandlers(
         CreateAmusementRideCommand request,
         CancellationToken cancellationToken)
     {
-        var ride = new Domain.Entities.ResourceSystem.AmusementRide
+        var ride = new AmusementRide
         {
             RideName = request.RideName,
             Location = request.Location,
@@ -123,13 +125,8 @@ public class AmusementRideQueryHandlers(
         UpdateAmusementRideCommand request,
         CancellationToken cancellationToken)
     {
-        var ride = await _amusementRideRepository.GetByIdAsync(request.RideId);
-
-        if (ride == null)
-        {
-            throw new InvalidOperationException("Amusement ride not found");
-        }
-
+        var ride = await _amusementRideRepository.GetByIdAsync(request.RideId)
+            ?? throw new ValidationException("Amusement ride not found");
         ride.RideName = request.RideName;
         ride.Location = request.Location;
         ride.Description = request.Description;

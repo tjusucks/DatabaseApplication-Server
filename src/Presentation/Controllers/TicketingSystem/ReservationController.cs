@@ -11,6 +11,105 @@ public class ReservationController(IMediator mediator) : ControllerBase
     private readonly IMediator _mediator = mediator;
 
     /// <summary>
+    /// Create a new reservation.
+    /// </summary>
+    /// <param name="command">Reservation creation parameters.</param>
+    /// <returns>Created reservation details.</returns>
+    [HttpPost]
+    public async Task<ActionResult<CreateReservationResponseDto>> CreateReservation(
+        [FromBody] CreateReservationCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetReservation), new { id = result.ReservationId }, result);
+    }
+
+    /// <summary>
+    /// Get reservation by ID.
+    /// </summary>
+    /// <param name="id">Reservation ID.</param>
+    /// <returns>Reservation details.</returns>
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ReservationDto>> GetReservation(int id)
+    {
+        var query = new GetReservationByIdQuery(id);
+        var result = await _mediator.Send(query);
+
+        if (result == null)
+            return NotFound($"Reservation {id} not found");
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Update reservation status.
+    /// </summary>
+    /// <param name="id">Reservation ID.</param>
+    /// <param name="command">Status update parameters.</param>
+    /// <returns>Updated reservation details.</returns>
+    [HttpPatch("{id}/status")]
+    public async Task<ActionResult<ReservationDto>> UpdateReservationStatus(
+        int id,
+        [FromBody] UpdateReservationStatusCommand command)
+    {
+        var commandWithId = command with { ReservationId = id };
+        var result = await _mediator.Send(commandWithId);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Process payment for a reservation.
+    /// </summary>
+    /// <param name="id">Reservation ID.</param>
+    /// <param name="command">Payment processing parameters.</param>
+    /// <returns>Updated reservation details.</returns>
+    [HttpPost("{id}/payment")]
+    public async Task<ActionResult<ReservationDto>> ProcessPayment(
+        int id,
+        [FromBody] ProcessPaymentCommand command)
+    {
+        var commandWithId = command with { ReservationId = id };
+        var result = await _mediator.Send(commandWithId);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Cancel a reservation.
+    /// </summary>
+    /// <param name="id">Reservation ID.</param>
+    /// <param name="command">Cancellation parameters.</param>
+    /// <returns>Cancellation result.</returns>
+    [HttpPost("{id}/cancel")]
+    public async Task<ActionResult> CancelReservation(
+        int id,
+        [FromBody] CancelReservationCommand command)
+    {
+        var commandWithId = command with { ReservationId = id };
+        var result = await _mediator.Send(commandWithId);
+
+        if (!result)
+            return NotFound($"Reservation {id} not found or cannot be cancelled");
+
+        return Ok(new { message = "Reservation cancelled successfully" });
+    }
+
+    /// <summary>
+    /// Delete a reservation directly.
+    /// </summary>
+    /// <param name="id">Reservation ID.</param>
+    /// <returns>Deletion result.</returns>
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteReservation(int id)
+    {
+        var command = new DeleteReservationCommand(id);
+        var result = await _mediator.Send(command);
+
+        if (!result)
+            return NotFound($"Reservation {id} not found");
+
+        return NoContent();
+    }
+
+    /// <summary>
     /// Search reservation records by visitor ID with filtering options.
     /// </summary>
     /// <param name="id">Visitor ID.</param>
