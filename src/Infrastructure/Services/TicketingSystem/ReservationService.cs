@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace DbApp.Infrastructure.Services.TicketingSystem
 {
@@ -122,7 +122,7 @@ namespace DbApp.Infrastructure.Services.TicketingSystem
                 throw new ArgumentException($"Reservation {reservationId} not found");
 
             reservation.Status = status;
-            
+
             return await _reservationRepository.UpdateAsync(reservation);
         }
 

@@ -1,6 +1,6 @@
+using System.Threading.Tasks;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.TicketingSystem;
-using System.Threading.Tasks;
 
 namespace DbApp.Domain.Interfaces.TicketingSystem
 {

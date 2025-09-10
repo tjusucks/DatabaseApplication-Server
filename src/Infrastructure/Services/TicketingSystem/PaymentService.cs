@@ -1,3 +1,6 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Enums.ResourceSystem;
@@ -5,9 +8,6 @@ using DbApp.Domain.Enums.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using DbApp.Infrastructure;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Infrastructure.Services.TicketingSystem
