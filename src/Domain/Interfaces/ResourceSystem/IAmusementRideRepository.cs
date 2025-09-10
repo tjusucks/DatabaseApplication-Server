@@ -8,6 +8,7 @@ public interface IAmusementRideRepository
 {
     // 基本CRUD操作
     Task<AmusementRide?> GetByIdAsync(int rideId);
+    Task<List<AmusementRide>> GetAllAsync();
     Task<AmusementRide> AddAsync(AmusementRide ride);
     Task UpdateAsync(AmusementRide ride);
     Task DeleteAsync(AmusementRide ride);

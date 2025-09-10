@@ -22,6 +22,17 @@ public class AmusementRideRepository(ApplicationDbContext dbContext) : IAmusemen
     }
 
     /// <summary>
+    /// Get all amusement rides with manager information.
+    /// </summary>
+    public async Task<List<AmusementRide>> GetAllAsync()
+    {
+        return await _dbContext.AmusementRides
+            .Include(r => r.Manager)
+            .ThenInclude(m => m!.User)
+            .ToListAsync();
+    }
+
+    /// <summary>
     /// Add a new amusement ride.
     /// </summary>
     public async Task<AmusementRide> AddAsync(AmusementRide ride)
