@@ -10,6 +10,13 @@ public class TicketTypeController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
+    [HttpPost]
+    public async Task<ActionResult<int>> Create([FromBody] CreateTicketTypeCommand command)
+    {
+        var newTicketTypeId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { ticketTypeId = newTicketTypeId }, new { TicketTypeId = newTicketTypeId });
+    }
+
     [HttpGet]
     public async Task<ActionResult<List<TicketTypeDto>>> GetAll()
     {
@@ -22,13 +29,6 @@ public class TicketTypeController(IMediator mediator) : ControllerBase
     {
         var type = await _mediator.Send(new GetTicketTypeByIdQuery(ticketTypeId));
         return Ok(type);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<int>> Create([FromBody] CreateTicketTypeCommand command)
-    {
-        var newTicketTypeId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetById), new { ticketTypeId = newTicketTypeId }, null);
     }
 
     [HttpPut("{ticketTypeId:int}")]

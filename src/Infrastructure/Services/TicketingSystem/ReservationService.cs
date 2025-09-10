@@ -32,23 +32,27 @@ public class ReservationService(
             var ticketTypes = new Dictionary<int, TicketType>();
             foreach (var item in items)
             {
-                var ticketType = await _ticketTypeRepository.GetByIdAsync(item.TicketTypeId) ?? throw new ArgumentException($"Ticket type {item.TicketTypeId} not found");
+                var ticketType = await _ticketTypeRepository.GetByIdAsync(item.TicketTypeId)
+                    ?? throw new NotFoundException($"Ticket type {item.TicketTypeId} not found");
 
                 // 检查库存限制
                 if (ticketType.MaxSaleLimit.HasValue)
                 {
                     var soldCount = await _ticketTypeRepository.GetSoldCountAsync(item.TicketTypeId, visitDate);
                     if (soldCount + item.Quantity > ticketType.MaxSaleLimit.Value)
-                        throw new InvalidOperationException($"Insufficient stock for ticket type {ticketType.TypeName}");
+                        throw new ValidationException($"Insufficient stock for ticket type {ticketType.TypeName}");
                 }
 
                 ticketTypes[item.TicketTypeId] = ticketType;
             }
 
+            var visitor = await _context.Visitors.FindAsync(visitorId)
+                ?? throw new NotFoundException($"Visitor with ID {visitorId} not found");
+
             // 创建预订
             var reservation = new Reservation
             {
-                VisitorId = visitorId,
+                VisitorId = visitor.VisitorId,
                 ReservationTime = DateTime.UtcNow,
                 VisitDate = visitDate,
                 PromotionId = promotionId,
