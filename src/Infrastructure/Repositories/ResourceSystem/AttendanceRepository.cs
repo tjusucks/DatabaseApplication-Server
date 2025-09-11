@@ -48,6 +48,7 @@ public class AttendanceRepository(ApplicationDbContext context) : IAttendanceRep
     public async Task<IEnumerable<Attendance>> GetByEmployeeAsync(int employeeId, DateTime? startDate = null, DateTime? endDate = null)
     {
         var query = _context.Attendances
+            .Include(a => a.Employee)
             .Where(a => a.EmployeeId == employeeId)
             .OrderBy(a => a.AttendanceDate);
 
