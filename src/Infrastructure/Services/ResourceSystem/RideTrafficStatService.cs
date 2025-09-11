@@ -1,7 +1,9 @@
 using System.Text.Json;
-using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json.Serialization;
 using DbApp.Domain.Entities.ResourceSystem;
 using DbApp.Domain.Interfaces.ResourceSystem;
+using DbApp.Domain.Interfaces.UserSystem;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace DbApp.Infrastructure.Services.ResourceSystem;
 
@@ -11,12 +13,20 @@ namespace DbApp.Infrastructure.Services.ResourceSystem;
 public class RideTrafficStatService(
     IRideTrafficStatRepository rideTrafficStatRepository,
     IAmusementRideRepository rideRepository,
+    IRideEntryRecordRepository rideEntryRecordRepository,
+    ApplicationDbContext dbContext,
     IDistributedCache cache) : IRideTrafficStatService
 {
     private readonly IRideTrafficStatRepository _rideTrafficStatRepo = rideTrafficStatRepository;
     private readonly IAmusementRideRepository _rideRepo = rideRepository;
+    private readonly IRideEntryRecordRepository _rideEntryRecordRepo = rideEntryRecordRepository;
+    private readonly ApplicationDbContext _dbContext = dbContext;
     private readonly IDistributedCache _cache = cache;
-    private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+    private readonly JsonSerializerOptions _jsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
 
     public async Task<RideTrafficStat?> GetRealTimeStatsAsync(int rideId)
     {
@@ -89,7 +99,7 @@ public class RideTrafficStatService(
             stat.IsCrowded = stat.VisitorCount > ride.Capacity * 2;
         }
 
-        // Update cache
+        // Update cache.
         var cacheKey = $"ride_traffic:realtime:{rideId}";
         var statJson = JsonSerializer.Serialize(stat, _jsonOptions);
         await _cache.SetStringAsync(cacheKey, statJson,
@@ -150,6 +160,195 @@ public class RideTrafficStatService(
     }
 
     /// <summary>
+    /// Calculates and updates traffic statistics for all rides.
+    /// Can be called manually or automatically at scheduled intervals.
+    /// </summary>
+    /// <param name="recordTime">The time to record the statistics.</param>
+    /// <returns>Task representing the asynchronous operation.</returns>
+    public async Task UpdateAllStatsAsync(DateTime recordTime)
+    {
+        // Get all rides.
+        var rides = await _rideRepo.GetAllAsync();
+
+        foreach (var ride in rides)
+        {
+            // Begin transaction for each ride.
+            await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                // Get the latest database record for this ride.
+                var latestStat = await GetLatestDatabaseStatAsync(ride.RideId);
+
+                // Define time window for statistics (last 15 minutes).
+                var endTime = recordTime;
+                var startTime = latestStat?.RecordTime ?? endTime.AddMinutes(-15);
+
+                // Find stats for this ride, or create default if not found.
+                var rideStats = await _rideEntryRecordRepo.GetStatAsync(ride.RideId, startTime, endTime);
+
+                // Create updated statistics.
+                var updatedStat = new RideTrafficStat
+                {
+                    RideId = ride.RideId,
+                    RecordTime = recordTime,
+                    VisitorCount = latestStat?.VisitorCount ?? 0,
+                    QueueLength = 0,
+                    WaitingTime = 0,
+                    IsCrowded = false,
+                    CreatedAt = latestStat?.CreatedAt ?? recordTime,
+                    UpdatedAt = recordTime,
+                    Ride = ride
+                };
+
+                // Update visitor count based on entry/exit stats.
+                if (rideStats != null)
+                {
+                    updatedStat.VisitorCount += rideStats.TotalEntries - rideStats.TotalExits;
+                }
+
+                // Update queue length, waiting time and crowded status based on ride capacity.
+                updatedStat.QueueLength = Math.Max(0, updatedStat.VisitorCount - ride.Capacity);
+                var cyclesNeeded = Math.Ceiling((double)updatedStat.QueueLength / ride.Capacity);
+                updatedStat.WaitingTime = (int)(cyclesNeeded * ride.Duration / 60.0); // Convert seconds to minutes.
+                updatedStat.IsCrowded = updatedStat.VisitorCount > ride.Capacity * 2;
+
+                // Update cache.
+                var cacheKey = $"ride_traffic:realtime:{ride.RideId}";
+                var statJson = JsonSerializer.Serialize(updatedStat, _jsonOptions);
+                await _cache.SetStringAsync(cacheKey, statJson,
+                    new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) });
+
+                // Save to database.
+                var existingStat = await _rideTrafficStatRepo.GetByIdAsync(ride.RideId, recordTime);
+                if (existingStat != null)
+                {
+                    existingStat.VisitorCount = updatedStat.VisitorCount;
+                    existingStat.QueueLength = updatedStat.QueueLength;
+                    existingStat.WaitingTime = updatedStat.WaitingTime;
+                    existingStat.IsCrowded = updatedStat.IsCrowded;
+                    existingStat.UpdatedAt = recordTime;
+                    await _rideTrafficStatRepo.UpdateAsync(existingStat);
+                }
+                else
+                {
+                    await _rideTrafficStatRepo.AddAsync(updatedStat);
+                }
+
+                // Commit transaction for this ride.
+                await _dbContext.Database.CommitTransactionAsync();
+            }
+            catch
+            {
+                // Rollback transaction for this ride on error.
+                await _dbContext.Database.RollbackTransactionAsync();
+                throw;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Calculates and updates traffic statistics for a specific ride.
+    /// Can be called manually or automatically at scheduled intervals.
+    /// </summary>
+    /// <param name="rideId">The ride ID.</param>
+    /// <param name="recordTime">The time to record the statistics.</param>
+    /// <returns>Task representing the asynchronous operation.</returns>
+    public async Task UpdateStatAsync(int rideId, DateTime recordTime)
+    {
+        // Begin database transaction.
+        await _dbContext.Database.BeginTransactionAsync();
+        try
+        {
+            // Get ride information.
+            var ride = await _rideRepo.GetByIdAsync(rideId);
+            if (ride == null)
+            {
+                // Rollback transaction and exit if ride doesn't exist.
+                await _dbContext.Database.RollbackTransactionAsync();
+                return;
+            }
+
+            // Get the latest database record for this ride.
+            var latestStat = await GetLatestDatabaseStatAsync(rideId);
+
+            // Define time window for statistics (last 15 minutes).
+            var endTime = recordTime;
+            var startTime = latestStat?.RecordTime ?? endTime.AddMinutes(-15);
+
+            Console.WriteLine(latestStat == null
+                ? $"No previous stats found for RideId={rideId}. Using default values."
+                : $"Latest stats for RideId={rideId} found at {latestStat.RecordTime}.");
+            Console.WriteLine($"Updating stats for RideId={rideId} using window {startTime} to {endTime}");
+
+            // Get statistics for this ride in the time window.
+            var rideStats = await _rideEntryRecordRepo.GetStatAsync(rideId, startTime, endTime);
+
+            // Create updated statistics.
+            var updatedStat = new RideTrafficStat
+            {
+                RideId = rideId,
+                RecordTime = recordTime,
+                VisitorCount = latestStat?.VisitorCount ?? 0,
+                QueueLength = 0,
+                WaitingTime = 0,
+                IsCrowded = false,
+                CreatedAt = latestStat?.CreatedAt ?? recordTime,
+                UpdatedAt = recordTime,
+                Ride = ride
+            };
+
+            // Update visitor count based on entry/exit stats.
+            if (rideStats != null)
+            {
+                // Add net entries to current visitor count.
+                Console.WriteLine($"RideId={rideId} - Entries: {rideStats.TotalEntries}, Exits: {rideStats.TotalExits}");
+                Console.WriteLine($"RideId={rideId} - Previous VisitorCount: {updatedStat.VisitorCount}");
+                updatedStat.VisitorCount += rideStats.TotalEntries - rideStats.TotalExits;
+                Console.WriteLine($"RideId={rideId} - Updated VisitorCount: {updatedStat.VisitorCount}");
+            }
+
+            // Update queue length, waiting time and crowded status based on ride capacity.
+            updatedStat.QueueLength = Math.Max(0, updatedStat.VisitorCount - ride.Capacity);
+            var cyclesNeeded = Math.Ceiling((double)updatedStat.QueueLength / ride.Capacity);
+            updatedStat.WaitingTime = (int)(cyclesNeeded * ride.Duration / 60.0); // Convert seconds to minutes.
+            updatedStat.IsCrowded = updatedStat.VisitorCount > ride.Capacity * 2;
+
+            // Update cache.
+            var cacheKey = $"ride_traffic:realtime:{rideId}";
+            var statJson = JsonSerializer.Serialize(updatedStat, _jsonOptions);
+            await _cache.SetStringAsync(cacheKey, statJson,
+                new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) });
+
+            // Save to database.
+            var existingStat = await _rideTrafficStatRepo.GetByIdAsync(rideId, recordTime);
+            if (existingStat != null)
+            {
+                // Update existing record.
+                existingStat.VisitorCount = updatedStat.VisitorCount;
+                existingStat.QueueLength = updatedStat.QueueLength;
+                existingStat.WaitingTime = updatedStat.WaitingTime;
+                existingStat.IsCrowded = updatedStat.IsCrowded;
+                existingStat.UpdatedAt = recordTime;
+                await _rideTrafficStatRepo.UpdateAsync(existingStat);
+            }
+            else
+            {
+                // Add new record.
+                await _rideTrafficStatRepo.AddAsync(updatedStat);
+            }
+
+            // Commit transaction.
+            await _dbContext.Database.CommitTransactionAsync();
+        }
+        catch
+        {
+            // Rollback transaction on error.
+            await _dbContext.Database.RollbackTransactionAsync();
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Retrieves the most recent ride traffic statistics from the database.
     /// If no recent statistics are found, returns null to indicate that default values should be used.
     /// </summary>
@@ -164,7 +363,11 @@ public class RideTrafficStatService(
             var stats = await _rideTrafficStatRepo.SearchAsync(
                 null, rideId, null, null, null, null, null, null, null, startTime, endTime, 1, 1);
 
-            return stats.FirstOrDefault();
+            var stat = stats.FirstOrDefault();
+            Console.WriteLine(stat == null
+                ? $"No recent stats found for RideId={rideId} in the last 15 minutes."
+                : $"Found recent stats for RideId={rideId} at {stat.RecordTime}.");
+            return stat;
         }
         catch
         {

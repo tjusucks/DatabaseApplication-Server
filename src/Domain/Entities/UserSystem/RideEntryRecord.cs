@@ -1,5 +1,5 @@
-using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Entities.ResourceSystem;
+using DbApp.Domain.Entities.TicketingSystem;
 
 namespace DbApp.Domain.Entities.UserSystem;
 

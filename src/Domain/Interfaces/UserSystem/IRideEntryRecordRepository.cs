@@ -1,4 +1,5 @@
 using DbApp.Domain.Entities.UserSystem;
+using DbApp.Domain.Statistics.UserSystem;
 
 namespace DbApp.Domain.Interfaces.UserSystem;
 
@@ -37,4 +38,21 @@ public interface IRideEntryRecordRepository
     /// Gets the active (not exited) ride entry record for a given visitor and ride.
     /// </summary>
     Task<RideEntryRecord?> GetActiveEntry(int visitorId, int rideId);
+
+    /// <summary>
+    /// Gets statistics for ride entry records within a time range for a specific ride.
+    /// </summary>
+    /// <param name="rideId">The ride ID (optional).</param>
+    /// <param name="startTime">Start time (inclusive).</param>
+    /// <param name="endTime">End time (exclusive).</param>
+    /// <returns>Ride entry record statistics.</returns>
+    Task<RideEntryRecordStats> GetStatAsync(int? rideId, DateTime startTime, DateTime endTime);
+
+    /// <summary>
+    /// Gets statistics for ride entry records within a time range for all rides.
+    /// </summary>
+    /// <param name="startTime">Start time (inclusive).</param>
+    /// <param name="endTime">End time (exclusive).</param>
+    /// <returns>List of ride entry record statistics grouped by ride.</returns>
+    Task<List<RideEntryRecordStats>> GetAllStatsAsync(DateTime startTime, DateTime endTime);
 }

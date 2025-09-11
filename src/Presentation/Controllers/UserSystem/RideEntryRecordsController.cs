@@ -1,6 +1,6 @@
+using DbApp.Application.UserSystem.RideEntryRecords;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using DbApp.Application.UserSystem.RideEntryRecords;
 
 namespace DbApp.Presentation.Controllers.UserSystem;
 

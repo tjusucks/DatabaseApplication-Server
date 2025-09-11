@@ -1,5 +1,5 @@
-using MediatR;
 using DbApp.Domain.Interfaces.UserSystem;
+using MediatR;
 using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.UserSystem.RideEntryRecords;

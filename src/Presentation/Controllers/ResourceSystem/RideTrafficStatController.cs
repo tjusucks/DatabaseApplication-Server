@@ -106,7 +106,6 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-#pragma warning disable
     /// <summary>
     /// Manually trigger traffic statistics update for all rides.
     /// </summary>
@@ -114,10 +113,11 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
     [HttpPost("update")]
     public async Task<ActionResult> TriggerManualUpdate()
     {
-        // TODO: Implement manual update logic.
+        var command = new UpdateAllRideTrafficStatsCommand(DateTime.UtcNow);
+        await _mediator.Send(command);
         return Ok(new
         {
-            Message = "Manual traffic statistics update triggered (not yet implemented).",
+            Message = "Manual traffic statistics update triggered successfully.",
             TriggeredAt = DateTime.UtcNow
         });
     }
@@ -130,15 +130,17 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
     [HttpPost("update/{rideId}")]
     public async Task<ActionResult> TriggerManualUpdateByRideId(int rideId)
     {
-        // TODO: Implement manual update logic for specific ride.
+        var command = new UpdateRideTrafficStatCommand(rideId, DateTime.UtcNow);
+        await _mediator.Send(command);
         return Ok(new
         {
-            Message = $"Manual traffic statistics update triggered for ride {rideId} (not yet implemented).",
+            Message = $"Manual traffic statistics update triggered for ride {rideId} successfully.",
             RideId = rideId,
             TriggeredAt = DateTime.UtcNow
         });
     }
 
+#pragma warning disable
     /// <summary>
     /// Configure scheduled traffic statistics update.
     /// This endpoint allows setting up automatic traffic statistics update at regular intervals.

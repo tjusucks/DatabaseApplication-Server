@@ -31,4 +31,21 @@ public interface IRideTrafficStatService
     /// Initializes real-time statistics for a ride from the latest database record.
     /// </summary>
     Task<RideTrafficStat?> InitializeStatsAsync(int rideId);
+
+    /// <summary>
+    /// Calculates and updates traffic statistics for all rides.
+    /// Can be called manually or automatically at scheduled intervals.
+    /// </summary>
+    /// <param name="recordTime">The time to record the statistics.</param>
+    /// <returns>Task representing the asynchronous operation.</returns>
+    Task UpdateAllStatsAsync(DateTime recordTime);
+
+    /// <summary>
+    /// Calculates and updates traffic statistics for a specific ride.
+    /// Can be called manually or automatically at scheduled intervals.
+    /// </summary>
+    /// <param name="rideId">The ride ID.</param>
+    /// <param name="recordTime">The time to record the statistics.</param>
+    /// <returns>Task representing the asynchronous operation.</returns>
+    Task UpdateStatAsync(int rideId, DateTime recordTime);
 }
