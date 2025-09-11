@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
+using DbApp.Infrastructure.DataSeedings;
 using DotNetEnv;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
@@ -56,16 +57,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("RedisConnection"));
 
-// Configure CORS for frontend development
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
 
 // Register repository implementations for dependency injection.
 builder.Services.Scan(scan => scan
@@ -91,6 +82,20 @@ foreach (var interfaceType in repositoryInterfaces)
     }
 }
 
+if (builder.Environment.IsDevelopment())
+{
+    // Configure CORS for frontend development.
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowFrontend", policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+    });
+}
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -106,13 +111,13 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync();
+
+    // Enable CORS for frontend development.
+    app.UseCors("AllowFrontend");
 }
 
 // Force HTTPS redirection for security.
 app.UseHttpsRedirection();
-
-// Enable CORS for frontend development
-app.UseCors("AllowFrontend");
 
 // Register exception handling middleware.
 app.UseExceptionHandler(errorApp =>
