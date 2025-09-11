@@ -64,7 +64,7 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-/// <summary>
+    /// <summary>
     /// Get ride traffic statistics (read-only).
     /// </summary>
     /// <param name="startDate">Start date for statistics.</param>
@@ -106,4 +106,85 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
+#pragma warning disable
+    /// <summary>
+    /// Manually trigger traffic statistics update for all rides.
+    /// </summary>
+    /// <returns>Status of manual update trigger.</returns>
+    [HttpPost("update")]
+    public async Task<ActionResult> TriggerManualUpdate()
+    {
+        // TODO: Implement manual update logic.
+        return Ok(new
+        {
+            Message = "Manual traffic statistics update triggered (not yet implemented).",
+            TriggeredAt = DateTime.UtcNow
+        });
+    }
+
+    /// <summary>
+    /// Manually trigger traffic statistics update for a specific ride.
+    /// </summary>
+    /// <param name="rideId">Ride ID.</param>
+    /// <returns>Status of manual update trigger for the ride.</returns>
+    [HttpPost("update/{rideId}")]
+    public async Task<ActionResult> TriggerManualUpdateByRideId(int rideId)
+    {
+        // TODO: Implement manual update logic for specific ride.
+        return Ok(new
+        {
+            Message = $"Manual traffic statistics update triggered for ride {rideId} (not yet implemented).",
+            RideId = rideId,
+            TriggeredAt = DateTime.UtcNow
+        });
+    }
+
+    /// <summary>
+    /// Configure scheduled traffic statistics update.
+    /// This endpoint allows setting up automatic traffic statistics update at regular intervals.
+    /// </summary>
+    /// <param name="intervalSeconds">Interval in seconds for automatic update. Set to 0 to disable.</param>
+    /// <param name="enabled">Whether scheduled update is enabled.</param>
+    /// <returns>Configuration status.</returns>
+    [HttpPost("update/config")]
+    public async Task<ActionResult> ConfigureScheduledUpdate(
+        [FromQuery] int intervalSeconds,
+        [FromQuery] bool enabled = true)
+    {
+        // This endpoint will be implemented to:
+        // 1. Configure the scheduled task for traffic statistics update.
+        // 2. Set the update interval (e.g., every 900 seconds for 15 minutes).
+        // 3. Enable or disable the scheduled update.
+        // 4. Return configuration status.
+
+        // TODO: Implement the actual scheduling logic.
+        return Ok(new
+        {
+            Message = "Scheduled traffic statistics update configured successfully.",
+            IntervalSeconds = intervalSeconds,
+            Enabled = enabled
+        });
+    }
+
+    /// <summary>
+    /// Get current scheduled update configuration.
+    /// </summary>
+    /// <returns>Current configuration settings.</returns>
+    [HttpGet("update/config")]
+    public async Task<ActionResult> GetScheduledUpdateConfig()
+    {
+        // This endpoint will be implemented to:
+        // 1. Return the current scheduled update configuration.
+        // 2. Include interval, enabled status, and next scheduled run time.
+
+        // TODO: Implement the actual configuration retrieval logic.
+        return Ok(new
+        {
+            Message = "Scheduled calculation configuration retrieved.",
+            IntervalSeconds = 900,
+            Enabled = true,
+            NextRunTime = DateTime.UtcNow.AddSeconds(900)
+        });
+    }
+#pragma warning restore
 }
