@@ -16,17 +16,17 @@ public class RideEntryRecordRepository(ApplicationDbContext dbContext) : IRideEn
     {
         _dbContext.RideEntryRecords.Add(rideEntryRecord);
         await _dbContext.SaveChangesAsync();
-        return rideEntryRecord.EntryRecordId;
+        return rideEntryRecord.RideEntryRecordId;
     }
 
-    public async Task<RideEntryRecord?> GetByIdAsync(int entryRecordId)
+    public async Task<RideEntryRecord?> GetByIdAsync(int rideEntryRecordId)
     {
         return await _dbContext.RideEntryRecords
             .Include(er => er.Visitor)
             .ThenInclude(v => v.User)
             .Include(er => er.Ride)
             .Include(er => er.Ticket)
-            .FirstOrDefaultAsync(er => er.EntryRecordId == entryRecordId);
+            .FirstOrDefaultAsync(er => er.RideEntryRecordId == rideEntryRecordId);
     }
 
     public async Task<List<RideEntryRecord>> GetAllAsync()

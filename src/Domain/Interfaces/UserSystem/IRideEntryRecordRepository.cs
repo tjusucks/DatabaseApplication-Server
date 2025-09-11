@@ -16,7 +16,7 @@ public interface IRideEntryRecordRepository
     /// <summary>
     /// Gets a ride entry record by its ID.
     /// </summary>
-    Task<RideEntryRecord?> GetByIdAsync(int entryRecordId);
+    Task<RideEntryRecord?> GetByIdAsync(int rideEntryRecordId);
 
     /// <summary>
     /// Gets all ride entry records.

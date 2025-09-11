@@ -20,8 +20,8 @@ public class RideEntryRecordsController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateRideEntryRecordCommand command)
     {
-        var entryRecordId = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetById), new { id = entryRecordId }, new { EntryRecordId = entryRecordId });
+        var rideEntryRecordId = await _mediator.Send(command);
+        return CreatedAtAction(nameof(GetById), new { id = rideEntryRecordId }, new { RideEntryRecordId = rideEntryRecordId });
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public class RideEntryRecordsController(IMediator mediator) : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        var entryRecord = await _mediator.Send(new GetRideEntryRecordByIdQuery { EntryRecordId = id });
+        var entryRecord = await _mediator.Send(new GetRideEntryRecordByIdQuery { RideEntryRecordId = id });
         return Ok(entryRecord);
     }
 
@@ -50,7 +50,7 @@ public class RideEntryRecordsController(IMediator mediator) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateRideEntryRecordCommand command)
     {
-        if (id != command.EntryRecordId)
+        if (id != command.RideEntryRecordId)
             return BadRequest(new { Error = "ID in URL does not match ID in request body" });
 
         await _mediator.Send(command);

@@ -30,5 +30,5 @@ public interface IRideTrafficStatService
     /// <summary>
     /// Initializes real-time statistics for a ride from the latest database record.
     /// </summary>
-    Task InitializeStatsAsync(int rideId);
+    Task<RideTrafficStat?> InitializeStatsAsync(int rideId);
 }

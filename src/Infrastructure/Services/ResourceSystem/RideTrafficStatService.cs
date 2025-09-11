@@ -20,13 +20,6 @@ public class RideTrafficStatService(
 
     public async Task<RideTrafficStat?> GetRealTimeStatsAsync(int rideId)
     {
-        // First check if the ride exists.
-        var ride = await _rideRepo.GetByIdAsync(rideId);
-        if (ride == null)
-        {
-            return null;
-        }
-
         // Try to get from cache first.
         var cacheKey = $"ride_traffic:realtime:{rideId}";
         var cachedStatJson = await _cache.GetStringAsync(cacheKey);
@@ -41,20 +34,7 @@ public class RideTrafficStatService(
         }
 
         // If not in cache, initialize from database.
-        await InitializeStatsAsync(rideId);
-
-        // Return the initialized stat.
-        var statJson = await _cache.GetStringAsync(cacheKey);
-        if (!string.IsNullOrEmpty(statJson))
-        {
-            var stat = JsonSerializer.Deserialize<RideTrafficStat>(statJson, _jsonOptions);
-            if (stat != null)
-            {
-                return stat;
-            }
-        }
-
-        return CreateDefaultStat(rideId);
+        return await InitializeStatsAsync(rideId);
     }
 
     public async Task<List<RideTrafficStat>> GetAllRealTimeStatsAsync()
@@ -118,15 +98,15 @@ public class RideTrafficStatService(
 
     public async Task UpdateOnRideExitAsync(int rideId)
     {
-        // Get current stats or initialize if not exists
+        // Get current stats or initialize if not exists.
         var stat = await GetRealTimeStatsAsync(rideId);
         if (stat == null)
         {
             return; // Ride does not exist, nothing to update.
         }
 
-        // Update the statistics
-        stat.VisitorCount = Math.Max(0, stat.VisitorCount - 1); // Ensure non-negative
+        // Update the statistics.
+        stat.VisitorCount = Math.Max(0, stat.VisitorCount - 1); // Ensure non-negative.
         stat.UpdatedAt = DateTime.UtcNow;
 
         // Get ride information for accurate calculations.
@@ -147,25 +127,26 @@ public class RideTrafficStatService(
             stat.IsCrowded = stat.VisitorCount > ride.Capacity * 2;
         }
 
-        // Update cache
+        // Update cache.
         var cacheKey = $"ride_traffic:realtime:{rideId}";
         var statJson = JsonSerializer.Serialize(stat, _jsonOptions);
         await _cache.SetStringAsync(cacheKey, statJson,
             new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) });
     }
 
-    public async Task InitializeStatsAsync(int rideId)
+    public async Task<RideTrafficStat?> InitializeStatsAsync(int rideId)
     {
-        // Try to get the latest stats from database
+        // Try to get the latest stats from database.
         var latestStat = await GetLatestDatabaseStatAsync(rideId);
 
         var statToCache = latestStat ?? CreateDefaultStat(rideId);
 
-        // Cache the stat
+        // Cache the stat.
         var cacheKey = $"ride_traffic:realtime:{rideId}";
         var statJson = JsonSerializer.Serialize(statToCache, _jsonOptions);
         await _cache.SetStringAsync(cacheKey, statJson,
             new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(30) });
+        return statToCache;
     }
 
     /// <summary>
@@ -176,7 +157,7 @@ public class RideTrafficStatService(
     {
         try
         {
-            // Get stats for the last 15 minutes
+            // Get stats for the last 15 minutes.
             var endTime = DateTime.UtcNow;
             var startTime = endTime.AddMinutes(-15);
 
@@ -187,13 +168,20 @@ public class RideTrafficStatService(
         }
         catch
         {
-            // If database query fails, return null to use default values
+            // If database query fails, return null to use default values.
             return null;
         }
     }
 
-    private static RideTrafficStat CreateDefaultStat(int rideId)
+    private RideTrafficStat? CreateDefaultStat(int rideId)
     {
+        // Get ride information to set the ride name.
+        var ride = _rideRepo.GetByIdAsync(rideId).Result;
+        if (ride == null)
+        {
+            return null; // Ride does not exist.
+        }
+
         return new RideTrafficStat
         {
             RideId = rideId,
@@ -203,7 +191,8 @@ public class RideTrafficStatService(
             WaitingTime = 0,
             IsCrowded = false,
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            UpdatedAt = DateTime.UtcNow,
+            Ride = ride
         };
     }
 }

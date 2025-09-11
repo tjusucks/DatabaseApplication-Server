@@ -17,7 +17,7 @@ public record CreateRideEntryRecordCommand(
 /// Command to update a ride entry record (e.g., mark exit).
 /// </summary>
 public record UpdateRideEntryRecordCommand(
-    int EntryRecordId,
+    int RideEntryRecordId,
     string? EntryGate = null,
     string? ExitGate = null,
     DateTime? ExitTime = null,
@@ -27,4 +27,4 @@ public record UpdateRideEntryRecordCommand(
 /// <summary>
 /// Command to delete a ride entry record.
 /// </summary>
-public record DeleteRideEntryRecordCommand(int EntryRecordId) : IRequest<Unit>;
+public record DeleteRideEntryRecordCommand(int RideEntryRecordId) : IRequest<Unit>;

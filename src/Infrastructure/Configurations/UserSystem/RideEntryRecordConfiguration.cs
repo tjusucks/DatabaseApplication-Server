@@ -16,10 +16,10 @@ public class RideEntryRecordConfiguration : IEntityTypeConfiguration<RideEntryRe
         builder.ToTable("ride_entry_records");
 
         // Primary key.
-        builder.HasKey(er => er.EntryRecordId);
+        builder.HasKey(er => er.RideEntryRecordId);
 
-        builder.Property(er => er.EntryRecordId)
-            .HasColumnName("entry_record_id")
+        builder.Property(er => er.RideEntryRecordId)
+            .HasColumnName("ride_entry_record_id")
             .HasColumnType("NUMBER(10)")
             .ValueGeneratedOnAdd();
 

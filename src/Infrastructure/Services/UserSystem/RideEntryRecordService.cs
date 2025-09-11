@@ -55,13 +55,13 @@ public class RideEntryRecordService(
                 TicketId = ticketId
             };
 
-            var entryRecordId = await _rideEntryRecordRepo.CreateAsync(rideEntryRecord);
-            
+            var rideEntryRecordId = await _rideEntryRecordRepo.CreateAsync(rideEntryRecord);
+
             // Update real-time traffic statistics for ride entry
             await _rideTrafficStatService.UpdateOnRideEntryAsync(rideId);
-            
+
             await _dbContext.Database.CommitTransactionAsync();
-            return entryRecordId;
+            return rideEntryRecordId;
         }
         catch
         {
@@ -82,12 +82,12 @@ public class RideEntryRecordService(
             activeEntry.ExitTime = DateTime.UtcNow;
             activeEntry.ExitGate = gateName;
             await _rideEntryRecordRepo.UpdateAsync(activeEntry);
-            
+
             // Update real-time traffic statistics for ride exit
             await _rideTrafficStatService.UpdateOnRideExitAsync(rideId);
-            
+
             await _dbContext.Database.CommitTransactionAsync();
-            return activeEntry.EntryRecordId;
+            return activeEntry.RideEntryRecordId;
         }
         catch
         {

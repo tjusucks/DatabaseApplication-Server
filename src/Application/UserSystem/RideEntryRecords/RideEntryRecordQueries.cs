@@ -7,7 +7,7 @@ namespace DbApp.Application.UserSystem.RideEntryRecords;
 /// </summary>
 public class GetRideEntryRecordByIdQuery : IRequest<RideEntryRecordDto?>
 {
-    public int EntryRecordId { get; set; }
+    public int RideEntryRecordId { get; set; }
 }
 
 /// <summary>

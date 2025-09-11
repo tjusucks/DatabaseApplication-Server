@@ -10,9 +10,9 @@ namespace DbApp.Domain.Entities.UserSystem;
 public class RideEntryRecord
 {
     /// <summary>
-    /// Entry record unique identifier.
+    /// Ride entry record unique identifier.
     /// </summary>
-    public int EntryRecordId { get; set; }
+    public int RideEntryRecordId { get; set; }
 
     /// <summary>
     /// Foreign key reference to the visitor.

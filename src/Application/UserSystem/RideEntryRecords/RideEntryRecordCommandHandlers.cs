@@ -37,8 +37,8 @@ public class RideEntryRecordCommandHandlers(
 
     public async Task<Unit> Handle(UpdateRideEntryRecordCommand request, CancellationToken cancellationToken)
     {
-        var rideEntryRecord = await _rideEntryRecordRepository.GetByIdAsync(request.EntryRecordId)
-            ?? throw new NotFoundException($"Ride entry record with ID {request.EntryRecordId} not found.");
+        var rideEntryRecord = await _rideEntryRecordRepository.GetByIdAsync(request.RideEntryRecordId)
+            ?? throw new NotFoundException($"Ride entry record with ID {request.RideEntryRecordId} not found.");
 
         // Update only the provided fields
         if (request.EntryGate != null)
@@ -61,8 +61,8 @@ public class RideEntryRecordCommandHandlers(
 
     public async Task<Unit> Handle(DeleteRideEntryRecordCommand request, CancellationToken cancellationToken)
     {
-        var rideEntryRecord = await _rideEntryRecordRepository.GetByIdAsync(request.EntryRecordId)
-            ?? throw new NotFoundException($"Ride entry record with ID {request.EntryRecordId} not found.");
+        var rideEntryRecord = await _rideEntryRecordRepository.GetByIdAsync(request.RideEntryRecordId)
+            ?? throw new NotFoundException($"Ride entry record with ID {request.RideEntryRecordId} not found.");
         await _rideEntryRecordRepository.DeleteAsync(rideEntryRecord);
         return Unit.Value;
     }

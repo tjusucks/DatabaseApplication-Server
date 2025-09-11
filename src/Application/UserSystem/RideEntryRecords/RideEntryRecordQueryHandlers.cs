@@ -19,8 +19,8 @@ public class RideEntryRecordQueryHandlers(
 
     public async Task<RideEntryRecordDto?> Handle(GetRideEntryRecordByIdQuery request, CancellationToken cancellationToken)
     {
-        var rideEntryRecord = await _rideEntryRecordRepository.GetByIdAsync(request.EntryRecordId)
-            ?? throw new NotFoundException($"Ride entry record with ID {request.EntryRecordId} not found.");
+        var rideEntryRecord = await _rideEntryRecordRepository.GetByIdAsync(request.RideEntryRecordId)
+            ?? throw new NotFoundException($"Ride entry record with ID {request.RideEntryRecordId} not found.");
         return _mapper.Map<RideEntryRecordDto>(rideEntryRecord);
     }
 

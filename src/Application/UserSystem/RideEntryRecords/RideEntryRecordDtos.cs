@@ -5,7 +5,7 @@ namespace DbApp.Application.UserSystem.RideEntryRecords;
 /// </summary>
 public class RideEntryRecordDto
 {
-    public int EntryRecordId { get; set; }
+    public int RideEntryRecordId { get; set; }
     public int VisitorId { get; set; }
     public string VisitorName { get; set; } = string.Empty;
     public int RideId { get; set; }
