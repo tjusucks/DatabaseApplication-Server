@@ -8,6 +8,7 @@ public interface IAmusementRideRepository
 {
     // 基本CRUD操作
     Task<AmusementRide?> GetByIdAsync(int rideId);
+    Task<List<AmusementRide>> GetAllAsync();
     Task<AmusementRide> AddAsync(AmusementRide ride);
     Task UpdateAsync(AmusementRide ride);
     Task DeleteAsync(AmusementRide ride);
@@ -42,4 +43,5 @@ public interface IAmusementRideRepository
 
     // 统计方法
     Task<AmusementRideStats> GetStatsAsync(DateTime? startDate, DateTime? endDate);
+
 }
