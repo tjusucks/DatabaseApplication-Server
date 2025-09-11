@@ -10,7 +10,7 @@ public interface IRideTrafficStatService
     /// <summary>
     /// Gets real-time traffic statistics for a specific ride.
     /// </summary>
-    Task<RideTrafficStat> GetRealTimeStatsAsync(int rideId);
+    Task<RideTrafficStat?> GetRealTimeStatsAsync(int rideId);
 
     /// <summary>
     /// Gets real-time traffic statistics for all rides.

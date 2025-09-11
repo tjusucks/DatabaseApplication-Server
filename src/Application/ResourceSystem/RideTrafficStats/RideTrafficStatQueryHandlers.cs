@@ -1,6 +1,7 @@
 using AutoMapper;
 using DbApp.Domain.Interfaces.ResourceSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.ResourceSystem.RideTrafficStats;
 
@@ -9,12 +10,16 @@ namespace DbApp.Application.ResourceSystem.RideTrafficStats;
 /// </summary>
 public class RideTrafficStatQueryHandlers(
     IRideTrafficStatRepository rideTrafficStatRepository,
+    IRideTrafficStatService rideTrafficStatService,
     IMapper mapper) :
     IRequestHandler<GetRideTrafficStatByIdQuery, RideTrafficStatSummaryDto?>,
     IRequestHandler<SearchRideTrafficStatsQuery, RideTrafficStatResult>,
-    IRequestHandler<GetRideTrafficStatsQuery, RideTrafficStatsDto>
+    IRequestHandler<GetRideTrafficStatsQuery, RideTrafficStatsDto>,
+    IRequestHandler<GetRealTimeRideTrafficStatQuery, RideTrafficStatSummaryDto>,
+    IRequestHandler<GetAllRealTimeRideTrafficStatsQuery, List<RideTrafficStatSummaryDto>>
 {
     private readonly IRideTrafficStatRepository _rideTrafficStatRepository = rideTrafficStatRepository;
+    private readonly IRideTrafficStatService _rideTrafficStatService = rideTrafficStatService;
     private readonly IMapper _mapper = mapper;
 
     /// <summary>
@@ -86,5 +91,28 @@ public class RideTrafficStatQueryHandlers(
             request.EndDate);
 
         return _mapper.Map<RideTrafficStatsDto>(stats);
+    }
+
+    /// <summary>
+    /// Handle getting real-time ride traffic statistics for a specific ride.
+    /// </summary>
+    public async Task<RideTrafficStatSummaryDto> Handle(
+        GetRealTimeRideTrafficStatQuery request,
+        CancellationToken cancellationToken)
+    {
+        var stat = await _rideTrafficStatService.GetRealTimeStatsAsync(request.RideId)
+            ?? throw new NotFoundException($"Ride with ID {request.RideId} not found.");
+        return _mapper.Map<RideTrafficStatSummaryDto>(stat);
+    }
+
+    /// <summary>
+    /// Handle getting real-time ride traffic statistics for all rides.
+    /// </summary>
+    public async Task<List<RideTrafficStatSummaryDto>> Handle(
+        GetAllRealTimeRideTrafficStatsQuery request,
+        CancellationToken cancellationToken)
+    {
+        var stats = await _rideTrafficStatService.GetAllRealTimeStatsAsync();
+        return _mapper.Map<List<RideTrafficStatSummaryDto>>(stats);
     }
 }

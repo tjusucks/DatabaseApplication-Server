@@ -34,3 +34,13 @@ public record GetRideTrafficStatsQuery(
     DateTime? EndDate = null,
     int? RideId = null
 ) : IRequest<RideTrafficStatsDto>;
+
+/// <summary>
+/// Query to get real-time ride traffic statistics for a specific ride.
+/// </summary>
+public record GetRealTimeRideTrafficStatQuery(int RideId) : IRequest<RideTrafficStatSummaryDto>;
+
+/// <summary>
+/// Query to get real-time ride traffic statistics for all rides.
+/// </summary>
+public record GetAllRealTimeRideTrafficStatsQuery : IRequest<List<RideTrafficStatSummaryDto>>;

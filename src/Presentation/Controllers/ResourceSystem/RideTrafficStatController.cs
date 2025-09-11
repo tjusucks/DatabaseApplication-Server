@@ -64,6 +64,7 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
+/// <summary>
     /// Get ride traffic statistics (read-only).
     /// </summary>
     /// <param name="startDate">Start date for statistics.</param>
@@ -77,6 +78,31 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
         [FromQuery] int? rideId = null)
     {
         var result = await _mediator.Send(new GetRideTrafficStatsQuery(startDate, endDate, rideId));
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get real-time traffic statistics for a specific ride.
+    /// </summary>
+    /// <param name="rideId">Ride ID.</param>
+    /// <returns>Real-time ride traffic statistics.</returns>
+    [HttpGet("realtime/{rideId}")]
+    public async Task<ActionResult<RideTrafficStatSummaryDto>> GetRealTimeStats(int rideId)
+    {
+        var query = new GetRealTimeRideTrafficStatQuery(rideId);
+        var result = await _mediator.Send(query);
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Get real-time traffic statistics for all rides.
+    /// </summary>
+    /// <returns>List of real-time ride traffic statistics.</returns>
+    [HttpGet("realtime")]
+    public async Task<ActionResult<List<RideTrafficStatSummaryDto>>> GetAllRealTimeStats()
+    {
+        var query = new GetAllRealTimeRideTrafficStatsQuery();
+        var result = await _mediator.Send(query);
         return Ok(result);
     }
 

@@ -31,7 +31,7 @@ public class RideEntryRecordCommandHandlers(
                 request.VisitorId,
                 request.RideId,
                 request.GateName),
-            _ => throw new ArgumentException($"Invalid type '{request.Type}'. Must be 'entry' or 'exit'.")
+            _ => throw new ValidationException($"Invalid type '{request.Type}'. Must be 'entry' or 'exit'.")
         };
     }
 

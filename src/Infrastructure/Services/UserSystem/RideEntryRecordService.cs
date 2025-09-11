@@ -14,11 +14,13 @@ public class RideEntryRecordService(
     IRideEntryRecordRepository rideEntryRecordRepository,
     IVisitorRepository visitorRepository,
     IAmusementRideRepository rideRepository,
+    IRideTrafficStatService rideTrafficStatService,
     ApplicationDbContext dbContext) : IRideEntryRecordService
 {
     private readonly IRideEntryRecordRepository _rideEntryRecordRepo = rideEntryRecordRepository;
     private readonly IVisitorRepository _visitorRepo = visitorRepository;
     private readonly IAmusementRideRepository _rideRepo = rideRepository;
+    private readonly IRideTrafficStatService _rideTrafficStatService = rideTrafficStatService;
     private readonly ApplicationDbContext _dbContext = dbContext;
 
     public async Task<int> CreateRideEntryAsync(int visitorId, int rideId, string gateName, int? ticketId)
@@ -54,6 +56,10 @@ public class RideEntryRecordService(
             };
 
             var entryRecordId = await _rideEntryRecordRepo.CreateAsync(rideEntryRecord);
+            
+            // Update real-time traffic statistics for ride entry
+            await _rideTrafficStatService.UpdateOnRideEntryAsync(rideId);
+            
             await _dbContext.Database.CommitTransactionAsync();
             return entryRecordId;
         }
@@ -76,6 +82,10 @@ public class RideEntryRecordService(
             activeEntry.ExitTime = DateTime.UtcNow;
             activeEntry.ExitGate = gateName;
             await _rideEntryRecordRepo.UpdateAsync(activeEntry);
+            
+            // Update real-time traffic statistics for ride exit
+            await _rideTrafficStatService.UpdateOnRideExitAsync(rideId);
+            
             await _dbContext.Database.CommitTransactionAsync();
             return activeEntry.EntryRecordId;
         }

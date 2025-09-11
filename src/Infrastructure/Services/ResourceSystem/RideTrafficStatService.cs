@@ -18,9 +18,16 @@ public class RideTrafficStatService(
     private readonly IDistributedCache _cache = cache;
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-    public async Task<RideTrafficStat> GetRealTimeStatsAsync(int rideId)
+    public async Task<RideTrafficStat?> GetRealTimeStatsAsync(int rideId)
     {
-        // Try to get from cache first
+        // First check if the ride exists.
+        var ride = await _rideRepo.GetByIdAsync(rideId);
+        if (ride == null)
+        {
+            return null;
+        }
+
+        // Try to get from cache first.
         var cacheKey = $"ride_traffic:realtime:{rideId}";
         var cachedStatJson = await _cache.GetStringAsync(cacheKey);
 
@@ -33,10 +40,10 @@ public class RideTrafficStatService(
             }
         }
 
-        // If not in cache, initialize from database
+        // If not in cache, initialize from database.
         await InitializeStatsAsync(rideId);
 
-        // Return the initialized stat
+        // Return the initialized stat.
         var statJson = await _cache.GetStringAsync(cacheKey);
         if (!string.IsNullOrEmpty(statJson))
         {
@@ -52,16 +59,19 @@ public class RideTrafficStatService(
 
     public async Task<List<RideTrafficStat>> GetAllRealTimeStatsAsync()
     {
-        // Get all rides
+        // Get all rides.
         var rides = await _rideRepo.GetAllAsync();
 
         var stats = new List<RideTrafficStat>();
 
-        // For each ride, get or initialize real-time stats
+        // For each ride, get or initialize real-time stats.
         foreach (var ride in rides)
         {
             var stat = await GetRealTimeStatsAsync(ride.RideId);
-            stats.Add(stat);
+            if (stat != null)
+            {
+                stats.Add(stat);
+            }
         }
 
         return stats;
@@ -69,22 +79,34 @@ public class RideTrafficStatService(
 
     public async Task UpdateOnRideEntryAsync(int rideId)
     {
-        // Get current stats or initialize if not exists
+        // Get current stats or initialize if not exists.
         var stat = await GetRealTimeStatsAsync(rideId);
+        if (stat == null)
+        {
+            return; // Ride does not exist, nothing to update.
+        }
 
-        // Update the statistics
+        // Update the statistics.
         stat.VisitorCount++;
+        stat.RecordTime = DateTime.UtcNow;
         stat.UpdatedAt = DateTime.UtcNow;
 
-        // Update queue length and waiting time estimation (simplified logic)
-        stat.QueueLength = Math.Max(0, stat.QueueLength - 1); // Assuming one person enters the ride
-        stat.WaitingTime = Math.Max(0, stat.VisitorCount * 2); // Simplified: 2 minutes per person
-
-        // Update crowded status (simplified logic)
+        // Get ride information for accurate calculations.
         var ride = await _rideRepo.GetByIdAsync(rideId);
         if (ride != null)
         {
-            stat.IsCrowded = stat.VisitorCount > ride.Capacity * 0.8; // 80% capacity threshold
+            // Update queue length estimation.
+            // Queue length is the number of people waiting beyond the ride capacity.
+            stat.QueueLength = Math.Max(0, stat.VisitorCount - ride.Capacity);
+
+            // Update waiting time estimation based on queue length and ride duration.
+            // Waiting time = (queue length / capacity) * ride duration.
+            var cyclesNeeded = Math.Ceiling((double)stat.QueueLength / ride.Capacity);
+            stat.WaitingTime = (int)(cyclesNeeded * ride.Duration / 60.0); // Convert seconds to minutes.
+
+            // Update crowded status based on capacity utilization.
+            // Crowded if more than 2x capacity.
+            stat.IsCrowded = stat.VisitorCount > ride.Capacity * 2;
         }
 
         // Update cache
@@ -98,20 +120,31 @@ public class RideTrafficStatService(
     {
         // Get current stats or initialize if not exists
         var stat = await GetRealTimeStatsAsync(rideId);
+        if (stat == null)
+        {
+            return; // Ride does not exist, nothing to update.
+        }
 
         // Update the statistics
         stat.VisitorCount = Math.Max(0, stat.VisitorCount - 1); // Ensure non-negative
         stat.UpdatedAt = DateTime.UtcNow;
 
-        // Update queue length and waiting time estimation (simplified logic)
-        stat.QueueLength++; // Assuming one person exits and joins queue
-        stat.WaitingTime = Math.Max(0, stat.VisitorCount * 2); // Simplified: 2 minutes per person
-
-        // Update crowded status (simplified logic)
+        // Get ride information for accurate calculations.
         var ride = await _rideRepo.GetByIdAsync(rideId);
         if (ride != null)
         {
-            stat.IsCrowded = stat.VisitorCount > ride.Capacity * 0.8; // 80% capacity threshold
+            // Update queue length estimation.
+            // Queue length is the number of people waiting beyond the ride capacity.
+            stat.QueueLength = Math.Max(0, stat.VisitorCount - ride.Capacity);
+
+            // Update waiting time estimation based on queue length and ride duration.
+            // Waiting time = (queue length / capacity) * ride duration.
+            var cyclesNeeded = Math.Ceiling((double)stat.QueueLength / ride.Capacity);
+            stat.WaitingTime = (int)(cyclesNeeded * ride.Duration / 60.0); // Convert seconds to minutes.
+
+            // Update crowded status based on capacity utilization.
+            // Crowded if more than 2x capacity.
+            stat.IsCrowded = stat.VisitorCount > ride.Capacity * 2;
         }
 
         // Update cache
