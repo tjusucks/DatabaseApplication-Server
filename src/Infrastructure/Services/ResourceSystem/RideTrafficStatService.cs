@@ -353,7 +353,7 @@ public class RideTrafficStatService(
             var startTime = endTime.AddMinutes(-15);
 
             var stats = await _rideTrafficStatRepo.SearchAsync(
-                null, rideId, null, null, null, null, null, null, null, startTime, endTime, 1, 1);
+                null, rideId, null, null, null, null, null, null, null, startTime, endTime, true, 1, 1);
 
             return stats.FirstOrDefault();
         }

@@ -53,13 +53,14 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
         [FromQuery] int? maxWaitingTime = null,
         [FromQuery] DateTime? recordTimeFrom = null,
         [FromQuery] DateTime? recordTimeTo = null,
+        [FromQuery] bool descending = true,
         [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 10)
+        [FromQuery] int pageSize = 20)
     {
         var result = await _mediator.Send(new SearchRideTrafficStatsQuery(
             keyword, rideId, isCrowded, minVisitorCount, maxVisitorCount,
             minQueueLength, maxQueueLength, minWaitingTime, maxWaitingTime,
-            recordTimeFrom, recordTimeTo, page, pageSize));
+            recordTimeFrom, recordTimeTo, descending, page, pageSize));
         return Ok(result);
     }
 

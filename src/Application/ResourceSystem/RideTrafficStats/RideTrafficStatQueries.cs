@@ -22,8 +22,9 @@ public record SearchRideTrafficStatsQuery(
     int? MaxWaitingTime = null,
     DateTime? RecordTimeFrom = null,
     DateTime? RecordTimeTo = null,
+    bool Descending = true,
     int Page = 1,
-    int PageSize = 10
+    int PageSize = 20
 ) : IRequest<RideTrafficStatResult>;
 
 /// <summary>

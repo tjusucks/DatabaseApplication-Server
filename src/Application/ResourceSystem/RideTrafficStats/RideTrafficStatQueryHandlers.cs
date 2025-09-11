@@ -52,6 +52,7 @@ public class RideTrafficStatQueryHandlers(
             request.MaxWaitingTime,
             request.RecordTimeFrom,
             request.RecordTimeTo,
+            request.Descending,
             request.Page,
             request.PageSize);
 
