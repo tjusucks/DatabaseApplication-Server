@@ -25,12 +25,12 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
 
     public async Task<Employee?> GetByIdAsync(int employeeId)
     {
-        return await _dbContext.Employees.FindAsync(employeeId);
+        return await _dbContext.Employees.Include(e => e.User).FirstOrDefaultAsync(e => e.EmployeeId == employeeId);
     }
 
     public async Task<List<Employee>> GetAllAsync()
     {
-        return await _dbContext.Employees.ToListAsync();
+        return await _dbContext.Employees.Include(e => e.User).ToListAsync();
     }
 
     public async Task UpdateAsync(Employee employee)
@@ -64,6 +64,7 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
         }
 
         var employees = await _dbContext.Employees
+            .Include(e => e.User)
             .Where(e =>
                 (e.StaffNumber != null && e.StaffNumber.Contains(keyword)) ||
                 (e.Position != null && e.Position.Contains(keyword)) ||
@@ -83,6 +84,7 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
         }
 
         var employees = await _dbContext.Employees
+            .Include(e => e.User)
             .Where(e => e.DepartmentName != null && e.DepartmentName.Equals(departmentName))
             .ToListAsync();
         return employees;
@@ -91,6 +93,7 @@ public class EmployeeRepository(ApplicationDbContext dbContext) : IEmployeeRepos
     public async Task<List<Employee>> GetByStaffTypeAsync(StaffType staffType)
     {
         var employees = await _dbContext.Employees
+            .Include(e => e.User)
             .Where(e => e.StaffType == staffType)
             .ToListAsync();
         return employees;
