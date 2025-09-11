@@ -1,5 +1,6 @@
 using System.Data.Common;
 using DbApp.Infrastructure;
+using DbApp.Infrastructure.DataSeedings;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using Respawn;
