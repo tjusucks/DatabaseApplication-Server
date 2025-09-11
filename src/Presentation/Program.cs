@@ -20,17 +20,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-// Add CORS services
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
-
 // Add MVC controllers and enum converters for API endpoints.
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -129,9 +118,6 @@ if (app.Environment.IsDevelopment())
 
 // Force HTTPS redirection for security.
 app.UseHttpsRedirection();
-
-// Add CORS middleware
-app.UseCors("AllowFrontend");
 
 // Register exception handling middleware.
 app.UseExceptionHandler(errorApp =>
