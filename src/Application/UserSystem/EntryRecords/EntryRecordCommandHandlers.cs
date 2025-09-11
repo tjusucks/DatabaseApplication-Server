@@ -45,6 +45,11 @@ public class EntryRecordCommandHandlers(
         if (request.ExitGate != null)
         {
             entryRecord.ExitGate = request.ExitGate;
+            // 设置出园时间为当前时间（如果还没有出园时间）
+            if (entryRecord.ExitTime == null)
+            {
+                entryRecord.ExitTime = DateTime.UtcNow;
+            }
         }
         if (request.TicketId.HasValue)
         {

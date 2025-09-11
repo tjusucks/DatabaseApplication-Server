@@ -13,7 +13,7 @@ public class AmusementRideMappingProfile : Profile
     {
         CreateMap<AmusementRide, AmusementRideSummaryDto>()
             .ForMember(dest => dest.ManagerName, opt =>
-                opt.MapFrom(src => src.Manager != null ? src.Manager.User.Username : null));
+                opt.MapFrom(src => src.Manager != null && src.Manager.User != null ? src.Manager.User.Username : null));
 
         CreateMap<AmusementRideStats, AmusementRideStatsDto>();
     }

@@ -2,172 +2,30 @@ using DbApp.Domain.Entities.UserSystem;
 using DbApp.Domain.Enums.UserSystem;
 using Microsoft.EntityFrameworkCore;
 
-namespace DbApp.Infrastructure;
+namespace DbApp.Infrastructure.DataSeedings.UserSystem;
 
-public static class DataSeeding
+public class VisitorDataSeeding : IDataSeeding
 {
-    public static void SeedData(DbContext dbContext)
+    public void Seed(DbContext dbContext)
     {
-        dbContext.ChangeTracker.Clear();
-
-        // Seed roles first
-        var roles = GetDefaultRoles();
-        foreach (var role in roles)
+        if (dbContext.Set<User>().Any() || dbContext.Set<Visitor>().Any())
         {
-            var existing = dbContext.Set<Role>().FirstOrDefault(r => r.RoleId == role.RoleId);
-            if (existing == null)
-            {
-                dbContext.Set<Role>().Add(role);
-            }
-            else if (existing.RoleName != role.RoleName ||
-                     existing.RoleDescription != role.RoleDescription ||
-                     existing.IsSystemRole != role.IsSystemRole)
-            {
-                existing.RoleName = role.RoleName;
-                existing.RoleDescription = role.RoleDescription;
-                existing.IsSystemRole = role.IsSystemRole;
-                existing.UpdatedAt = DateTime.UtcNow;
-            }
+            return; // Data already seeded.
         }
-
-        // Save roles first to ensure they exist
-        dbContext.SaveChanges();
-
-        // Seed test visitors
-        SeedTestVisitors(dbContext);
-
+        dbContext.Set<User>().AddRange(GetTestUsers());
+        dbContext.Set<Visitor>().AddRange(GetTestVisitors());
         dbContext.SaveChanges();
     }
 
-    public static async Task SeedDataAsync(DbContext dbContext)
+    public Task SeedAsync(DbContext dbContext)
     {
-        dbContext.ChangeTracker.Clear();
-
-        // Seed roles first
-        var roles = GetDefaultRoles();
-        foreach (var role in roles)
+        if (dbContext.Set<User>().Any() || dbContext.Set<Visitor>().Any())
         {
-            var existing = await dbContext.Set<Role>().FirstOrDefaultAsync(r => r.RoleId == role.RoleId);
-            if (existing == null)
-            {
-                await dbContext.Set<Role>().AddAsync(role);
-            }
-            else if (existing.RoleName != role.RoleName ||
-                     existing.RoleDescription != role.RoleDescription ||
-                     existing.IsSystemRole != role.IsSystemRole)
-            {
-                existing.RoleName = role.RoleName;
-                existing.RoleDescription = role.RoleDescription;
-                existing.IsSystemRole = role.IsSystemRole;
-                existing.UpdatedAt = DateTime.UtcNow;
-            }
+            return Task.CompletedTask; // Data already seeded.
         }
-
-        // Save roles first to ensure they exist
-        await dbContext.SaveChangesAsync();
-
-        // Seed test visitors
-        await SeedTestVisitorsAsync(dbContext);
-
-        await dbContext.SaveChangesAsync();
-    }
-
-    private static List<Role> GetDefaultRoles()
-    {
-        var now = DateTime.UtcNow;
-        return
-        [
-            new()
-            {
-                RoleId = 1,
-                RoleName = "Visitor",
-                RoleDescription = "General visitor, including members.",
-                IsSystemRole = false,
-                CreatedAt = now,
-                UpdatedAt = now
-            },
-            new()
-            {
-                RoleId = 2,
-                RoleName = "Employee",
-                RoleDescription = "Employee with resource system access.",
-                IsSystemRole = true,
-                CreatedAt = now,
-                UpdatedAt = now
-            },
-            new()
-            {
-                RoleId = 3,
-                RoleName = "Manager",
-                RoleDescription = "Manager with administrative permissions.",
-                IsSystemRole = true,
-                CreatedAt = now,
-                UpdatedAt = now
-            },
-            new()
-            {
-                RoleId = 4,
-                RoleName = "Admin",
-                RoleDescription = "System administrator with full permissions.",
-                IsSystemRole = true,
-                CreatedAt = now,
-                UpdatedAt = now
-            }
-        ];
-    }
-
-    private static void SeedTestVisitors(DbContext dbContext)
-    {
-        // Check if visitors already exist
-        if (dbContext.Set<User>().Any())
-        {
-            return; // Data already seeded
-        }
-
-        var testUsers = GetTestUsers();
-        var testVisitors = GetTestVisitors();
-
-        // Add users first
-        foreach (var user in testUsers)
-        {
-            dbContext.Set<User>().Add(user);
-        }
-
-        // Save users to get their IDs
-        dbContext.SaveChanges();
-
-        // Add visitors
-        foreach (var visitor in testVisitors)
-        {
-            dbContext.Set<Visitor>().Add(visitor);
-        }
-    }
-
-    private static async Task SeedTestVisitorsAsync(DbContext dbContext)
-    {
-        // Check if visitors already exist
-        if (await dbContext.Set<User>().AnyAsync())
-        {
-            return; // Data already seeded
-        }
-
-        var testUsers = GetTestUsers();
-        var testVisitors = GetTestVisitors();
-
-        // Add users first
-        foreach (var user in testUsers)
-        {
-            await dbContext.Set<User>().AddAsync(user);
-        }
-
-        // Save users to get their IDs
-        await dbContext.SaveChangesAsync();
-
-        // Add visitors
-        foreach (var visitor in testVisitors)
-        {
-            await dbContext.Set<Visitor>().AddAsync(visitor);
-        }
+        dbContext.Set<User>().AddRange(GetTestUsers());
+        dbContext.Set<Visitor>().AddRange(GetTestVisitors());
+        return dbContext.SaveChangesAsync();
     }
 
     private static List<User> GetTestUsers()
