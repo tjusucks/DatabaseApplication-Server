@@ -64,7 +64,6 @@ public class RideTrafficStatsController(IMediator mediator) : ControllerBase
     }
 
     /// <summary>
-    /// <summary>
     /// Get ride traffic statistics (read-only).
     /// </summary>
     /// <param name="startDate">Start date for statistics.</param>

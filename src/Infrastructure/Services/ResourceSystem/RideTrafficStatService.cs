@@ -149,7 +149,7 @@ public class RideTrafficStatService(
         // Try to get the latest stats from database.
         var latestStat = await GetLatestDatabaseStatAsync(rideId);
 
-        var statToCache = latestStat ?? CreateDefaultStat(rideId);
+        var statToCache = latestStat ?? await CreateDefaultStatAsync(rideId);
 
         // Cache the stat.
         var cacheKey = $"ride_traffic:realtime:{rideId}";
@@ -364,10 +364,10 @@ public class RideTrafficStatService(
         }
     }
 
-    private RideTrafficStat? CreateDefaultStat(int rideId)
+    private async Task<RideTrafficStat?> CreateDefaultStatAsync(int rideId)
     {
         // Get ride information to set the ride name.
-        var ride = _rideRepo.GetByIdAsync(rideId).Result;
+        var ride = await _rideRepo.GetByIdAsync(rideId);
         if (ride == null)
         {
             return null; // Ride does not exist.
