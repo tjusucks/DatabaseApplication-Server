@@ -275,11 +275,6 @@ public class RideTrafficStatService(
             var endTime = recordTime;
             var startTime = latestStat?.RecordTime ?? endTime.AddMinutes(-15);
 
-            Console.WriteLine(latestStat == null
-                ? $"No previous stats found for RideId={rideId}. Using default values."
-                : $"Latest stats for RideId={rideId} found at {latestStat.RecordTime}.");
-            Console.WriteLine($"Updating stats for RideId={rideId} using window {startTime} to {endTime}");
-
             // Get statistics for this ride in the time window.
             var rideStats = await _rideEntryRecordRepo.GetStatAsync(rideId, startTime, endTime);
 
@@ -301,10 +296,7 @@ public class RideTrafficStatService(
             if (rideStats != null)
             {
                 // Add net entries to current visitor count.
-                Console.WriteLine($"RideId={rideId} - Entries: {rideStats.TotalEntries}, Exits: {rideStats.TotalExits}");
-                Console.WriteLine($"RideId={rideId} - Previous VisitorCount: {updatedStat.VisitorCount}");
                 updatedStat.VisitorCount += rideStats.TotalEntries - rideStats.TotalExits;
-                Console.WriteLine($"RideId={rideId} - Updated VisitorCount: {updatedStat.VisitorCount}");
             }
 
             // Update queue length, waiting time and crowded status based on ride capacity.
@@ -363,11 +355,7 @@ public class RideTrafficStatService(
             var stats = await _rideTrafficStatRepo.SearchAsync(
                 null, rideId, null, null, null, null, null, null, null, startTime, endTime, 1, 1);
 
-            var stat = stats.FirstOrDefault();
-            Console.WriteLine(stat == null
-                ? $"No recent stats found for RideId={rideId} in the last 15 minutes."
-                : $"Found recent stats for RideId={rideId} at {stat.RecordTime}.");
-            return stat;
+            return stats.FirstOrDefault();
         }
         catch
         {
