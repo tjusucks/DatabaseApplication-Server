@@ -77,5 +77,5 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
           ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }} '
-          sudo systemctl start ApplicationServer.service
+          sudo systemctl start ApplicationServer.service --no-block
           '
