@@ -109,20 +109,21 @@ foreach (var interfaceType in repositoryInterfaces)
     }
 }
 
-if (builder.Environment.IsDevelopment())
+// Configure CORS for frontend development.
+builder.Services.AddCors(options =>
 {
-    // Configure CORS for frontend development.
-    builder.Services.AddCors(options =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        options.AddPolicy("AllowFrontend", policy =>
-        {
-            policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader()
-                  .AllowCredentials(); // 允许Cookie传递
-        });
+        policy.WithOrigins(
+            "http://localhost:3000",
+            "https://localhost:3000",
+            "https://database-application-web.vercel.app"
+        )
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
-}
+});
 
 var app = builder.Build();
 
@@ -139,10 +140,10 @@ if (app.Environment.IsDevelopment())
     using var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     await dbContext.Database.MigrateAsync();
-
-    // Enable CORS for frontend development.
-    app.UseCors("AllowFrontend");
 }
+
+// Enable CORS for frontend development.
+app.UseCors("AllowFrontend");
 
 // Force HTTPS redirection for security.
 app.UseHttpsRedirection();

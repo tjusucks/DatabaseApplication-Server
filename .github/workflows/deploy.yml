@@ -1,0 +1,74 @@
+name: Deploy Development Server
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "*.sln"
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    name: Build and deploy development server
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+          cache: true
+          cache-dependency-path: |
+            src/**/packages.lock.json
+            tests/packages.lock.json
+      
+      - name: Install migration tool
+        run: dotnet tool restore
+
+      - name: Build the projects
+        run: |
+          chmod +x ./utils/release.sh
+          ./utils/release.sh
+      
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+      - name: Stop Application Server
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
+          ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }} '
+          sudo systemctl stop ApplicationServer.service
+          '
+
+      - name: Backup old deploy files on server
+        run: |
+            ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
+            ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }} '
+            cd /home/${{ secrets.DEPLOY_SERVER_USER }}/ApplicationServer/ &&
+            if [ -d publish ]; then
+              ts=$(date +%Y%m%d%H%M%S)
+              mv publish publish_$ts
+              ls -dt publish_* | tail -n +6 | xargs -r rm -rf
+            fi
+            '
+
+      - name: Copy publish files to server
+        run: |
+          scp -i ~/.ssh/id_ed25519 \
+            -o StrictHostKeyChecking=no \
+            -r ./bin/publish \
+            ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }}:/home/${{ secrets.DEPLOY_SERVER_USER }}/ApplicationServer/publish
+
+      - name: Start Application Server
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no \
+          ${{ secrets.DEPLOY_SERVER_USER }}@${{ secrets.DEPLOY_SERVER_IP }} '
+          sudo systemctl start ApplicationServer.service --no-block
+          '
