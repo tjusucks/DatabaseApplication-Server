@@ -409,13 +409,6 @@
       "domain": {
         "type": "Project"
       }
-    },
-    "net9.0/linux-x64": {
-      "System.Diagnostics.EventLog": {
-        "type": "Transitive",
-        "resolved": "9.0.8",
-        "contentHash": "gebRF3JLLJ76jz1CQpvwezNapZUjFq20JQsaGHzBH0DzlkHBLpdhwkOei9usiOkIGMwU/L0ALWpNe1JE+5/itw=="
-      }
     }
   }
 }
