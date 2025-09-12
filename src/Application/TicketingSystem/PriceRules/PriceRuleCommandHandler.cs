@@ -1,6 +1,7 @@
 using DbApp.Domain.Entities.TicketingSystem;
 using DbApp.Domain.Interfaces.TicketingSystem;
 using MediatR;
+using static DbApp.Domain.Exceptions;
 
 namespace DbApp.Application.TicketingSystem.PriceRules;
 
@@ -16,7 +17,7 @@ public class PriceRuleCommandHandler(
     {
         var ticketType = await ticketTypeRepository.GetByIdAsync(request.TicketTypeId);
         if (ticketType == null || request.Price < 0 || request.EffectiveStartDate >= request.EffectiveEndDate)
-            return 0;
+            throw new ValidationException("Invalid ticket type or price rule details.");
 
         var priceRule = new PriceRule
         {
@@ -40,7 +41,7 @@ public class PriceRuleCommandHandler(
     {
         var rule = await priceRuleRepository.GetByIdAsync(request.RuleId);
         if (rule == null || request.Price < 0 || request.EffectiveStartDate >= request.EffectiveEndDate)
-            return Unit.Value;
+            throw new ValidationException("Invalid price rule details.");
 
         rule.RuleName = request.RuleName;
         rule.Priority = request.Priority;
@@ -57,10 +58,8 @@ public class PriceRuleCommandHandler(
 
     public async Task<Unit> Handle(DeletePriceRuleCommand request, CancellationToken cancellationToken)
     {
-        var rule = await priceRuleRepository.GetByIdAsync(request.RuleId);
-        if (rule == null)
-            return Unit.Value;
-
+        var rule = await priceRuleRepository.GetByIdAsync(request.RuleId)
+            ?? throw new NotFoundException("Price rule not found.");
         await priceRuleRepository.DeleteAsync(rule);
         return Unit.Value;
     }

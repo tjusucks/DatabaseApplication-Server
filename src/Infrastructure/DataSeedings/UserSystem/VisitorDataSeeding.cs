@@ -8,7 +8,7 @@ public class VisitorDataSeeding : IDataSeeding
 {
     public void Seed(DbContext dbContext)
     {
-        if (dbContext.Set<User>().Any() || dbContext.Set<Visitor>().Any())
+        if (dbContext.Set<User>().Any() && dbContext.Set<Visitor>().Any())
         {
             return; // Data already seeded.
         }
@@ -19,7 +19,7 @@ public class VisitorDataSeeding : IDataSeeding
 
     public Task SeedAsync(DbContext dbContext)
     {
-        if (dbContext.Set<User>().Any() || dbContext.Set<Visitor>().Any())
+        if (dbContext.Set<User>().Any() && dbContext.Set<Visitor>().Any())
         {
             return Task.CompletedTask; // Data already seeded.
         }
