@@ -32,6 +32,9 @@ jobs:
           cache-dependency-path: |
             src/**/packages.lock.json
             tests/packages.lock.json
+      
+      - name: Install migration tool
+        run: dotnet tool restore
 
       - name: Build the projects
         run: |
