@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
 using DbApp.Infrastructure.DataSeedings;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
@@ -36,6 +37,32 @@ builder.Services.AddMediatR(cfg =>
 
 // Register AutoMapper for DTO mapping.
 builder.Services.AddAutoMapper(cfg => { }, typeof(DbApp.Application.MappingProfile).Assembly);
+
+// Configure Cookie Authentication
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/api/auth/login";
+        options.LogoutPath = "/api/auth/logout";
+        options.AccessDeniedPath = "/api/auth/access-denied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Events.OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = 401;
+            return Task.CompletedTask;
+        };
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.StatusCode = 403;
+            return Task.CompletedTask;
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Configure Entity Framework with Oracle database and check constraints.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -89,9 +116,10 @@ if (builder.Environment.IsDevelopment())
     {
         options.AddPolicy("AllowFrontend", policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
                   .AllowAnyMethod()
-                  .AllowAnyHeader();
+                  .AllowAnyHeader()
+                  .AllowCredentials(); // 允许Cookie传递
         });
     });
 }
@@ -118,6 +146,10 @@ if (app.Environment.IsDevelopment())
 
 // Force HTTPS redirection for security.
 app.UseHttpsRedirection();
+
+// Enable authentication and authorization
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Register exception handling middleware.
 app.UseExceptionHandler(errorApp =>
