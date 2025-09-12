@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 using DbApp.Infrastructure;
 using DbApp.Infrastructure.DataSeedings;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Scalar.AspNetCore;
 using static DbApp.Domain.Exceptions;
 
