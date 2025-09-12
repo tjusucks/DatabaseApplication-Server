@@ -116,9 +116,10 @@ if (builder.Environment.IsDevelopment())
     {
         options.AddPolicy("AllowFrontend", policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
                   .AllowAnyMethod()
-                  .AllowAnyHeader();
+                  .AllowAnyHeader()
+                  .AllowCredentials(); // 允许Cookie传递
         });
     });
 }

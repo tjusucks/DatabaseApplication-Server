@@ -112,6 +112,38 @@ public class VisitorDataSeeding : IDataSeeding
                 RoleId = 1, // Visitor role
                 CreatedAt = now,
                 UpdatedAt = now
+            },
+            new()
+            {
+                UserId = 6,
+                Username = "admin",
+                PasswordHash = "admin123",
+                Email = "admin@system.com",
+                DisplayName = "系统管理员",
+                PhoneNumber = "1234567896",
+                BirthDate = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                Gender = Gender.Male,
+                RegisterTime = now,
+                PermissionLevel = 4,
+                RoleId = 4, // Admin role
+                CreatedAt = now,
+                UpdatedAt = now
+            },
+            new()
+            {
+                UserId = 7,
+                Username = "manager",
+                PasswordHash = "manager123",
+                Email = "manager@system.com",
+                DisplayName = "系统经理",
+                PhoneNumber = "1234567897",
+                BirthDate = new DateTime(1985, 6, 15, 0, 0, 0, DateTimeKind.Utc),
+                Gender = Gender.Female,
+                RegisterTime = now,
+                PermissionLevel = 3,
+                RoleId = 3, // Manager role
+                CreatedAt = now,
+                UpdatedAt = now
             }
         ];
     }
