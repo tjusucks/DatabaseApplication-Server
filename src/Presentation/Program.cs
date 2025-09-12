@@ -119,7 +119,7 @@ if (builder.Environment.IsDevelopment())
             policy.WithOrigins("http://localhost:3000", "https://localhost:3000")
                   .AllowAnyMethod()
                   .AllowAnyHeader()
-                  .AllowCredentials(); // 允许Cookie传递
+                  .AllowCredentials();
         });
     });
 }
