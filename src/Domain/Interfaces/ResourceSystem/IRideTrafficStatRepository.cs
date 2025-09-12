@@ -24,8 +24,9 @@ public interface IRideTrafficStatRepository
         int? maxWaitingTime,
         DateTime? recordTimeFrom,
         DateTime? recordTimeTo,
-        int page,
-        int pageSize);
+        bool Descending = true,
+        int page = 1,
+        int pageSize = 20);
 
     // 统一计数方法
     Task<int> CountAsync(

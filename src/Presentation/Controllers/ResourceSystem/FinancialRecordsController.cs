@@ -18,7 +18,7 @@ public class FinancialRecordsController(IMediator mediator) : ControllerBase
     public async Task<ActionResult<FinancialRecordDetailDto>> CreateFinancialRecord([FromBody] CreateFinancialRecordCommand command)
     {
         var result = await _mediator.Send(command);
-        return CreatedAtAction(nameof(GetFinancialRecord), new { recordId = result.RecordId }, result);
+        return CreatedAtAction(nameof(GetFinancialRecord), new { id = result.RecordId }, result);
     }
 
     /// <summary>

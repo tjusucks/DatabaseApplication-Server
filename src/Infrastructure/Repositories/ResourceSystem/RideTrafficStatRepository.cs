@@ -66,8 +66,9 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
         int? maxWaitingTime,
         DateTime? recordTimeFrom,
         DateTime? recordTimeTo,
-        int page,
-        int pageSize)
+        bool Descending = true,
+        int page = 1,
+        int pageSize = 20)
     {
         var query = _dbContext.RideTrafficStats
             .Include(r => r.Ride)
@@ -78,8 +79,11 @@ public class RideTrafficStatRepository(ApplicationDbContext dbContext) : IRideTr
             minVisitorCount, maxVisitorCount, minQueueLength, maxQueueLength,
             minWaitingTime, maxWaitingTime, recordTimeFrom, recordTimeTo);
 
+        query = Descending
+            ? query.OrderByDescending(r => r.RecordTime)
+            : query.OrderBy(r => r.RecordTime);
+
         return await query
-            .OrderByDescending(r => r.RecordTime)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();

@@ -80,6 +80,7 @@ public class AmusementRide
 
     // 导航属性
     public Employee? Manager { get; set; }
+    public ICollection<RideEntryRecord> RideEntryRecords { get; set; } = [];
     public ICollection<InspectionRecord> InspectionRecords { get; set; } = [];
     public ICollection<MaintenanceRecord> MaintenanceRecords { get; set; } = [];
     public ICollection<RideTrafficStat> RideTrafficStats { get; set; } = [];
