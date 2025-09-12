@@ -30,7 +30,6 @@ public class EmployeeDataSeeding : IDataSeeding
         {
             var employees = GetEmployeesForUsers(adminAndManagerUsers);
             dbContext.Set<Employee>().AddRange(employees);
-            dbContext.SaveChanges();
         }
 
         dbContext.SaveChanges();
@@ -60,7 +59,6 @@ public class EmployeeDataSeeding : IDataSeeding
         {
             var employees = GetEmployeesForUsers(adminAndManagerUsers);
             await dbContext.Set<Employee>().AddRangeAsync(employees);
-            await dbContext.SaveChangesAsync();
         }
 
         await dbContext.SaveChangesAsync();
