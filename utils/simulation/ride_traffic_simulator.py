@@ -43,7 +43,6 @@ class RideTrafficSimulatorAPI:
         self.visitor_ids = []
         self.ride_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # From seeding
         self.session = requests.Session()
-        self.session.verify = False  # Disable SSL verification for local testing
         
     def create_test_visitors(self) -> List[int]:
         """
@@ -326,12 +325,13 @@ def main():
                         help="Clean up visitors after simulation")
     parser.add_argument("--force-cleanup", action="store_true",
                         help="Force cleanup without confirmation")
-    
+    parser.add_argument("--disable-verification", action="store_false", dest="verify", default=True,
+                        help="Disable SSL verification")
     args = parser.parse_args()
     
     # Create simulator
     simulator = RideTrafficSimulatorAPI(args.base_url, args.visitors, args.cleanup, args.force_cleanup)
-    
+    simulator.session.verify = args.verify
     try:
         # Create test visitors
         logger.info("Creating test visitors...")
