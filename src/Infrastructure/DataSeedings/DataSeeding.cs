@@ -29,6 +29,7 @@ public static class DataSeeding
         new RoleDataSeeding(),
         new VisitorDataSeeding(),
         new EmployeeDataSeeding(),
+        new StaffTeamDataSeeding(), // Must come after EmployeeDataSeeding
         new AmusementRideDataSeeding()
     ];
 }
