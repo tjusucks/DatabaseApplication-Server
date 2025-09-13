@@ -1,0 +1,41 @@
+# File path: /etc/systemd/system/ApplicationServer.service.
+[Unit]
+Description=Database Application Web Server
+Documentation=https://your-docs-url.com
+After=network.target oracle23ai-free.service redis-server.service
+Wants=oracle23ai-free.service redis-server.service
+
+[Service]
+Type=notify
+User=youmu
+Group=youmu
+WorkingDirectory=/home/youmu/ApplicationServer/publish
+ExecStartPre=/home/youmu/ApplicationServer/publish/Migrations
+ExecStart=/home/youmu/ApplicationServer/publish/Presentation
+ExecReload=/bin/kill -s HUP $MAINPID
+
+# Environment variables.
+EnvironmentFile=-/home/youmu/ApplicationServer/.env
+
+# Restart policy.
+Restart=always
+RestartSec=10
+TimeoutStopSec=30
+
+# Security settings.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/youmu/ApplicationServer/publish /home/youmu/ApplicationServer/log /tmp
+
+# Logging settings.
+SyslogIdentifier=ApplicationServer
+StandardOutput=journal
+StandardError=journal
+
+# Resource limits.
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target
