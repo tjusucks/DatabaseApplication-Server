@@ -43,6 +43,7 @@ class RideTrafficSimulatorAPI:
         self.visitor_ids = []
         self.ride_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # From seeding
         self.session = requests.Session()
+        self.session.verify = False  # Disable SSL verification for local testing
         
     def create_test_visitors(self) -> List[int]:
         """
@@ -252,7 +253,7 @@ class RideTrafficSimulatorAPI:
         """
         Clean up visitors created during the simulation.
         """
-        if not self.cleanup:
+        if not self.cleanup and not self.force_cleanup:
             logger.info("Cleanup disabled, skipping visitor deletion")
             return
             
