@@ -5,6 +5,9 @@ DEV_USERNAME="USERNAME"
 DEV_PASSWORD="password"
 PDB_NAME="FREEPDB1"
 
+echo "Stopping ApplicationServer service..."
+systemctl stop ApplicationServer.service
+
 docker exec -i $CONTAINER_ALIAS sqlplus sys/"$SYS_PASSWORD"@localhost:1521/"$PDB_NAME" as sysdba <<EOF
 -- Drop the development user if it exists
 DROP USER "$DEV_USERNAME" CASCADE;
@@ -25,3 +28,6 @@ SELECT username FROM dba_users WHERE username = '$DEV_USERNAME';
 EOF
 
 echo "Database user '$DEV_USERNAME' has been successfully configured."
+
+echo "Starting ApplicationServer service..."
+systemctl start ApplicationServer.service --no-block
