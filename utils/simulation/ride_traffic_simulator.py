@@ -252,7 +252,7 @@ class RideTrafficSimulatorAPI:
         """
         Clean up visitors created during the simulation.
         """
-        if not self.cleanup:
+        if not self.cleanup and not self.force_cleanup:
             logger.info("Cleanup disabled, skipping visitor deletion")
             return
             
@@ -325,12 +325,13 @@ def main():
                         help="Clean up visitors after simulation")
     parser.add_argument("--force-cleanup", action="store_true",
                         help="Force cleanup without confirmation")
-    
+    parser.add_argument("--disable-verification", action="store_false", dest="verify", default=True,
+                        help="Disable SSL verification")
     args = parser.parse_args()
     
     # Create simulator
     simulator = RideTrafficSimulatorAPI(args.base_url, args.visitors, args.cleanup, args.force_cleanup)
-    
+    simulator.session.verify = args.verify
     try:
         # Create test visitors
         logger.info("Creating test visitors...")
