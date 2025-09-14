@@ -13,7 +13,7 @@ public interface ISalaryFinancialService
     /// <param name="salaryRecord">The salary record to create</param>
     /// <returns>The created salary record with its ID</returns>
     Task<SalaryRecord> CreateSalaryWithFinancialRecordAsync(SalaryRecord salaryRecord);
-    
+
     /// <summary>
     /// Creates a batch of salary records with their corresponding financial records
     /// </summary>
