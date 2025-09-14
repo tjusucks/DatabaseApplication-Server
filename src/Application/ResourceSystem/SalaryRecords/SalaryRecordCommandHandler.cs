@@ -7,6 +7,7 @@ namespace DbApp.Application.ResourceSystem.SalaryRecords;
 
 public class SalaryRecordCommandHandler(
     ISalaryRecordRepository salaryRecordRepository,
+    ISalaryFinancialService salaryFinancialService,
     IMapper mapper) :
     IRequestHandler<CreateSalaryRecordCommand, SalaryRecordDetailDto>,
     IRequestHandler<UpdateSalaryRecordCommand, SalaryRecordDetailDto?>,
@@ -14,6 +15,7 @@ public class SalaryRecordCommandHandler(
     IRequestHandler<CreateBatchSalaryRecordsCommand, List<SalaryRecordDetailDto>>
 {
     private readonly ISalaryRecordRepository _salaryRecordRepository = salaryRecordRepository;
+    private readonly ISalaryFinancialService _salaryFinancialService = salaryFinancialService;
     private readonly IMapper _mapper = mapper;
 
     public async Task<SalaryRecordDetailDto> Handle(CreateSalaryRecordCommand request, CancellationToken cancellationToken)
@@ -28,7 +30,7 @@ public class SalaryRecordCommandHandler(
             UpdatedAt = DateTime.UtcNow
         };
 
-        var createdRecord = await _salaryRecordRepository.AddAsync(salaryRecord);
+        var createdRecord = await _salaryFinancialService.CreateSalaryWithFinancialRecordAsync(salaryRecord);
 
         // Retrieve the full record with navigation properties
         var fullRecord = await _salaryRecordRepository.GetByIdAsync(createdRecord.SalaryRecordId);
@@ -75,7 +77,7 @@ public class SalaryRecordCommandHandler(
             UpdatedAt = DateTime.UtcNow
         }).ToList();
 
-        var createdRecords = await _salaryRecordRepository.AddBatchAsync(salaryRecords);
+        var createdRecords = await _salaryFinancialService.CreateBatchSalariesWithFinancialRecordsAsync(salaryRecords);
 
         // Retrieve the full records with navigation properties
         var fullRecords = new List<SalaryRecord>();
